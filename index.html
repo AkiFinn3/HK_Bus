@@ -145,6 +145,15 @@
 
   .all-link:hover { border-bottom-color: var(--accent); }
 
+  .quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin-top: 13px;
+  }
+
+  .quick-links .all-link { margin-top: 0; }
+
   .divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--line) 12%, var(--line) 88%, transparent);
@@ -406,7 +415,10 @@
     <span class="en">Fu Tai Estate → Shenzhen Bay Port</span>
   </h1>
 
-  <a class="all-link" href="hk-buses.html">全港巴士 · 所有路線 <span aria-hidden="true">→</span></a>
+  <div class="quick-links">
+    <a class="all-link" href="hk-buses.html">全港巴士 · 所有路線 <span aria-hidden="true">→</span></a>
+    <a class="all-link" href="game.html">🎮 巴士大亨 · 經營遊戲 <span aria-hidden="true">→</span></a>
+  </div>
 
   <div class="divider" aria-hidden="true"></div>
 

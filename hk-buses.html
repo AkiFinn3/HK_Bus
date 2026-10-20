@@ -88,6 +88,16 @@
 
   .back:hover { background: rgba(255, 210, 63, 0.13); }
 
+  .top-links {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .top-links .back { margin-top: 0; }
+
   .panel {
     margin-bottom: 14px;
     padding: clamp(16px, 4vw, 24px);
@@ -715,7 +725,10 @@
       <h1>全港巴士</h1>
       <p class="sub">九巴 · 龍運 · 城巴 · 嶼巴 · 港鐵巴士 · 綠色小巴</p>
     </div>
-    <a class="back" href="index.html">B3A 看板 →</a>
+    <div class="top-links">
+      <a class="back" href="index.html">B3A 看板 →</a>
+      <a class="back" href="game.html">🎮 巴士大亨 →</a>
+    </div>
   </header>
 
   <div class="favorites" id="favorites" hidden></div>

@@ -1,0 +1,3776 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<meta name="description" content="巴士大亨：一款香港公交經營增量遊戲。買巴士、開路線、續專營權，建立你的巴士王國。">
+<title>巴士大亨 · Bus Tycoon HK</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="巴士大亨">
+<style>
+  :root {
+    --bg: #080d17;
+    --panel: rgba(255, 255, 255, 0.055);
+    --panel-2: rgba(255, 255, 255, 0.085);
+    --line: rgba(255, 255, 255, 0.1);
+    --text: #f5f7fb;
+    --muted: #8b97ad;
+    --accent: #ffd23f;
+    --accent-soft: rgba(255, 210, 63, 0.14);
+    --green: #37e29a;
+    --blue: #6ea8ff;
+    --red: #ff6b6b;
+    --orange: #ff9f43;
+    --pink: #ff6b9d;
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { min-height: 100%; }
+
+  body {
+    margin: 0;
+    padding: clamp(12px, 3vw, 28px);
+    background:
+      radial-gradient(1100px 600px at 12% -8%, #1b2b4a 0%, transparent 58%),
+      radial-gradient(900px 500px at 108% 110%, #2a1f0a 0%, transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+      "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button, input, textarea { font: inherit; }
+
+  .app { width: min(100%, 1080px); margin: 0 auto; }
+
+  .hidden { display: none !important; }
+
+  /* ---------- Header ---------- */
+
+  .hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 6px 4px 18px;
+  }
+
+  .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+
+  .brand-icon {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 17px;
+    display: grid;
+    place-items: center;
+    color: #0b1220;
+    background: linear-gradient(145deg, #fff0a8, var(--accent) 55%, #e0a800);
+    box-shadow: 0 12px 30px rgba(255, 210, 63, 0.24), inset 0 1px 0 rgba(255,255,255,.6);
+  }
+
+  .brand-icon svg { width: 36px; height: 36px; }
+
+  .kicker {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 3px 0 0;
+    font-size: clamp(26px, 4.6vw, 38px);
+    font-weight: 850;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+
+  .tagline {
+    margin: 5px 0 0;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+
+  .install-strip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin: 0 0 14px;
+    padding: 11px 14px;
+    border: 1px solid rgba(255, 210, 63, .3);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255, 210, 63, .14), rgba(255, 210, 63, .035));
+    color: var(--text);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .18s, background .18s, transform .15s;
+  }
+
+  .install-strip:hover {
+    border-color: rgba(255, 210, 63, .55);
+    background: linear-gradient(135deg, rgba(255, 210, 63, .2), rgba(255, 210, 63, .06));
+  }
+
+  .install-strip:active { transform: translateY(1px); }
+  .install-strip[hidden] { display: none; }
+
+  .install-strip-icon {
+    flex-shrink: 0;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .install-strip-text {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .install-strip-text b { font-size: 13px; font-weight: 800; }
+  .install-strip-text small { font-size: 10.5px; color: var(--muted); }
+
+  .install-strip-action {
+    flex-shrink: 0;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #12151d;
+    font-size: 11.5px;
+    font-weight: 850;
+  }
+
+  .lang-switch {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255,255,255,.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .lang-switch button {
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 5px 9px;
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+    line-height: 1;
+    transition: background .18s, color .18s;
+  }
+
+  .lang-switch button:hover { color: var(--text); }
+  .lang-switch button.active { background: var(--accent); color: #12151d; }
+
+  .rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,.05);
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: .08em;
+    white-space: nowrap;
+  }
+
+  .rating .rating-label {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Stats ---------- */
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .stat {
+    position: relative;
+    overflow: hidden;
+    padding: 13px 15px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: linear-gradient(160deg, rgba(255,255,255,.075), rgba(255,255,255,.022));
+    min-width: 0;
+  }
+
+  .stat::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120px 60px at 100% 0, rgba(255,210,63,.13), transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+
+  .stat.accent::after { opacity: 1; }
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .stat-value {
+    margin-top: 5px;
+    font-size: clamp(19px, 2.9vw, 27px);
+    font-weight: 830;
+    letter-spacing: -0.035em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .stat.accent .stat-value { color: var(--accent); }
+
+  .stat-sub {
+    margin-top: 3px;
+    font-size: 10.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .stat-sub .up { color: var(--green); }
+  .stat-sub .down { color: var(--red); }
+
+  /* ---------- Buffs ---------- */
+
+  .buff-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 10px;
+  }
+
+  .buff-bar:empty { display: none; }
+
+  .buff {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 700;
+    border: 1px solid rgba(55,226,154,.25);
+    background: rgba(55,226,154,.08);
+    color: var(--green);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .buff.bad {
+    border-color: rgba(255,107,107,.28);
+    background: rgba(255,107,107,.08);
+    color: var(--red);
+  }
+
+  /* ---------- Tabs ---------- */
+
+  .tabs {
+    position: sticky;
+    top: 8px;
+    z-index: 30;
+    display: flex;
+    gap: 3px;
+    padding: 5px;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    background: rgba(8, 13, 23, 0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tabs button {
+    flex: 1;
+    min-width: max-content;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 750;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .18s, color .18s;
+  }
+
+  .tabs button:hover { color: var(--text); background: rgba(255,255,255,.05); }
+  .tabs button.active { background: rgba(255,255,255,.1); color: var(--text); }
+
+  .tabs .tab-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1.6s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .25; }
+  }
+
+  /* ---------- Panels ---------- */
+
+  .panel { animation: rise .3s cubic-bezier(.2,.7,.2,1) both; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 2px 12px;
+  }
+
+  .section-head h2 {
+    margin: 0;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+
+  .section-head p {
+    margin: 3px 0 0;
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  .section-meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Route cards ---------- */
+
+  .route-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 14px;
+  }
+
+  .route-card {
+    --route: var(--accent);
+    position: relative;
+    overflow: hidden;
+    padding: 17px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: linear-gradient(160deg, rgba(255,255,255,.075), rgba(255,255,255,.022));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    min-width: 0;
+  }
+
+  .route-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(420px 150px at 100% 0, var(--route), transparent 70%);
+    opacity: .1;
+    pointer-events: none;
+  }
+
+  .route-card.locked { opacity: .72; }
+
+  .route-card.locked::before { opacity: .03; }
+
+  .route-head {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    min-width: 0;
+  }
+
+  .route-badge {
+    flex-shrink: 0;
+    display: inline-grid;
+    place-items: center;
+    min-width: 52px;
+    height: 34px;
+    padding: 0 9px;
+    border-radius: 9px;
+    background: var(--route);
+    color: #10141c;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: .01em;
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--route) 24%, transparent);
+  }
+
+  .route-title-wrap { min-width: 0; }
+
+  .route-name {
+    margin: 1px 0 0;
+    font-size: 14.5px;
+    font-weight: 780;
+    line-height: 1.3;
+  }
+
+  .route-sub {
+    margin-top: 3px;
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  .route-track {
+    position: relative;
+    height: 46px;
+    margin: 13px 0 9px;
+    border: 1px solid rgba(255,255,255,.055);
+    border-radius: 12px;
+    background: rgba(0,0,0,.16);
+    overflow: hidden;
+  }
+
+  .rail {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 8px, transparent 8px 16px);
+  }
+
+  .rail::before, .rail::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,.35);
+  }
+
+  .rail::before { left: -14px; }
+  .rail::after { right: -14px; }
+
+  .runner {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 36px;
+    height: 22px;
+    margin-top: -11px;
+    color: var(--route);
+    animation: drive var(--dur, 14s) linear infinite;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,.35));
+    will-change: left;
+  }
+
+  @keyframes drive {
+    from { left: -7%; }
+    to { left: 104%; }
+  }
+
+  .track-empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  .route-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .route-stats b {
+    display: block;
+    font-size: 17px;
+    font-weight: 820;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .route-stats span {
+    display: block;
+    margin-top: 2px;
+    font-size: 9.5px;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .load-track {
+    height: 6px;
+    margin: 12px 0 11px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.075);
+    overflow: hidden;
+  }
+
+  .load-track i {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--route), #fff);
+    transition: width .3s ease, background .3s ease;
+  }
+
+  .load-track.high i { background: linear-gradient(90deg, var(--orange), var(--red)); }
+  .load-track.low i { background: linear-gradient(90deg, var(--green), var(--blue)); }
+
+  .route-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .route-demand {
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.45;
+    min-width: 0;
+  }
+
+  .route-demand strong { color: #d7dfec; font-weight: 700; }
+
+  .route-lock-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .lock-price {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .lock-price b { color: var(--accent); font-size: 14px; }
+
+  /* ---------- Buttons ---------- */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,.065);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 9px 13px;
+    font-size: 12.5px;
+    font-weight: 750;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background .16s, border-color .16s, transform .12s, opacity .16s;
+  }
+
+  .btn:hover:not(:disabled) { background: rgba(255,255,255,.12); }
+  .btn:active:not(:disabled) { transform: translateY(1px); }
+  .btn:disabled { opacity: .42; cursor: not-allowed; }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: transparent;
+    color: #12151d;
+    box-shadow: 0 8px 22px rgba(255, 210, 63, 0.16);
+  }
+
+  .btn-primary:hover:not(:disabled) { background: #ffe173; }
+
+  .btn-ghost { background: transparent; }
+
+  .btn-small { padding: 7px 10px; font-size: 11.5px; border-radius: 9px; }
+
+  .btn-block { width: 100%; }
+
+  .btn .price-inline {
+    font-variant-numeric: tabular-nums;
+    opacity: .82;
+    font-weight: 800;
+  }
+
+  /* ---------- Fleet shop ---------- */
+
+  .fleet-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 9px;
+    padding: 11px;
+    margin-bottom: 13px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+  }
+
+  .chip {
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,.045);
+    color: var(--muted);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background .16s, color .16s, border-color .16s;
+  }
+
+  .chip:hover:not(:disabled) { color: var(--text); background: rgba(255,255,255,.09); }
+  .chip.active { background: var(--accent); color: #12151d; border-color: transparent; }
+  .chip:disabled { opacity: .35; cursor: not-allowed; }
+
+  .fleet-slots {
+    margin-left: auto;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .fleet-slots b { color: var(--text); }
+
+  .bus-grid, .upg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+
+  .bus-card {
+    --bus: var(--accent);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: linear-gradient(165deg, rgba(255,255,255,.065), rgba(255,255,255,.02));
+    min-width: 0;
+  }
+
+  .bus-card.locked { opacity: .58; }
+
+  .bus-head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+  }
+
+  .bus-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    color: var(--bus);
+    background: color-mix(in srgb, var(--bus) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--bus) 24%, transparent);
+  }
+
+  .bus-icon svg { width: 29px; height: 29px; }
+
+  .bus-title { min-width: 0; }
+
+  .bus-name { font-size: 13.5px; font-weight: 780; }
+
+  .bus-desc {
+    margin-top: 2px;
+    font-size: 10.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 5px; }
+
+  .pill {
+    padding: 4px 7px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.06);
+    color: #c6d0e2;
+    font-size: 10px;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .pill.good { background: rgba(55,226,154,.1); color: var(--green); }
+  .pill.warn { background: rgba(255,159,67,.1); color: var(--orange); }
+
+  .bus-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 2px;
+  }
+
+  .bus-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .owned { font-size: 10.5px; color: var(--muted); }
+  .owned b { color: var(--text); font-size: 13px; }
+
+  .price { font-size: 12.5px; font-weight: 820; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+  .lock-note {
+    padding: 7px 9px;
+    border-radius: 9px;
+    background: rgba(255,255,255,.04);
+    color: var(--muted);
+    font-size: 10.5px;
+    line-height: 1.45;
+  }
+
+  /* ---------- Upgrades ---------- */
+
+  .upg-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: linear-gradient(165deg, rgba(255,255,255,.065), rgba(255,255,255,.02));
+    min-width: 0;
+  }
+
+  .upg-head { display: flex; align-items: center; gap: 11px; }
+
+  .upg-icon {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+
+  .upg-title { min-width: 0; flex: 1; }
+
+  .upg-name { font-size: 13.5px; font-weight: 780; }
+
+  .upg-desc { margin-top: 2px; font-size: 10.5px; color: var(--muted); line-height: 1.4; }
+
+  .level-pill {
+    flex-shrink: 0;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.06);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .level-pill.max { background: rgba(55,226,154,.12); color: var(--green); }
+
+  .upg-effect {
+    padding: 8px 10px;
+    border-radius: 9px;
+    background: rgba(255,210,63,.07);
+    border: 1px solid rgba(255,210,63,.12);
+    color: #eadba0;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.45;
+  }
+
+  .upg-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; }
+
+  /* ---------- Achievements ---------- */
+
+  .ach-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(238px, 1fr));
+    gap: 10px;
+  }
+
+  .ach-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 13px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+    min-width: 0;
+  }
+
+  .ach-card.locked { opacity: .46; filter: grayscale(1); }
+
+  .ach-icon {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: rgba(255,210,63,.1);
+    font-size: 19px;
+  }
+
+  .ach-card.locked .ach-icon { background: rgba(255,255,255,.05); }
+
+  .ach-name { font-size: 12.5px; font-weight: 780; }
+
+  .ach-desc { margin-top: 2px; font-size: 10.5px; color: var(--muted); line-height: 1.4; }
+
+  .ach-state {
+    margin-top: 5px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+
+  .ach-card.locked .ach-state { color: var(--muted); }
+
+  /* ---------- Settings ---------- */
+
+  .settings-block {
+    padding: 16px;
+    margin-bottom: 11px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--panel);
+  }
+
+  .settings-block h3 {
+    margin: 0 0 4px;
+    font-size: 14px;
+  }
+
+  .settings-block p {
+    margin: 0 0 11px;
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .settings-block p:last-child { margin-bottom: 0; }
+
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+  .textarea {
+    width: 100%;
+    min-height: 74px;
+    margin: 8px 0;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(0,0,0,.28);
+    color: var(--text);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10.5px;
+    line-height: 1.45;
+    resize: vertical;
+  }
+
+  .stats-mini {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+  }
+
+  .stats-mini div {
+    padding: 9px 11px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.045);
+  }
+
+  .stats-mini span {
+    display: block;
+    font-size: 9.5px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .stats-mini b {
+    display: block;
+    margin-top: 2px;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Prestige ---------- */
+
+  .prestige-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 18px;
+    padding: 15px 17px;
+    border: 1px solid rgba(255,210,63,.22);
+    border-radius: 17px;
+    background: linear-gradient(120deg, rgba(255,210,63,.09), rgba(255,255,255,.025));
+  }
+
+  .prestige-info { flex: 1; min-width: 0; }
+
+  .prestige-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .prestige-top b {
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: .02em;
+  }
+
+  .mini-bar {
+    height: 5px;
+    margin-top: 7px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    overflow: hidden;
+  }
+
+  .mini-bar i {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent), #fff1b3);
+    transition: width .3s;
+  }
+
+  .footnote {
+    margin: 14px 3px 0;
+    text-align: center;
+    font-size: 10.5px;
+    color: #667389;
+    line-height: 1.6;
+  }
+
+  /* ---------- Modal ---------- */
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(4, 8, 16, 0.74);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: fade .2s ease;
+  }
+
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    width: min(100%, 480px);
+    max-height: min(90vh, 720px);
+    overflow: auto;
+    padding: 22px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 22px;
+    background: linear-gradient(180deg, #151f31, #0c1321);
+    box-shadow: 0 40px 100px rgba(0,0,0,.6);
+    animation: pop .24s cubic-bezier(.2,.8,.3,1.1);
+  }
+
+  @keyframes pop {
+    from { opacity: 0; transform: translateY(12px) scale(.98); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .modal-kicker {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .modal h2 {
+    margin: 6px 0 0;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .modal-body {
+    margin-top: 9px;
+    font-size: 13px;
+    color: #c9d2e2;
+    line-height: 1.62;
+  }
+
+  .modal-body p { margin: 0 0 8px; }
+  .modal-body p:last-child { margin-bottom: 0; }
+  .modal-body .muted { color: var(--muted); font-size: 11.5px; }
+  .modal-body .big { color: var(--accent); font-size: 24px; font-weight: 820; font-variant-numeric: tabular-nums; }
+
+  .modal-actions {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .modal-actions .btn {
+    justify-content: flex-start;
+    text-align: left;
+    white-space: normal;
+    padding: 12px 14px;
+    line-height: 1.4;
+  }
+
+  .modal-actions .btn-primary { justify-content: center; }
+
+  .modal-close {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  /* ---------- Toasts ---------- */
+
+  .toasts {
+    position: fixed;
+    left: 50%;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    width: min(90vw, 380px);
+    pointer-events: none;
+  }
+
+  .toast {
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    background: rgba(17, 24, 38, 0.96);
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 0 14px 40px rgba(0,0,0,.4);
+    animation: toastIn .24s ease;
+  }
+
+  .toast.good { border-left-color: var(--green); }
+  .toast.bad { border-left-color: var(--red); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* ---------- Responsive ---------- */
+
+  @media (max-width: 760px) {
+    body { padding: 12px 10px 22px; }
+    .hero { align-items: flex-start; gap: 10px; }
+    .brand { gap: 10px; }
+    .brand-icon { width: 46px; height: 46px; border-radius: 14px; }
+    .brand-icon svg { width: 30px; height: 30px; }
+    .kicker { font-size: 8.5px; letter-spacing: .16em; }
+    .tagline { font-size: 11px; }
+    .hero-actions { gap: 6px; }
+    .lang-switch button { padding: 5px 7px; font-size: 10.5px; }
+    .rating { display: none; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .stat { padding: 11px 12px; border-radius: 13px; }
+    .stat-value { font-size: 20px; }
+    .tabs { top: 4px; border-radius: 13px; }
+    .tabs button { padding: 8px 9px; font-size: 11.5px; }
+    .route-grid { grid-template-columns: 1fr; gap: 11px; }
+    .route-card { padding: 14px; border-radius: 17px; }
+    .bus-grid, .upg-grid { grid-template-columns: 1fr; }
+    .prestige-bar { flex-direction: column; align-items: stretch; gap: 11px; }
+    .prestige-bar .btn { width: 100%; }
+    .mini-bar { margin-top: 6px; }
+    .section-head { align-items: flex-start; }
+    .modal { padding: 19px; border-radius: 19px; }
+    .modal h2 { font-size: 20px; }
+  }
+
+  @media (max-width: 380px) {
+    .brand-icon { display: none; }
+    .stat-value { font-size: 18px; }
+    .route-stats b { font-size: 15px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <rect x="7" y="14" width="50" height="34" rx="8" fill="currentColor"/>
+          <rect x="13" y="19" width="16" height="12" rx="2.5" fill="#0b1220" opacity=".88"/>
+          <rect x="35" y="19" width="16" height="12" rx="2.5" fill="#0b1220" opacity=".88"/>
+          <rect x="13" y="36" width="38" height="4" rx="2" fill="#0b1220" opacity=".28"/>
+          <circle cx="19" cy="50" r="6" fill="#0b1220"/>
+          <circle cx="45" cy="50" r="6" fill="#0b1220"/>
+          <circle cx="19" cy="50" r="2.4" fill="#ffd23f"/>
+          <circle cx="45" cy="50" r="2.4" fill="#ffd23f"/>
+        </svg>
+      </div>
+      <div>
+        <div class="kicker" data-i18n="kicker">香港公交帝國</div>
+        <h1 data-i18n="appName">巴士大亨</h1>
+        <p class="tagline" data-i18n="tagline">由一條路線開始，建立你的巴士王國</p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <div class="lang-switch" id="langSwitch" role="group" aria-label="Language">
+        <button type="button" data-lang="zhHant">繁</button>
+        <button type="button" data-lang="zhHans">简</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+      <div class="rating" id="rating" title="">
+        <span class="rating-label" data-i18n="rating">評級</span>
+        <span id="ratingStars">★☆☆☆☆</span>
+      </div>
+    </div>
+  </header>
+
+  <button type="button" class="install-strip" id="installStrip" hidden>
+    <span class="install-strip-icon" aria-hidden="true">📲</span>
+    <span class="install-strip-text">
+      <b data-i18n="installStripTitle">安裝巴士大亨 App</b>
+      <small data-i18n="installStripHint">全屏遊玩 · 離線可用</small>
+    </span>
+    <span class="install-strip-action" data-i18n="installAction">安裝</span>
+  </button>
+
+  <section class="stats" aria-live="polite">
+    <div class="stat accent">
+      <div class="stat-label" data-i18n="cash">現金</div>
+      <div class="stat-value" id="statCash">$0</div>
+      <div class="stat-sub" id="statNet"></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label" data-i18n="passengers">累計載客</div>
+      <div class="stat-value" id="statPax">0</div>
+      <div class="stat-sub" id="statPaxRate"></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label" data-i18n="fleet">車隊</div>
+      <div class="stat-value" id="statFleet">0</div>
+      <div class="stat-sub" id="statSlots"></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label" data-i18n="prestigePts">專營權點數</div>
+      <div class="stat-value" id="statPrestige">0</div>
+      <div class="stat-sub" id="statPrestigeBonus"></div>
+    </div>
+  </section>
+
+  <div class="buff-bar" id="buffBar"></div>
+
+  <nav class="tabs" id="tabs" aria-label="Sections">
+    <button type="button" data-tab="routes" class="active" data-i18n="tabRoutes">路線</button>
+    <button type="button" data-tab="fleet" data-i18n="tabFleet">車隊</button>
+    <button type="button" data-tab="upgrades" data-i18n="tabUpgrades">升級</button>
+    <button type="button" data-tab="achievements" data-i18n="tabAchievements">成就</button>
+    <button type="button" data-tab="settings" data-i18n="tabSettings">設定</button>
+  </nav>
+
+  <main>
+    <section id="panel-routes" class="panel" aria-live="polite"></section>
+    <section id="panel-fleet" class="panel hidden" aria-live="polite"></section>
+    <section id="panel-upgrades" class="panel hidden" aria-live="polite"></section>
+    <section id="panel-achievements" class="panel hidden" aria-live="polite"></section>
+    <section id="panel-settings" class="panel hidden" aria-live="polite"></section>
+  </main>
+
+  <footer class="prestige-bar">
+    <div class="prestige-info">
+      <div class="prestige-top">
+        <b data-i18n="prestige">續專營權</b>
+        <span id="prestigeText"></span>
+      </div>
+      <div class="mini-bar"><i id="prestigeBar"></i></div>
+    </div>
+    <button type="button" class="btn btn-primary" id="prestigeBtn" data-prestige data-i18n="prestigeBtn">續牌轉生</button>
+  </footer>
+
+  <div class="footnote" data-i18n="disclaimer"></div>
+</div>
+
+<div class="modal-backdrop hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-kicker" id="modalKicker"></div>
+    <h2 id="modalTitle"></h2>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions" id="modalActions"></div>
+    <div class="modal-close" id="modalCloseWrap"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+/* =====================================================================
+   巴士大亨 · Bus Tycoon HK
+   A single-file idle game. No dependencies.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. Translations
+   --------------------------------------------------------------------- */
+
+const I18N = {
+  zhHant: {
+    pageTitle: "巴士大亨 · Bus Tycoon HK",
+    appName: "巴士大亨",
+    kicker: "香港公交帝國",
+    tagline: "由一條路線開始，建立你的巴士王國",
+    disclaimer: "非官方粉絲作品 · 路線名稱僅作致敬 · 一切數據為遊戲虛構",
+    rating: "評級",
+    ratingTitle: "公司評級 {n} / 5 星",
+    cash: "現金",
+    passengers: "累計載客",
+    fleet: "車隊",
+    prestigePts: "專營權點數",
+    tabRoutes: "路線",
+    tabFleet: "車隊",
+    tabUpgrades: "升級",
+    tabAchievements: "成就",
+    tabSettings: "設定",
+    prestige: "續專營權",
+    prestigeBtn: "續牌轉生",
+    netLine: "淨收入 {value}/秒",
+    paxRate: "現時 {value}/秒",
+    slotLine: "車位 {used}/{total}",
+    prestigeBonus: "收入 +{x}%",
+    routesTitle: "路線網絡",
+    routesHint: "增加巴士提升運力；市場推廣可以帶來更多客流。",
+    fleetTitle: "車隊採購",
+    fleetHint: "購入的巴士會直接派到所選路線。車位有限，高載客量車型更划算。",
+    upgradesTitle: "公司升級",
+    upgradesHint: "每項升級永久生效，價格會隨等級上升。",
+    achievementsTitle: "成就",
+    achievementsHint: "每個成就永久提升 1% 總收入。",
+    settingsTitle: "設定",
+    shopTitle: "採購巴士",
+    selectRoute: "路線",
+    fleetSlots: "車位 {used}/{total}",
+    routeOpen: "營運中",
+    routeLocked: "尚未開辦",
+    locked: "未解鎖",
+    income: "收入 / 秒",
+    buses: "巴士",
+    load: "載客率",
+    demand: "客流",
+    fare: "票價",
+    trip: "全程",
+    demandLine: "客流 <strong>{x}</strong>/秒 · 票價 {fare}",
+    buyBuses: "增購巴士",
+    unlockRoute: "解鎖路線",
+    unlockAt: "需要 {x}",
+    loadHigh: "運力飽和",
+    loadLow: "客流不足",
+    loadOk: "營運順暢",
+    loadEmpty: "尚未派車",
+    busOwned: "已擁有 {n}",
+    busCapacity: "{n} 人",
+    busUpkeep: "維護 {x}/秒",
+    busThroughput: "{value} 人/秒",
+    unlockAtEarned: "累計收入 {x} 後解鎖",
+    buy: "購買",
+    sell: "出售",
+    upgradeNow: "升級",
+    maxed: "已滿級",
+    level: "等級",
+    maxLevel: "滿級",
+    upgradeLevel: "Lv {n} / {max}",
+    effectGarage: "車位 +{n}",
+    effectMaintenance: "維護費 -{n}%",
+    effectDriver: "運力 +{n}%",
+    effectMarketing: "客流 +{n}%",
+    effectFare: "票價 +{a}% · 客流 -{b}%",
+    effectDigital: "總收入 +{n}%",
+    achCount: "{done} / {total} 已達成",
+    achUnlocked: "已達成",
+    achLocked: "未達成",
+    settingsLanguage: "語言",
+    settingsData: "存檔",
+    settingsStats: "統計",
+    settingsAbout: "關於",
+    exportData: "匯出存檔",
+    importData: "匯入存檔",
+    copy: "複製",
+    copied: "已複製",
+    importOk: "存檔已匯入",
+    importFail: "存檔格式不正確",
+    autoSave: "每 5 秒自動儲存，離線收益最多 8 小時。",
+    resetSave: "重設遊戲",
+    resetHint: "清除所有進度，包括專營權點數，無法復原。",
+    resetConfirmTitle: "重設遊戲？",
+    resetConfirmBody: "所有進度、成就與專營權點數都會被清除。",
+    confirmReset: "確認重設",
+    cancel: "取消",
+    close: "關閉",
+    confirm: "確認",
+    playtime: "遊玩時間",
+    allTime: "累計收入",
+    thisRun: "本輪收入",
+    totalPax: "累計載客",
+    prestiges: "續牌次數",
+    busesBought: "購入巴士",
+    install: "安裝到桌面",
+    installHint: "Android / Chrome / Edge 可安裝；iOS 請用分享選單「加入主畫面」。",
+    installed: "已安裝",
+    installStripTitle: "安裝巴士大亨 App",
+    installStripHint: "全屏遊玩 · 離線可用",
+    installAction: "安裝",
+    installTitle: "安裝巴士大亨",
+    installIos: "在 Safari 點擊底部的「分享」按鈕，然後選擇「加入主畫面」。",
+    installAndroid: "在 Chrome 右上角選單選擇「安裝應用程式」或「加到主畫面」。",
+    installDesktop: "在 Chrome / Edge 的網址列右側點擊安裝圖示，或從選單選擇「安裝」。",
+    prestigeReady: "可獲得 {n} 點專營權",
+    prestigeNeed: "本輪收入 {cur} / {goal}",
+    prestigeGainLabel: "續牌可獲得",
+    prestigeDesc: "每點專營權永久提升 10% 收入與 8% 客流。轉生會重置現金、車隊、路線與升級。",
+    prestigeConfirmTitle: "續簽專營權？",
+    prestigeConfirmBody: "你將獲得 {n} 點專營權，今輪進度會重置；成就、統計與語言會保留。",
+    prestigeDone: "續牌成功，獲得 {n} 點專營權",
+    offlineTitle: "歡迎回來",
+    offlineBody: "你離開了 {time}，車隊為你賺取了 {cash}。",
+    offlineCap: "離線收益上限 8 小時",
+    offlineContinue: "繼續營運",
+    eventKicker: "營運事件",
+    eventChoose: "選擇處理方式：",
+    eventResolved: "事件已處理",
+    "buff.demand": "客流",
+    "buff.throughput": "運力",
+    "buff.upkeep": "維護費",
+    "buff.fare": "票價",
+    toastBought: "已購入巴士",
+    toastSold: "已出售巴士",
+    toastLastBus: "不能出售最後一輛巴士",
+    toastUnlocked: "路線已解鎖",
+    toastUpgrade: "升級完成",
+    toastAch: "成就達成：{name}",
+    toastSlot: "車廠已滿，請升級車廠",
+    toastPoor: "現金不足",
+    toastCopied: "已複製到剪貼簿",
+    toastSaved: "已儲存",
+    aboutText: "《巴士大亨》是一款香港公交經營增量遊戲。所有路線、票價與事件均為遊戲虛構，與任何真實營運商無關。",
+    routeUnlockTitle: "開辦新路線？",
+    routeUnlockBody: "花費 {cost} 開辦 {route}。",
+    routeUnlockConfirm: "開辦路線",
+    hourShort: "小時",
+    minuteShort: "分",
+    secondShort: "秒",
+    "route.b3a.name": "富泰邨 ⇄ 深圳灣口岸",
+    "route.k51.name": "富泰 ⇄ 大欖",
+    "route.r506.name": "屯門碼頭 ⇄ 兆麟",
+    "route.e33.name": "屯門市中心 ⇄ 機場",
+    "route.r968.name": "元朗 ⇄ 銅鑼灣",
+    "bus.shuttle.name": "單層巴士",
+    "bus.shuttle.desc": "靈活穿梭窄街，入門首選。",
+    "bus.double.name": "雙層巴士",
+    "bus.double.desc": "香港最經典的雙層巴士。",
+    "bus.artic.name": "掛接巴士",
+    "bus.artic.desc": "一口氣載走整條人龍。",
+    "bus.electric.name": "電動雙層",
+    "bus.electric.desc": "安靜、環保，維護成本更低。",
+    "bus.hydrogen.name": "氫能巴士",
+    "bus.hydrogen.desc": "新一代零排放旗艦車款。",
+    "upgrade.garage.name": "車廠擴建",
+    "upgrade.garage.desc": "每級增加 2 個車位。",
+    "upgrade.maintenance.name": "維修團隊",
+    "upgrade.maintenance.desc": "每級降低 5% 維護費。",
+    "upgrade.driver.name": "司機培訓",
+    "upgrade.driver.desc": "每級提升 10% 運力。",
+    "upgrade.marketing.name": "市場推廣",
+    "upgrade.marketing.desc": "每級提升 25% 客流。",
+    "upgrade.fare.name": "票價策略",
+    "upgrade.fare.desc": "每級票價 +10%，客流 -2%。",
+    "upgrade.digital.name": "電子支付",
+    "upgrade.digital.desc": "每級提升 10% 總收入。",
+    "ach.firstFare.name": "首程車費",
+    "ach.firstFare.desc": "累計收入達到 $100",
+    "ach.fleet10.name": "車隊成形",
+    "ach.fleet10.desc": "擁有 10 輛巴士",
+    "ach.fleet50.name": "巴士王國",
+    "ach.fleet50.desc": "擁有 50 輛巴士",
+    "ach.fleet100.name": "百車大軍",
+    "ach.fleet100.desc": "擁有 100 輛巴士",
+    "ach.routes2.name": "拓展網絡",
+    "ach.routes2.desc": "解鎖 2 條路線",
+    "ach.routes5.name": "全港覆蓋",
+    "ach.routes5.desc": "解鎖全部 5 條路線",
+    "ach.upgrades10.name": "現代化",
+    "ach.upgrades10.desc": "累計升級 10 級",
+    "ach.million.name": "百萬大亨",
+    "ach.million.desc": "本輪收入達到 $1M",
+    "ach.billion.name": "十億巨頭",
+    "ach.billion.desc": "累計收入達到 $1B",
+    "ach.prestige1.name": "續牌成功",
+    "ach.prestige1.desc": "完成首次續牌",
+    "ach.rating5.name": "五星服務",
+    "ach.rating5.desc": "公司評級達到 5 星",
+    "ach.events5.name": "危機處理",
+    "ach.events5.desc": "處理 5 次營運事件",
+    "event.rush.title": "繁忙時段",
+    "event.rush.body": "站台擠滿趕上班的乘客，你打算怎樣調度？",
+    "event.rush.pay": "加開特別班次（花費 {cost}）→ 客流 +50%，60 秒",
+    "event.rush.skip": "維持正常班次",
+    "event.breakdown.title": "車輛故障",
+    "event.breakdown.body": "一輛巴士在途中拋錨，維修組正在待命。",
+    "event.breakdown.pay": "立即維修（花費 {cost}）",
+    "event.breakdown.risk": "繼續行駛 → 運力 -35%，45 秒",
+    "event.big.title": "大型活動",
+    "event.big.body": "體育館今晚有演唱會，散場客流即將湧現。",
+    "event.big.pay": "贊助活動（花費 {cost}）→ 客流 +90%，90 秒",
+    "event.big.skip": "不參與",
+    "event.fare.title": "票價聽證會",
+    "event.fare.body": "運輸署邀請你提交票價調整方案。",
+    "event.fare.raise": "申請加價 → 票價 +8%、客流 -4%（永久）",
+    "event.fare.freeze": "凍結票價 → 客流 +15%，120 秒",
+    "event.fuel.title": "油價急升",
+    "event.fuel.body": "燃油供應商通知下個月加價。",
+    "event.fuel.lock": "鎖定油價（花費 {cost}）",
+    "event.fuel.risk": "承受成本 → 維護費 +80%，60 秒",
+    "event.tourist.title": "旅客潮",
+    "event.tourist.body": "黃金週將至，口岸人流預計創新高。",
+    "event.tourist.cash": "把握機會 → 即時獲得 30 秒收入",
+    "event.tourist.demand": "加強宣傳 → 客流 +35%，90 秒"
+  },
+
+  zhHans: {
+    pageTitle: "巴士大亨 · Bus Tycoon HK",
+    appName: "巴士大亨",
+    kicker: "香港公交帝国",
+    tagline: "从一条路线开始，建立你的巴士王国",
+    disclaimer: "非官方粉丝作品 · 路线名称仅作致敬 · 一切数据为游戏虚构",
+    rating: "评级",
+    ratingTitle: "公司评级 {n} / 5 星",
+    cash: "现金",
+    passengers: "累计载客",
+    fleet: "车队",
+    prestigePts: "专营权点数",
+    tabRoutes: "路线",
+    tabFleet: "车队",
+    tabUpgrades: "升级",
+    tabAchievements: "成就",
+    tabSettings: "设置",
+    prestige: "续专营权",
+    prestigeBtn: "续牌转生",
+    netLine: "净收入 {value}/秒",
+    paxRate: "现时 {value}/秒",
+    slotLine: "车位 {used}/{total}",
+    prestigeBonus: "收入 +{x}%",
+    routesTitle: "路线网络",
+    routesHint: "增加巴士提升运力；市场推广可以带来更多客流。",
+    fleetTitle: "车队采购",
+    fleetHint: "购入的巴士会直接派到所选路线。车位有限，高载客量车型更划算。",
+    upgradesTitle: "公司升级",
+    upgradesHint: "每项升级永久生效，价格会随等级上升。",
+    achievementsTitle: "成就",
+    achievementsHint: "每个成就永久提升 1% 总收入。",
+    settingsTitle: "设置",
+    shopTitle: "采购巴士",
+    selectRoute: "路线",
+    fleetSlots: "车位 {used}/{total}",
+    routeOpen: "营运中",
+    routeLocked: "尚未开办",
+    locked: "未解锁",
+    income: "收入 / 秒",
+    buses: "巴士",
+    load: "载客率",
+    demand: "客流",
+    fare: "票价",
+    trip: "全程",
+    demandLine: "客流 <strong>{x}</strong>/秒 · 票价 {fare}",
+    buyBuses: "增购巴士",
+    unlockRoute: "解锁路线",
+    unlockAt: "需要 {x}",
+    loadHigh: "运力饱和",
+    loadLow: "客流不足",
+    loadOk: "营运顺畅",
+    loadEmpty: "尚未派车",
+    busOwned: "已拥有 {n}",
+    busCapacity: "{n} 人",
+    busUpkeep: "维护 {x}/秒",
+    busThroughput: "{value} 人/秒",
+    unlockAtEarned: "累计收入 {x} 后解锁",
+    buy: "购买",
+    sell: "出售",
+    upgradeNow: "升级",
+    maxed: "已满级",
+    level: "等级",
+    maxLevel: "满级",
+    upgradeLevel: "Lv {n} / {max}",
+    effectGarage: "车位 +{n}",
+    effectMaintenance: "维护费 -{n}%",
+    effectDriver: "运力 +{n}%",
+    effectMarketing: "客流 +{n}%",
+    effectFare: "票价 +{a}% · 客流 -{b}%",
+    effectDigital: "总收入 +{n}%",
+    achCount: "{done} / {total} 已达成",
+    achUnlocked: "已达成",
+    achLocked: "未达成",
+    settingsLanguage: "语言",
+    settingsData: "存档",
+    settingsStats: "统计",
+    settingsAbout: "关于",
+    exportData: "导出存档",
+    importData: "导入存档",
+    copy: "复制",
+    copied: "已复制",
+    importOk: "存档已导入",
+    importFail: "存档格式不正确",
+    autoSave: "每 5 秒自动保存，离线收益最多 8 小时。",
+    resetSave: "重置游戏",
+    resetHint: "清除所有进度，包括专营权点数，无法复原。",
+    resetConfirmTitle: "重置游戏？",
+    resetConfirmBody: "所有进度、成就与专营权点数都会被清除。",
+    confirmReset: "确认重置",
+    cancel: "取消",
+    close: "关闭",
+    confirm: "确认",
+    playtime: "游玩时间",
+    allTime: "累计收入",
+    thisRun: "本轮收入",
+    totalPax: "累计载客",
+    prestiges: "续牌次数",
+    busesBought: "购入巴士",
+    install: "安装到桌面",
+    installHint: "Android / Chrome / Edge 可安装；iOS 请用分享菜单「加入主屏幕」。",
+    installed: "已安装",
+    installStripTitle: "安装巴士大亨 App",
+    installStripHint: "全屏游玩 · 离线可用",
+    installAction: "安装",
+    installTitle: "安装巴士大亨",
+    installIos: "在 Safari 点击底部的「分享」按钮，然后选择「添加到主屏幕」。",
+    installAndroid: "在 Chrome 右上角菜单选择「安装应用」或「添加到主屏幕」。",
+    installDesktop: "在 Chrome / Edge 的地址栏右侧点击安装图标，或从菜单中选择「安装」。",
+    prestigeReady: "可获得 {n} 点专营权",
+    prestigeNeed: "本轮收入 {cur} / {goal}",
+    prestigeGainLabel: "续牌可获得",
+    prestigeDesc: "每点专营权永久提升 10% 收入与 8% 客流。转生会重置现金、车队、路线与升级。",
+    prestigeConfirmTitle: "续签专营权？",
+    prestigeConfirmBody: "你将获得 {n} 点专营权，今轮进度会重置；成就、统计与语言会保留。",
+    prestigeDone: "续牌成功，获得 {n} 点专营权",
+    offlineTitle: "欢迎回来",
+    offlineBody: "你离开了 {time}，车队为你赚取了 {cash}。",
+    offlineCap: "离线收益上限 8 小时",
+    offlineContinue: "继续营运",
+    eventKicker: "营运事件",
+    eventChoose: "选择处理方式：",
+    eventResolved: "事件已处理",
+    "buff.demand": "客流",
+    "buff.throughput": "运力",
+    "buff.upkeep": "维护费",
+    "buff.fare": "票价",
+    toastBought: "已购入巴士",
+    toastSold: "已出售巴士",
+    toastLastBus: "不能出售最后一辆巴士",
+    toastUnlocked: "路线已解锁",
+    toastUpgrade: "升级完成",
+    toastAch: "成就达成：{name}",
+    toastSlot: "车厂已满，请升级车厂",
+    toastPoor: "现金不足",
+    toastCopied: "已复制到剪贴板",
+    toastSaved: "已保存",
+    aboutText: "《巴士大亨》是一款香港公交经营增量游戏。所有路线、票价与事件均为游戏虚构，与任何真实营运商无关。",
+    routeUnlockTitle: "开办新路线？",
+    routeUnlockBody: "花费 {cost} 开办 {route}。",
+    routeUnlockConfirm: "开办路线",
+    hourShort: "小时",
+    minuteShort: "分",
+    secondShort: "秒",
+    "route.b3a.name": "富泰邨 ⇄ 深圳湾口岸",
+    "route.k51.name": "富泰 ⇄ 大榄",
+    "route.r506.name": "屯门码头 ⇄ 兆麟",
+    "route.e33.name": "屯门市中心 ⇄ 机场",
+    "route.r968.name": "元朗 ⇄ 铜锣湾",
+    "bus.shuttle.name": "单层巴士",
+    "bus.shuttle.desc": "灵活穿梭窄街，入门首选。",
+    "bus.double.name": "双层巴士",
+    "bus.double.desc": "香港最经典的双层巴士。",
+    "bus.artic.name": "挂接巴士",
+    "bus.artic.desc": "一口气载走整条人龙。",
+    "bus.electric.name": "电动双层",
+    "bus.electric.desc": "安静、环保，维护成本更低。",
+    "bus.hydrogen.name": "氢能巴士",
+    "bus.hydrogen.desc": "新一代零排放旗舰车款。",
+    "upgrade.garage.name": "车厂扩建",
+    "upgrade.garage.desc": "每级增加 2 个车位。",
+    "upgrade.maintenance.name": "维修团队",
+    "upgrade.maintenance.desc": "每级降低 5% 维护费。",
+    "upgrade.driver.name": "司机培训",
+    "upgrade.driver.desc": "每级提升 10% 运力。",
+    "upgrade.marketing.name": "市场推广",
+    "upgrade.marketing.desc": "每级提升 25% 客流。",
+    "upgrade.fare.name": "票价策略",
+    "upgrade.fare.desc": "每级票价 +10%，客流 -2%。",
+    "upgrade.digital.name": "电子支付",
+    "upgrade.digital.desc": "每级提升 10% 总收入。",
+    "ach.firstFare.name": "首程车费",
+    "ach.firstFare.desc": "累计收入达到 $100",
+    "ach.fleet10.name": "车队成形",
+    "ach.fleet10.desc": "拥有 10 辆巴士",
+    "ach.fleet50.name": "巴士王国",
+    "ach.fleet50.desc": "拥有 50 辆巴士",
+    "ach.fleet100.name": "百车大军",
+    "ach.fleet100.desc": "拥有 100 辆巴士",
+    "ach.routes2.name": "拓展网络",
+    "ach.routes2.desc": "解锁 2 条路线",
+    "ach.routes5.name": "全港覆盖",
+    "ach.routes5.desc": "解锁全部 5 条路线",
+    "ach.upgrades10.name": "现代化",
+    "ach.upgrades10.desc": "累计升级 10 级",
+    "ach.million.name": "百万大亨",
+    "ach.million.desc": "本轮收入达到 $1M",
+    "ach.billion.name": "十亿巨头",
+    "ach.billion.desc": "累计收入达到 $1B",
+    "ach.prestige1.name": "续牌成功",
+    "ach.prestige1.desc": "完成首次续牌",
+    "ach.rating5.name": "五星服务",
+    "ach.rating5.desc": "公司评级达到 5 星",
+    "ach.events5.name": "危机处理",
+    "ach.events5.desc": "处理 5 次营运事件",
+    "event.rush.title": "繁忙时段",
+    "event.rush.body": "站台挤满赶上班的乘客，你打算怎样调度？",
+    "event.rush.pay": "加开特别班次（花费 {cost}）→ 客流 +50%，60 秒",
+    "event.rush.skip": "维持正常班次",
+    "event.breakdown.title": "车辆故障",
+    "event.breakdown.body": "一辆巴士在途中抛锚，维修组正在待命。",
+    "event.breakdown.pay": "立即维修（花费 {cost}）",
+    "event.breakdown.risk": "继续行驶 → 运力 -35%，45 秒",
+    "event.big.title": "大型活动",
+    "event.big.body": "体育馆今晚有演唱会，散场客流即将涌现。",
+    "event.big.pay": "赞助活动（花费 {cost}）→ 客流 +90%，90 秒",
+    "event.big.skip": "不参与",
+    "event.fare.title": "票价听证会",
+    "event.fare.body": "运输署邀请你提交票价调整方案。",
+    "event.fare.raise": "申请加价 → 票价 +8%、客流 -4%（永久）",
+    "event.fare.freeze": "冻结票价 → 客流 +15%，120 秒",
+    "event.fuel.title": "油价急升",
+    "event.fuel.body": "燃油供应商通知下个月加价。",
+    "event.fuel.lock": "锁定油价（花费 {cost}）",
+    "event.fuel.risk": "承受成本 → 维护费 +80%，60 秒",
+    "event.tourist.title": "旅客潮",
+    "event.tourist.body": "黄金周将至，口岸人流预计创新高。",
+    "event.tourist.cash": "把握机会 → 即时获得 30 秒收入",
+    "event.tourist.demand": "加强宣传 → 客流 +35%，90 秒"
+  },
+
+  en: {
+    pageTitle: "Bus Tycoon · Hong Kong",
+    appName: "Bus Tycoon",
+    kicker: "HONG KONG TRANSIT EMPIRE",
+    tagline: "Start with one route. Build a bus empire.",
+    disclaimer: "Unofficial fan project · Route names are an homage · All numbers are fictional",
+    rating: "RATING",
+    ratingTitle: "Company rating {n} / 5 stars",
+    cash: "CASH",
+    passengers: "PASSENGERS",
+    fleet: "FLEET",
+    prestigePts: "FRANCHISE PTS",
+    tabRoutes: "Routes",
+    tabFleet: "Fleet",
+    tabUpgrades: "Upgrades",
+    tabAchievements: "Awards",
+    tabSettings: "Settings",
+    prestige: "Franchise renewal",
+    prestigeBtn: "Prestige",
+    netLine: "Net {value}/s",
+    paxRate: "{value}/s",
+    slotLine: "Slots {used}/{total}",
+    prestigeBonus: "+{x}% income",
+    routesTitle: "Route network",
+    routesHint: "More buses add capacity. Marketing brings more passengers.",
+    fleetTitle: "Fleet depot",
+    fleetHint: "Buses are assigned to the selected route. Slots are limited — high-capacity models go further.",
+    upgradesTitle: "Company upgrades",
+    upgradesHint: "Every upgrade is permanent. Prices rise with each level.",
+    achievementsTitle: "Achievements",
+    achievementsHint: "Each achievement permanently adds 1% to all income.",
+    settingsTitle: "Settings",
+    shopTitle: "Buy buses",
+    selectRoute: "Route",
+    fleetSlots: "Slots {used}/{total}",
+    routeOpen: "In service",
+    routeLocked: "Not opened",
+    locked: "Locked",
+    income: "Income / sec",
+    buses: "Buses",
+    load: "Load",
+    demand: "Demand",
+    fare: "Fare",
+    trip: "Trip",
+    demandLine: "Demand <strong>{x}</strong>/s · Fare {fare}",
+    buyBuses: "Buy buses",
+    unlockRoute: "Open route",
+    unlockAt: "Requires {x}",
+    loadHigh: "At capacity",
+    loadLow: "Low demand",
+    loadOk: "Running well",
+    loadEmpty: "No buses assigned",
+    busOwned: "Owned {n}",
+    busCapacity: "{n} seats",
+    busUpkeep: "Upkeep {x}/s",
+    busThroughput: "{value} pax/s",
+    unlockAtEarned: "Unlocks at {x} lifetime earnings",
+    buy: "Buy",
+    sell: "Sell",
+    upgradeNow: "Upgrade",
+    maxed: "MAX",
+    level: "Level",
+    maxLevel: "Max",
+    upgradeLevel: "Lv {n} / {max}",
+    effectGarage: "Slots +{n}",
+    effectMaintenance: "Upkeep -{n}%",
+    effectDriver: "Capacity +{n}%",
+    effectMarketing: "Demand +{n}%",
+    effectFare: "Fare +{a}% · Demand -{b}%",
+    effectDigital: "Total income +{n}%",
+    achCount: "{done} / {total} unlocked",
+    achUnlocked: "Unlocked",
+    achLocked: "Locked",
+    settingsLanguage: "Language",
+    settingsData: "Save data",
+    settingsStats: "Statistics",
+    settingsAbout: "About",
+    exportData: "Export save",
+    importData: "Import save",
+    copy: "Copy",
+    copied: "Copied",
+    importOk: "Save imported",
+    importFail: "Invalid save format",
+    autoSave: "Autosaves every 5 seconds. Offline earnings cap at 8 hours.",
+    resetSave: "Reset game",
+    resetHint: "Deletes all progress, including franchise points. This cannot be undone.",
+    resetConfirmTitle: "Reset game?",
+    resetConfirmBody: "All progress, achievements and franchise points will be erased.",
+    confirmReset: "Reset everything",
+    cancel: "Cancel",
+    close: "Close",
+    confirm: "Confirm",
+    playtime: "Play time",
+    allTime: "Lifetime earnings",
+    thisRun: "This run",
+    totalPax: "Total passengers",
+    prestiges: "Prestiges",
+    busesBought: "Buses bought",
+    install: "Install app",
+    installHint: "Installable on Android / Chrome / Edge. On iOS use Share → Add to Home Screen.",
+    installed: "Installed",
+    installStripTitle: "Install Bus Tycoon",
+    installStripHint: "Full screen · Works offline",
+    installAction: "Install",
+    installTitle: "Install Bus Tycoon",
+    installIos: "In Safari, tap the Share button at the bottom, then choose “Add to Home Screen”.",
+    installAndroid: "Open the Chrome menu and choose “Install app” or “Add to Home screen”.",
+    installDesktop: "Click the install icon in the Chrome / Edge address bar, or choose “Install” from the menu.",
+    prestigeReady: "{n} franchise points available",
+    prestigeNeed: "This run {cur} / {goal}",
+    prestigeGainLabel: "Renewal grants",
+    prestigeDesc: "Each franchise point permanently adds 10% income and 8% demand. Prestiging resets cash, fleet, routes and upgrades.",
+    prestigeConfirmTitle: "Renew the franchise?",
+    prestigeConfirmBody: "You will receive {n} franchise points. This run resets; achievements, stats and language are kept.",
+    prestigeDone: "Franchise renewed: +{n} points",
+    offlineTitle: "Welcome back",
+    offlineBody: "You were away for {time}. Your fleet earned {cash}.",
+    offlineCap: "Offline earnings cap at 8 hours",
+    offlineContinue: "Keep operating",
+    eventKicker: "Operations event",
+    eventChoose: "Choose how to respond:",
+    eventResolved: "Event resolved",
+    "buff.demand": "Demand",
+    "buff.throughput": "Capacity",
+    "buff.upkeep": "Upkeep",
+    "buff.fare": "Fare",
+    toastBought: "Bus purchased",
+    toastSold: "Bus sold",
+    toastLastBus: "You cannot sell your last bus",
+    toastUnlocked: "Route opened",
+    toastUpgrade: "Upgrade complete",
+    toastAch: "Achievement: {name}",
+    toastSlot: "Depot full — upgrade your depot",
+    toastPoor: "Not enough cash",
+    toastCopied: "Copied to clipboard",
+    toastSaved: "Saved",
+    aboutText: "Bus Tycoon is a Hong Kong bus idle game. All routes, fares and events are fictional and unaffiliated with any real operator.",
+    routeUnlockTitle: "Open a new route?",
+    routeUnlockBody: "Spend {cost} to open {route}.",
+    routeUnlockConfirm: "Open route",
+    hourShort: "h",
+    minuteShort: "m",
+    secondShort: "s",
+    "route.b3a.name": "Fu Tai Estate ⇄ Shenzhen Bay Port",
+    "route.k51.name": "Fu Tai ⇄ Tai Lam",
+    "route.r506.name": "Tuen Mun Ferry Pier ⇄ Siu Lun",
+    "route.e33.name": "Tuen Mun Town Centre ⇄ Airport",
+    "route.r968.name": "Yuen Long ⇄ Causeway Bay",
+    "bus.shuttle.name": "Single-decker",
+    "bus.shuttle.desc": "Nimble through narrow streets. The starter bus.",
+    "bus.double.name": "Double-decker",
+    "bus.double.desc": "The classic Hong Kong workhorse.",
+    "bus.artic.name": "Articulated bus",
+    "bus.artic.desc": "Swallows an entire queue in one go.",
+    "bus.electric.name": "Electric double-decker",
+    "bus.electric.desc": "Quiet, clean and cheaper to maintain.",
+    "bus.hydrogen.name": "Hydrogen bus",
+    "bus.hydrogen.desc": "The zero-emission flagship.",
+    "upgrade.garage.name": "Depot expansion",
+    "upgrade.garage.desc": "+2 garage slots per level.",
+    "upgrade.maintenance.name": "Maintenance crew",
+    "upgrade.maintenance.desc": "-5% upkeep per level.",
+    "upgrade.driver.name": "Driver training",
+    "upgrade.driver.desc": "+10% capacity per level.",
+    "upgrade.marketing.name": "Marketing",
+    "upgrade.marketing.desc": "+25% passenger demand per level.",
+    "upgrade.fare.name": "Fare strategy",
+    "upgrade.fare.desc": "+10% fare and -2% demand per level.",
+    "upgrade.digital.name": "Contactless payments",
+    "upgrade.digital.desc": "+10% total income per level.",
+    "ach.firstFare.name": "First Fare",
+    "ach.firstFare.desc": "Earn $100 in total",
+    "ach.fleet10.name": "Fleet Builder",
+    "ach.fleet10.desc": "Own 10 buses",
+    "ach.fleet50.name": "Bus Kingdom",
+    "ach.fleet50.desc": "Own 50 buses",
+    "ach.fleet100.name": "Hundred Strong",
+    "ach.fleet100.desc": "Own 100 buses",
+    "ach.routes2.name": "Network Expansion",
+    "ach.routes2.desc": "Unlock 2 routes",
+    "ach.routes5.name": "Citywide",
+    "ach.routes5.desc": "Unlock all 5 routes",
+    "ach.upgrades10.name": "Modernisation",
+    "ach.upgrades10.desc": "Reach 10 total upgrade levels",
+    "ach.million.name": "Millionaire",
+    "ach.million.desc": "Earn $1M in one run",
+    "ach.billion.name": "Billionaire",
+    "ach.billion.desc": "Earn $1B lifetime",
+    "ach.prestige1.name": "Franchise Renewed",
+    "ach.prestige1.desc": "Prestige for the first time",
+    "ach.rating5.name": "Five Stars",
+    "ach.rating5.desc": "Reach a 5-star company rating",
+    "ach.events5.name": "Crisis Manager",
+    "ach.events5.desc": "Resolve 5 operations events",
+    "event.rush.title": "Rush hour",
+    "event.rush.body": "Platforms are packed with commuters. How will you dispatch?",
+    "event.rush.pay": "Add extra services (cost {cost}) → Demand +50% for 60s",
+    "event.rush.skip": "Keep the normal timetable",
+    "event.breakdown.title": "Breakdown",
+    "event.breakdown.body": "A bus has broken down mid-route. The maintenance crew is standing by.",
+    "event.breakdown.pay": "Fix it immediately (cost {cost})",
+    "event.breakdown.risk": "Keep it running → Capacity -35% for 45s",
+    "event.big.title": "Big event",
+    "event.big.body": "A stadium concert ends tonight. A wave of passengers is coming.",
+    "event.big.pay": "Sponsor the event (cost {cost}) → Demand +90% for 90s",
+    "event.big.skip": "Stay out of it",
+    "event.fare.title": "Fare hearing",
+    "event.fare.body": "The Transport Department invites you to submit a fare proposal.",
+    "event.fare.raise": "Apply for a rise → Fare +8%, demand -4% (permanent)",
+    "event.fare.freeze": "Freeze fares → Demand +15% for 120s",
+    "event.fuel.title": "Fuel price spike",
+    "event.fuel.body": "Your fuel supplier announces a price increase next month.",
+    "event.fuel.lock": "Lock in the old price (cost {cost})",
+    "event.fuel.risk": "Absorb the cost → Upkeep +80% for 60s",
+    "event.tourist.title": "Tourist wave",
+    "event.tourist.body": "Golden Week is coming. Border traffic is expected to hit a record.",
+    "event.tourist.cash": "Seize the moment → Gain 30 seconds of income",
+    "event.tourist.demand": "Promote harder → Demand +35% for 90s"
+  }
+};
+
+/* ---------------------------------------------------------------------
+   2. Game configuration
+   --------------------------------------------------------------------- */
+
+const SAVE_KEY = "hkBusTycoon.save.v1";
+const SAVE_VERSION = 1;
+const MAX_OFFLINE_SECONDS = 8 * 3600;
+const TICK_SECONDS = 0.1;
+const PRESTIGE_GOAL = 5e5;
+
+const ROUTES = [
+  { id: "b3a",  num: "B3A",  color: "#ffd23f", unlock: 0,       demand: 2.6, fare: 5.2, trip: 35 },
+  { id: "k51",  num: "K51",  color: "#37e29a", unlock: 2500,    demand: 7,   fare: 6,   trip: 45 },
+  { id: "r506", num: "506",  color: "#6ea8ff", unlock: 25000,   demand: 20,  fare: 8,   trip: 55 },
+  { id: "e33",  num: "E33",  color: "#ff9f43", unlock: 250000,  demand: 65,  fare: 16,  trip: 70 },
+  { id: "r968", num: "968",  color: "#ff6b9d", unlock: 2500000, demand: 220, fare: 24,  trip: 90 }
+];
+
+const BUSES = [
+  { id: "shuttle",  color: "#ffd23f", cost: 25,        capacity: 40,  speed: 1.00, upkeep: 0.05, unlock: 0 },
+  { id: "double",   color: "#6ea8ff", cost: 320,       capacity: 100, speed: 0.95, upkeep: 0.12, unlock: 0 },
+  { id: "artic",    color: "#37e29a", cost: 7000,      capacity: 180, speed: 0.85, upkeep: 0.30, unlock: 12000 },
+  { id: "electric", color: "#b388ff", cost: 90000,     capacity: 260, speed: 1.05, upkeep: 0.40, unlock: 250000 },
+  { id: "hydrogen", color: "#ff6b9d", cost: 1800000,   capacity: 440, speed: 1.10, upkeep: 1.20, unlock: 3000000 }
+];
+
+const UPGRADES = [
+  { id: "garage",      icon: "🏭", max: 20, base: 80,  growth: 1.65 },
+  { id: "maintenance", icon: "🔧", max: 15, base: 200, growth: 1.75 },
+  { id: "driver",      icon: "🎓", max: 25, base: 150, growth: 1.70 },
+  { id: "marketing",   icon: "📣", max: 30, base: 120, growth: 1.65 },
+  { id: "fare",        icon: "🎟️", max: 15, base: 400, growth: 1.90 },
+  { id: "digital",     icon: "💳", max: 20, base: 600, growth: 1.80 }
+];
+
+const ROUTE_BY_ID = Object.fromEntries(ROUTES.map((r) => [r.id, r]));
+const BUS_BY_ID = Object.fromEntries(BUSES.map((b) => [b.id, b]));
+const UPGRADE_BY_ID = Object.fromEntries(UPGRADES.map((u) => [u.id, u]));
+
+const ACHIEVEMENTS = [
+  { id: "firstFare",  icon: "🎫", check: () => state.allTimeEarned >= 100 },
+  { id: "fleet10",    icon: "🚌", check: () => totalFleet() >= 10 },
+  { id: "fleet50",    icon: "🚍", check: () => totalFleet() >= 50 },
+  { id: "fleet100",   icon: "🏙️", check: () => totalFleet() >= 100 },
+  { id: "routes2",    icon: "🗺️", check: () => unlockedRouteCount() >= 2 },
+  { id: "routes5",    icon: "🌏", check: () => unlockedRouteCount() >= 5 },
+  { id: "upgrades10", icon: "🛠️", check: () => totalUpgradeLevels() >= 10 },
+  { id: "million",    icon: "💰", check: () => state.runEarned >= 1e6 },
+  { id: "billion",    icon: "💎", check: () => state.allTimeEarned >= 1e9 },
+  { id: "prestige1",  icon: "👑", check: () => state.stats.prestiges >= 1 },
+  { id: "rating5",    icon: "⭐", check: () => ratingStars() >= 5 },
+  { id: "events5",    icon: "🧯", check: () => state.eventsResolved >= 5 }
+];
+
+const EVENTS = [
+  {
+    id: "rush",
+    title: "event.rush.title",
+    body: "event.rush.body",
+    choices: [
+      { label: "event.rush.pay", costPct: 0.05, minCost: 10, effects: [{ type: "buff", stat: "demand", mult: 1.5, duration: 60 }] },
+      { label: "event.rush.skip", effects: [] }
+    ]
+  },
+  {
+    id: "breakdown",
+    title: "event.breakdown.title",
+    body: "event.breakdown.body",
+    choices: [
+      { label: "event.breakdown.pay", costPct: 0.08, minCost: 20, effects: [] },
+      { label: "event.breakdown.risk", effects: [{ type: "buff", stat: "throughput", mult: 0.65, duration: 45 }] }
+    ]
+  },
+  {
+    id: "big",
+    title: "event.big.title",
+    body: "event.big.body",
+    choices: [
+      { label: "event.big.pay", costPct: 0.12, minCost: 50, effects: [{ type: "buff", stat: "demand", mult: 1.9, duration: 90 }] },
+      { label: "event.big.skip", effects: [] }
+    ]
+  },
+  {
+    id: "fare",
+    title: "event.fare.title",
+    body: "event.fare.body",
+    choices: [
+      { label: "event.fare.raise", effects: [{ type: "perm", stat: "fare", mult: 1.08 }, { type: "perm", stat: "demand", mult: 0.96 }] },
+      { label: "event.fare.freeze", effects: [{ type: "buff", stat: "demand", mult: 1.15, duration: 120 }] }
+    ]
+  },
+  {
+    id: "fuel",
+    title: "event.fuel.title",
+    body: "event.fuel.body",
+    choices: [
+      { label: "event.fuel.lock", costPct: 0.10, minCost: 20, effects: [] },
+      { label: "event.fuel.risk", effects: [{ type: "buff", stat: "upkeep", mult: 1.8, duration: 60 }] }
+    ]
+  },
+  {
+    id: "tourist",
+    title: "event.tourist.title",
+    body: "event.tourist.body",
+    choices: [
+      { label: "event.tourist.cash", effects: [{ type: "cashSeconds", seconds: 30 }] },
+      { label: "event.tourist.demand", effects: [{ type: "buff", stat: "demand", mult: 1.35, duration: 90 }] }
+    ]
+  }
+];
+
+/* ---------------------------------------------------------------------
+   3. State & persistence
+   --------------------------------------------------------------------- */
+
+const storage = (() => {
+  try {
+    const probe = "__bus_tycoon_probe__";
+    localStorage.setItem(probe, "1");
+    localStorage.removeItem(probe);
+    return localStorage;
+  } catch (err) {
+    return null;
+  }
+})();
+
+function freshFleet() {
+  return { shuttle: 0, double: 0, artic: 0, electric: 0, hydrogen: 0 };
+}
+
+function freshRoute(id) {
+  const fleet = freshFleet();
+  if (id === "b3a") fleet.shuttle = 1;
+  return { unlocked: id === "b3a", fleet, passengers: 0 };
+}
+
+function freshState() {
+  return {
+    version: SAVE_VERSION,
+    lang: null,
+    cash: 0,
+    runEarned: 0,
+    allTimeEarned: 0,
+    totalPassengers: 0,
+    prestige: 0,
+    upgrades: { garage: 0, maintenance: 0, driver: 0, marketing: 0, fare: 0, digital: 0 },
+    routes: Object.fromEntries(ROUTES.map((r) => [r.id, freshRoute(r.id)])),
+    achievements: {},
+    eventsResolved: 0,
+    perm: { fare: 1, demand: 1, upkeep: 1 },
+    stats: { bought: 0, prestiges: 0, playTime: 0, bestNet: 0 },
+    selRoute: "b3a",
+    tab: "routes",
+    lastSeen: Date.now(),
+    createdAt: Date.now()
+  };
+}
+
+let state = freshState();
+let buffs = [];
+let gameTime = 0;
+let eventTimer = 90;
+let paused = false;
+let currentEvent = null;
+let modalState = null;
+let modalOpen = false;
+let deferredPrompt = null;
+let lastOffline = null;
+let accumulator = 0;
+let lastFrame = performance.now();
+let uiClock = 0;
+let achClock = 0;
+let saveClock = 0;
+
+function safeNum(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function detectLang() {
+  const nav = (navigator.language || "en").toLowerCase();
+  if (nav.startsWith("zh")) {
+    return /hant|tw|hk|mo/.test(nav) ? "zhHant" : "zhHans";
+  }
+  return "en";
+}
+
+function currentLang() {
+  return state && I18N[state.lang] ? state.lang : detectLang();
+}
+
+function t(key, vars) {
+  const dict = I18N[currentLang()] || I18N.en;
+  let out = dict[key];
+  if (out == null) out = I18N.en[key];
+  if (out == null) out = key;
+  if (vars) {
+    for (const [name, value] of Object.entries(vars)) {
+      out = out.split("{" + name + "}").join(String(value));
+    }
+  }
+  return out;
+}
+
+function trimNumber(value) {
+  const digits = value < 10 ? 2 : value < 100 ? 1 : 0;
+  return value.toFixed(digits).replace(/\.0+$/, "").replace(/(\.\d)0$/, "$1");
+}
+
+function fmt(value) {
+  if (!Number.isFinite(value)) return "∞";
+  const negative = value < 0;
+  let n = Math.abs(value);
+  let out;
+  if (n < 1000) {
+    out = n < 10 && n % 1 !== 0 ? trimNumber(n) : Math.floor(n).toLocaleString("en-US");
+  } else {
+    const units = currentLang() === "en"
+      ? [[1e15, "Qa"], [1e12, "T"], [1e9, "B"], [1e6, "M"], [1e3, "K"]]
+      : [[1e16, "京"], [1e12, "兆"], [1e8, "億"], [1e4, "萬"]];
+    out = null;
+    for (const [size, suffix] of units) {
+      if (n >= size) {
+        out = trimNumber(n / size) + suffix;
+        break;
+      }
+    }
+    if (out == null) out = Math.floor(n).toLocaleString("en-US");
+  }
+  return (negative ? "-" : "") + out;
+}
+
+function money(value) {
+  return (value < 0 ? "-$" : "$") + fmt(Math.abs(value));
+}
+
+function formatDuration(seconds) {
+  seconds = Math.max(0, Math.floor(seconds));
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  if (h > 0) return h + t("hourShort") + " " + m + t("minuteShort");
+  if (m > 0) return m + t("minuteShort") + " " + s + t("secondShort");
+  return s + t("secondShort");
+}
+
+/* ---------------------------------------------------------------------
+   4. Economy maths
+   --------------------------------------------------------------------- */
+
+function upgradeLevel(id) {
+  return state.upgrades[id] || 0;
+}
+
+function upgradeCost(id) {
+  const u = UPGRADE_BY_ID[id];
+  return Math.ceil(u.base * Math.pow(u.growth, upgradeLevel(id)));
+}
+
+function garageSlots() {
+  return 3 + upgradeLevel("garage") * 2;
+}
+
+function totalFleet() {
+  let total = 0;
+  for (const route of ROUTES) {
+    const fleet = state.routes[route.id].fleet;
+    for (const bus of BUSES) total += fleet[bus.id] || 0;
+  }
+  return total;
+}
+
+function routeFleetCount(routeId) {
+  const fleet = state.routes[routeId].fleet;
+  let total = 0;
+  for (const bus of BUSES) total += fleet[bus.id] || 0;
+  return total;
+}
+
+function unlockedRouteCount() {
+  return ROUTES.filter((route) => state.routes[route.id].unlocked).length;
+}
+
+function totalUpgradeLevels() {
+  return UPGRADES.reduce((sum, u) => sum + upgradeLevel(u.id), 0);
+}
+
+function activeBuff(stat) {
+  let mult = 1;
+  for (const buff of buffs) {
+    if (buff.stat === stat && buff.until > gameTime) mult *= buff.mult;
+  }
+  return mult;
+}
+
+function routeThroughput(routeId) {
+  const route = ROUTE_BY_ID[routeId];
+  const fleet = state.routes[routeId].fleet;
+  let capacity = 0;
+  for (const bus of BUSES) {
+    capacity += (fleet[bus.id] || 0) * bus.capacity * bus.speed;
+  }
+  return (capacity / route.trip) * (1 + 0.10 * upgradeLevel("driver")) * activeBuff("throughput");
+}
+
+function routeDemand(routeId) {
+  const route = ROUTE_BY_ID[routeId];
+  const run = state.routes[routeId];
+  const network = 1 + 0.08 * Math.log10(1 + (run.passengers || 0) / 2000);
+  return route.demand
+    * (1 + 0.25 * upgradeLevel("marketing"))
+    * (1 - 0.02 * upgradeLevel("fare"))
+    * state.perm.demand
+    * (1 + 0.08 * state.prestige)
+    * activeBuff("demand")
+    * network;
+}
+
+function routeServed(routeId) {
+  const demand = routeDemand(routeId);
+  const capacity = routeThroughput(routeId);
+  if (demand <= 0 || capacity <= 0) return 0;
+  return demand * (1 - Math.exp(-capacity / demand));
+}
+
+function routeLoad(routeId) {
+  const capacity = routeThroughput(routeId);
+  if (capacity <= 0) return 0;
+  return clamp(routeServed(routeId) / capacity, 0, 1);
+}
+
+function routeFare(routeId) {
+  const route = ROUTE_BY_ID[routeId];
+  return route.fare * (1 + 0.10 * upgradeLevel("fare")) * state.perm.fare * activeBuff("fare");
+}
+
+function routeIncome(routeId) {
+  return routeServed(routeId) * routeFare(routeId);
+}
+
+function achievementCount() {
+  return ACHIEVEMENTS.reduce((sum, a) => sum + (state.achievements[a.id] ? 1 : 0), 0);
+}
+
+function achievementMultiplier() {
+  return 1 + 0.01 * achievementCount();
+}
+
+function ratingStars() {
+  const score = totalFleet() * 0.9 + unlockedRouteCount() * 10 + totalUpgradeLevels() * 1.1;
+  if (score >= 320) return 5;
+  if (score >= 160) return 4;
+  if (score >= 70) return 3;
+  if (score >= 25) return 2;
+  return 1;
+}
+
+function ratingMultiplier() {
+  return 1 + (ratingStars() - 1) * 0.03;
+}
+
+function globalIncomeMultiplier() {
+  return (1 + 0.10 * upgradeLevel("digital"))
+    * (1 + 0.10 * state.prestige)
+    * achievementMultiplier()
+    * ratingMultiplier();
+}
+
+function grossIncome() {
+  let total = 0;
+  for (const route of ROUTES) {
+    if (state.routes[route.id].unlocked) total += routeIncome(route.id);
+  }
+  return total * globalIncomeMultiplier();
+}
+
+function totalUpkeep() {
+  let total = 0;
+  for (const route of ROUTES) {
+    const fleet = state.routes[route.id].fleet;
+    for (const bus of BUSES) total += (fleet[bus.id] || 0) * bus.upkeep;
+  }
+  return total
+    * Math.max(0.2, 1 - 0.05 * upgradeLevel("maintenance"))
+    * state.perm.upkeep
+    * activeBuff("upkeep");
+}
+
+function netIncome() {
+  return grossIncome() - totalUpkeep();
+}
+
+function totalServed() {
+  let total = 0;
+  for (const route of ROUTES) {
+    if (state.routes[route.id].unlocked) total += routeServed(route.id);
+  }
+  return total;
+}
+
+function prestigeGain() {
+  if (state.runEarned < PRESTIGE_GOAL) return 0;
+  return Math.max(1, Math.floor(Math.sqrt(state.runEarned / PRESTIGE_GOAL)));
+}
+
+function prestigeProgress() {
+  return clamp(state.runEarned / PRESTIGE_GOAL, 0, 1);
+}
+
+function busCost(routeId, modelId) {
+  const bus = BUS_BY_ID[modelId];
+  const owned = state.routes[routeId].fleet[modelId] || 0;
+  return Math.ceil(bus.cost * Math.pow(1.15, owned));
+}
+
+function busRefund(routeId, modelId) {
+  const bus = BUS_BY_ID[modelId];
+  const owned = state.routes[routeId].fleet[modelId] || 0;
+  if (owned <= 0) return 0;
+  return Math.floor(bus.cost * Math.pow(1.15, owned - 1) * 0.6);
+}
+
+function busUnlocked(modelId) {
+  return state.allTimeEarned >= BUS_BY_ID[modelId].unlock;
+}
+
+/* ---------------------------------------------------------------------
+   5. Save / load
+   --------------------------------------------------------------------- */
+
+function hydrate(raw) {
+  const next = freshState();
+  if (!raw || typeof raw !== "object") return next;
+
+  next.version = SAVE_VERSION;
+  next.lang = I18N[raw.lang] ? raw.lang : null;
+  next.cash = Math.max(0, safeNum(raw.cash));
+  next.runEarned = Math.max(0, safeNum(raw.runEarned));
+  next.allTimeEarned = Math.max(0, safeNum(raw.allTimeEarned));
+  next.totalPassengers = Math.max(0, safeNum(raw.totalPassengers));
+  next.prestige = Math.max(0, Math.floor(safeNum(raw.prestige)));
+  next.eventsResolved = Math.max(0, Math.floor(safeNum(raw.eventsResolved)));
+  next.selRoute = ROUTE_BY_ID[raw.selRoute] ? raw.selRoute : "b3a";
+  next.tab = ["routes", "fleet", "upgrades", "achievements", "settings"].includes(raw.tab) ? raw.tab : "routes";
+  next.lastSeen = safeNum(raw.lastSeen, Date.now());
+  next.createdAt = safeNum(raw.createdAt, Date.now());
+
+  if (raw.upgrades) {
+    for (const upgrade of UPGRADES) {
+      next.upgrades[upgrade.id] = clamp(Math.floor(safeNum(raw.upgrades[upgrade.id])), 0, upgrade.max);
+    }
+  }
+
+  if (raw.routes) {
+    for (const route of ROUTES) {
+      const saved = raw.routes[route.id];
+      if (!saved) continue;
+      const target = next.routes[route.id];
+      target.unlocked = route.id === "b3a" ? true : !!saved.unlocked;
+      target.passengers = Math.max(0, safeNum(saved.passengers));
+      if (saved.fleet) {
+        for (const bus of BUSES) {
+          target.fleet[bus.id] = clamp(Math.floor(safeNum(saved.fleet[bus.id])), 0, 1e9);
+        }
+      }
+    }
+  }
+
+  if (raw.achievements) {
+    for (const achievement of ACHIEVEMENTS) {
+      if (raw.achievements[achievement.id]) next.achievements[achievement.id] = true;
+    }
+  }
+
+  if (raw.perm) {
+    next.perm.fare = Math.max(0.01, safeNum(raw.perm.fare, 1));
+    next.perm.demand = Math.max(0.01, safeNum(raw.perm.demand, 1));
+    next.perm.upkeep = Math.max(0.01, safeNum(raw.perm.upkeep, 1));
+  }
+
+  if (raw.stats) {
+    next.stats.bought = Math.max(0, Math.floor(safeNum(raw.stats.bought)));
+    next.stats.prestiges = Math.max(0, Math.floor(safeNum(raw.stats.prestiges)));
+    next.stats.playTime = Math.max(0, safeNum(raw.stats.playTime));
+    next.stats.bestNet = Math.max(0, safeNum(raw.stats.bestNet));
+  }
+
+  if (!next.routes[next.selRoute] || !next.routes[next.selRoute].unlocked) {
+    next.selRoute = "b3a";
+  }
+
+  // Make sure a corrupted save always has at least one bus to earn with.
+  let fleetTotal = 0;
+  for (const route of ROUTES) {
+    for (const bus of BUSES) fleetTotal += next.routes[route.id].fleet[bus.id] || 0;
+  }
+  if (fleetTotal === 0) next.routes.b3a.fleet.shuttle = 1;
+
+  return next;
+}
+
+function simplifyOfflineState() {
+  // Buffs are transient and never persist across sessions.
+  buffs = [];
+}
+
+function simulateOffline(seconds, wasCapped) {
+  simplifyOfflineState();
+  const rate = netIncome();
+  if (!Number.isFinite(rate) || rate <= 0) return null;
+
+  const gain = rate * seconds;
+  state.cash += gain;
+  state.runEarned += gain;
+  state.allTimeEarned += gain;
+  state.totalPassengers += totalServed() * seconds;
+  for (const route of ROUTES) {
+    if (state.routes[route.id].unlocked) {
+      state.routes[route.id].passengers += routeServed(route.id) * seconds;
+    }
+  }
+  state.stats.playTime += seconds;
+  return { seconds, gain, rate, capped: !!wasCapped };
+}
+
+function loadGame() {
+  let raw = null;
+  try {
+    const encoded = storage && storage.getItem(SAVE_KEY);
+    if (encoded) raw = JSON.parse(encoded);
+  } catch (err) {
+    console.warn("Could not read save:", err);
+  }
+
+  if (!raw) {
+    state = freshState();
+    return;
+  }
+
+  state = hydrate(raw);
+  const now = Date.now();
+  const elapsed = Math.max(0, (now - safeNum(raw.lastSeen, now)) / 1000);
+  if (elapsed >= 60) {
+    lastOffline = simulateOffline(Math.min(elapsed, MAX_OFFLINE_SECONDS), elapsed > MAX_OFFLINE_SECONDS);
+  }
+  state.lastSeen = now;
+}
+
+function saveGame() {
+  if (!storage) return;
+  try {
+    state.lastSeen = Date.now();
+    storage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch (err) {
+    console.warn("Could not save:", err);
+  }
+}
+
+function exportSave() {
+  const json = JSON.stringify(state);
+  const bytes = new TextEncoder().encode(json);
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
+function decodeSave(text) {
+  if (text.trim().startsWith("{")) return text;
+  const binary = atob(text.trim());
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+/* ---------------------------------------------------------------------
+   6. UI helpers
+   --------------------------------------------------------------------- */
+
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+function busIconSvg() {
+  return '<svg viewBox="0 0 40 24" fill="none" aria-hidden="true">' +
+    '<rect x="2" y="3" width="36" height="15" rx="4" fill="currentColor"/>' +
+    '<rect x="6" y="6" width="11" height="6" rx="1.5" fill="#0b1220" opacity=".82"/>' +
+    '<rect x="21" y="6" width="13" height="6" rx="1.5" fill="#0b1220" opacity=".82"/>' +
+    '<circle cx="10" cy="20" r="3" fill="#0b1220"/>' +
+    '<circle cx="30" cy="20" r="3" fill="#0b1220"/>' +
+    '</svg>';
+}
+
+function starString(stars) {
+  return "★".repeat(stars) + "☆".repeat(5 - stars);
+}
+
+function syncTabs() {
+  $$("#tabs button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.tab === state.tab);
+  });
+}
+
+function syncLangButtons() {
+  $$("[data-lang]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.lang === currentLang());
+  });
+}
+
+function renderStatic() {
+  const lang = currentLang();
+  document.documentElement.lang = lang === "zhHant" ? "zh-HK" : lang === "zhHans" ? "zh-CN" : "en";
+  document.title = t("pageTitle");
+  $$("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  syncLangButtons();
+  syncTabs();
+  updateInstallStrip();
+}
+
+function upgradeEffectText(id) {
+  const level = upgradeLevel(id);
+  switch (id) {
+    case "garage": return t("effectGarage", { n: level * 2 });
+    case "maintenance": return t("effectMaintenance", { n: level * 5 });
+    case "driver": return t("effectDriver", { n: level * 10 });
+    case "marketing": return t("effectMarketing", { n: level * 25 });
+    case "fare": return t("effectFare", { a: level * 10, b: level * 2 });
+    case "digital": return t("effectDigital", { n: level * 10 });
+    default: return "";
+  }
+}
+
+/* ---------------------------------------------------------------------
+   7. Panels
+   --------------------------------------------------------------------- */
+
+function routeCard(route) {
+  const run = state.routes[route.id];
+  const unlocked = run.unlocked;
+  const count = routeFleetCount(route.id);
+  const load = routeLoad(route.id);
+  const loadPct = count > 0 ? Math.round(load * 100) : 0;
+  const loadClass = count === 0 ? "" : load > 0.85 ? "high" : load < 0.55 ? "low" : "";
+  const status = count === 0
+    ? t("loadEmpty")
+    : load > 0.85
+      ? t("loadHigh")
+      : load < 0.55
+        ? t("loadLow")
+        : t("loadOk");
+  const income = routeIncome(route.id) * globalIncomeMultiplier();
+
+  let runners = "";
+  if (unlocked && count > 0) {
+    const visible = Math.min(count, 6);
+    const duration = Math.max(7, route.trip / 3);
+    for (let i = 0; i < visible; i += 1) {
+      const delay = -(i * duration) / visible;
+      runners += `<div class="runner" style="--dur:${duration}s;animation-delay:${delay}s">${busIconSvg()}</div>`;
+    }
+  }
+
+  const track = `<div class="route-track"><div class="rail"></div>${runners || `<div class="track-empty">${unlocked ? t("loadEmpty") : "🔒 " + t("locked")}</div>`}</div>`;
+
+  const body = unlocked
+    ? `
+      <div class="route-stats">
+        <div><b data-live-income="${route.id}">${money(income)}</b><span>${t("income")}</span></div>
+        <div><b data-live-buses="${route.id}">${count}</b><span>${t("buses")}</span></div>
+        <div><b data-live-load="${route.id}">${count > 0 ? loadPct + "%" : "—"}</b><span>${t("load")}</span></div>
+      </div>
+      <div class="load-track ${loadClass}"><i data-live-bar="${route.id}" style="width:${loadPct}%"></i></div>
+      <div class="route-foot">
+        <div class="route-demand" data-live-demand="${route.id}"></div>
+        <button type="button" class="btn btn-small" data-buy-route="${route.id}">🚌 ${t("buyBuses")}</button>
+      </div>
+    `
+    : `
+      <div class="route-stats">
+        <div><b>${fmt(route.demand)}</b><span>${t("demand")}</span></div>
+        <div><b>${money(route.fare)}</b><span>${t("fare")}</span></div>
+        <div><b>${formatDuration(route.trip)}</b><span>${t("trip")}</span></div>
+      </div>
+      <div class="route-lock-foot">
+        <div class="lock-price">${t("unlockAt", { x: `<b>${money(route.unlock)}</b>` })}</div>
+        <button type="button" class="btn btn-primary btn-small" data-unlock-route="${route.id}" data-price="${route.unlock}">${t("unlockRoute")}</button>
+      </div>
+    `;
+
+  return `
+    <article class="route-card ${unlocked ? "" : "locked"}" style="--route:${route.color}">
+      <div class="route-head">
+        <span class="route-badge">${route.num}</span>
+        <div class="route-title-wrap">
+          <h3 class="route-name">${t("route." + route.id + ".name")}</h3>
+          <div class="route-sub">${unlocked ? t("routeOpen") : t("routeLocked")}</div>
+        </div>
+      </div>
+      ${track}
+      ${body}
+    </article>
+  `;
+}
+
+function renderRoutes() {
+  const panel = $("#panel-routes");
+  panel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>${t("routesTitle")}</h2>
+        <p>${t("routesHint")}</p>
+      </div>
+      <div class="section-meta">${unlockedRouteCount()} / ${ROUTES.length}</div>
+    </div>
+    <div class="route-grid">${ROUTES.map(routeCard).join("")}</div>
+  `;
+}
+
+function renderFleet() {
+  const panel = $("#panel-fleet");
+  const unlocked = ROUTES.filter((route) => state.routes[route.id].unlocked);
+  if (!state.routes[state.selRoute] || !state.routes[state.selRoute].unlocked) {
+    state.selRoute = unlocked[0] ? unlocked[0].id : "b3a";
+  }
+  const selected = ROUTE_BY_ID[state.selRoute];
+  const fleet = state.routes[state.selRoute].fleet;
+
+  const chips = unlocked.map((route) =>
+    `<button type="button" class="chip ${route.id === state.selRoute ? "active" : ""}" data-fleet-route="${route.id}">${route.num}</button>`
+  ).join("");
+
+  const cards = BUSES.map((bus) => {
+    const locked = !busUnlocked(bus.id);
+    const owned = fleet[bus.id] || 0;
+    const cost = busCost(state.selRoute, bus.id);
+    const throughput = (bus.capacity * bus.speed) / selected.trip;
+    const refund = owned > 0 ? busRefund(state.selRoute, bus.id) : 0;
+    const canSell = owned > 0 && totalFleet() > 1;
+    const disabled = locked ? " disabled data-locked=\"1\"" : "";
+    return `
+      <article class="bus-card" style="--bus:${bus.color}">
+        <div class="bus-head">
+          <div class="bus-icon">${busIconSvg()}</div>
+          <div class="bus-title">
+            <div class="bus-name">${t("bus." + bus.id + ".name")}</div>
+            <div class="bus-desc">${t("bus." + bus.id + ".desc")}</div>
+          </div>
+        </div>
+        <div class="pill-row">
+          <span class="pill">${t("busCapacity", { n: bus.capacity })}</span>
+          <span class="pill">${t("busThroughput", { value: fmt(throughput) })}</span>
+          <span class="pill">${t("busUpkeep", { x: money(bus.upkeep) })}</span>
+        </div>
+        ${locked ? `<div class="lock-note">${t("unlockAtEarned", { x: money(bus.unlock) })}</div>` : ""}
+        <div class="bus-foot">
+          <div class="owned">${t("busOwned", { n: owned })}</div>
+          <div class="bus-actions">
+            ${owned > 0 ? `<button type="button" class="btn btn-small btn-ghost" data-sell-bus="${state.selRoute}|${bus.id}" ${canSell ? "" : `disabled title="${t("toastLastBus")}"`}>${t("sell")} · ${money(refund)}</button>` : ""}
+            <button type="button" class="btn btn-small ${locked ? "" : "btn-primary"}" data-buy-bus="${state.selRoute}|${bus.id}" data-price="${cost}" data-slot="1"${disabled}>
+              ${locked ? t("locked") : t("buy")} · <span class="price-inline">${money(cost)}</span>
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  panel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>${t("fleetTitle")}</h2>
+        <p>${t("fleetHint")}</p>
+      </div>
+    </div>
+    <div class="fleet-bar">
+      ${chips}
+      <span class="fleet-slots">${t("fleetSlots", { used: totalFleet(), total: garageSlots() })}</span>
+    </div>
+    <div class="bus-grid">${cards}</div>
+  `;
+}
+
+function renderUpgrades() {
+  const panel = $("#panel-upgrades");
+  const cards = UPGRADES.map((upgrade) => {
+    const level = upgradeLevel(upgrade.id);
+    const maxed = level >= upgrade.max;
+    const cost = upgradeCost(upgrade.id);
+    return `
+      <article class="upg-card">
+        <div class="upg-head">
+          <div class="upg-icon">${upgrade.icon}</div>
+          <div class="upg-title">
+            <div class="upg-name">${t("upgrade." + upgrade.id + ".name")}</div>
+            <div class="upg-desc">${t("upgrade." + upgrade.id + ".desc")}</div>
+          </div>
+          <span class="level-pill ${maxed ? "max" : ""}">${t("upgradeLevel", { n: level, max: upgrade.max })}</span>
+        </div>
+        <div class="upg-effect">${upgradeEffectText(upgrade.id)}</div>
+        <div class="upg-foot">
+          <div class="price">${maxed ? t("maxed") : money(cost)}</div>
+          <button type="button" class="btn btn-small ${maxed ? "" : "btn-primary"}" ${maxed ? "disabled" : `data-upgrade="${upgrade.id}" data-price="${cost}"`}>
+            ${maxed ? t("maxLevel") : t("upgradeNow")}
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  panel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>${t("upgradesTitle")}</h2>
+        <p>${t("upgradesHint")}</p>
+      </div>
+      <div class="section-meta">${totalUpgradeLevels()} / ${UPGRADES.reduce((sum, u) => sum + u.max, 0)}</div>
+    </div>
+    <div class="upg-grid">${cards}</div>
+  `;
+}
+
+function renderAchievements() {
+  const panel = $("#panel-achievements");
+  const done = achievementCount();
+  const cards = ACHIEVEMENTS.map((achievement) => {
+    const unlocked = !!state.achievements[achievement.id];
+    return `
+      <article class="ach-card ${unlocked ? "" : "locked"}">
+        <div class="ach-icon">${achievement.icon}</div>
+        <div>
+          <div class="ach-name">${t("ach." + achievement.id + ".name")}</div>
+          <div class="ach-desc">${t("ach." + achievement.id + ".desc")}</div>
+          <div class="ach-state">${unlocked ? t("achUnlocked") : t("achLocked")}</div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  panel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>${t("achievementsTitle")}</h2>
+        <p>${t("achievementsHint")}</p>
+      </div>
+      <div class="section-meta">${t("achCount", { done, total: ACHIEVEMENTS.length })}</div>
+    </div>
+    <div class="ach-grid">${cards}</div>
+  `;
+}
+
+function renderSettings() {
+  const panel = $("#panel-settings");
+  const standalone = isStandalone();
+  const installControl = standalone
+    ? `<span class="pill good">${t("installed")}</span>`
+    : `<button type="button" class="btn btn-primary btn-small" data-install>${t("install")}</button>`;
+  const langButtons = [
+    ["zhHant", "繁體中文"],
+    ["zhHans", "简体中文"],
+    ["en", "English"]
+  ].map(([code, label]) =>
+    `<button type="button" class="chip ${currentLang() === code ? "active" : ""}" data-lang="${code}">${label}</button>`
+  ).join("");
+
+  panel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>${t("settingsTitle")}</h2>
+        <p>${t("autoSave")}</p>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <h3>${t("settingsLanguage")}</h3>
+      <div class="row">${langButtons}</div>
+    </div>
+
+    <div class="settings-block">
+      <h3>${t("settingsStats")}</h3>
+      <div class="stats-mini">
+        <div><span>${t("playtime")}</span><b>${formatDuration(state.stats.playTime)}</b></div>
+        <div><span>${t("allTime")}</span><b>${money(state.allTimeEarned)}</b></div>
+        <div><span>${t("thisRun")}</span><b>${money(state.runEarned)}</b></div>
+        <div><span>${t("totalPax")}</span><b>${fmt(state.totalPassengers)}</b></div>
+        <div><span>${t("prestiges")}</span><b>${state.stats.prestiges}</b></div>
+        <div><span>${t("busesBought")}</span><b>${state.stats.bought}</b></div>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <h3>${t("settingsData")}</h3>
+      <textarea class="textarea" id="saveText" readonly spellcheck="false"></textarea>
+      <div class="row">
+        <button type="button" class="btn btn-small" data-copy-save>${t("copy")}</button>
+      </div>
+      <textarea class="textarea" id="importText" spellcheck="false" placeholder="${t("importData")}"></textarea>
+      <div class="row">
+        <button type="button" class="btn btn-small" data-import-save>${t("importData")}</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <h3>${t("install")}</h3>
+      <p>${t("installHint")}</p>
+      <div class="row">${installControl}</div>
+    </div>
+
+    <div class="settings-block">
+      <h3>${t("resetSave")}</h3>
+      <p>${t("resetHint")}</p>
+      <div class="row">
+        <button type="button" class="btn btn-small" data-reset>${t("resetSave")}</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <h3>${t("settingsAbout")}</h3>
+      <p>${t("aboutText")}</p>
+    </div>
+  `;
+
+  const saveText = $("#saveText");
+  if (saveText) saveText.value = exportSave();
+  syncLangButtons();
+}
+
+function renderPanel() {
+  const panels = {
+    routes: $("#panel-routes"),
+    fleet: $("#panel-fleet"),
+    upgrades: $("#panel-upgrades"),
+    achievements: $("#panel-achievements"),
+    settings: $("#panel-settings")
+  };
+  for (const [key, element] of Object.entries(panels)) {
+    if (element) element.classList.toggle("hidden", key !== state.tab);
+  }
+
+  if (state.tab === "routes") renderRoutes();
+  else if (state.tab === "fleet") renderFleet();
+  else if (state.tab === "upgrades") renderUpgrades();
+  else if (state.tab === "achievements") renderAchievements();
+  else if (state.tab === "settings") renderSettings();
+
+  refreshAffordability();
+}
+
+function renderAll() {
+  renderStatic();
+  renderStats();
+  renderBuffs();
+  renderPanel();
+  refreshLive();
+}
+
+function renderStats() {
+  const cashEl = $("#statCash");
+  if (!cashEl) return;
+  const net = netIncome();
+  cashEl.textContent = money(state.cash);
+  $("#statNet").innerHTML = t("netLine", {
+    value: `<span class="${net >= 0 ? "up" : "down"}">${money(net)}</span>`
+  });
+  $("#statPax").textContent = fmt(state.totalPassengers);
+  $("#statPaxRate").textContent = t("paxRate", { value: fmt(totalServed()) });
+  $("#statFleet").textContent = fmt(totalFleet());
+  $("#statSlots").textContent = t("slotLine", { used: totalFleet(), total: garageSlots() });
+  $("#statPrestige").textContent = fmt(state.prestige);
+  $("#statPrestigeBonus").textContent = t("prestigeBonus", { x: state.prestige * 10 });
+
+  const stars = ratingStars();
+  $("#ratingStars").textContent = starString(stars);
+  $("#rating").title = t("ratingTitle", { n: stars });
+}
+
+function renderBuffs() {
+  const bar = $("#buffBar");
+  if (!bar) return;
+  const active = buffs.filter((buff) => buff.until > gameTime);
+  if (!active.length) {
+    bar.innerHTML = "";
+    return;
+  }
+  bar.innerHTML = active.map((buff) => {
+    const label = t("buff." + buff.stat);
+    const pct = Math.round((buff.mult - 1) * 100);
+    const good = buff.stat === "upkeep" ? buff.mult < 1 : buff.mult > 1;
+    const remaining = Math.max(0, buff.until - gameTime);
+    return `<span class="buff ${good ? "" : "bad"}">${label} ${pct > 0 ? "+" : ""}${pct}% · ${Math.ceil(remaining)}s</span>`;
+  }).join("");
+}
+
+function refreshLive() {
+  renderStats();
+  renderBuffs();
+
+  for (const route of ROUTES) {
+    if (!state.routes[route.id].unlocked) continue;
+    const count = routeFleetCount(route.id);
+    const load = routeLoad(route.id);
+    const incomeEl = document.querySelector(`[data-live-income="${route.id}"]`);
+    const busesEl = document.querySelector(`[data-live-buses="${route.id}"]`);
+    const loadEl = document.querySelector(`[data-live-load="${route.id}"]`);
+    const barEl = document.querySelector(`[data-live-bar="${route.id}"]`);
+    const demandEl = document.querySelector(`[data-live-demand="${route.id}"]`);
+
+    if (incomeEl) incomeEl.textContent = money(routeIncome(route.id) * globalIncomeMultiplier());
+    if (busesEl) busesEl.textContent = String(count);
+    if (loadEl) loadEl.textContent = count > 0 ? Math.round(load * 100) + "%" : "—";
+
+    if (barEl) {
+      barEl.style.width = (count > 0 ? load * 100 : 0).toFixed(1) + "%";
+      const track = barEl.closest(".load-track");
+      if (track) {
+        track.classList.toggle("high", count > 0 && load > 0.85);
+        track.classList.toggle("low", count > 0 && load < 0.55);
+      }
+    }
+
+    if (demandEl) {
+      const status = count === 0
+        ? t("loadEmpty")
+        : load > 0.85
+          ? t("loadHigh")
+          : load < 0.55
+            ? t("loadLow")
+            : t("loadOk");
+      const color = count === 0
+        ? "var(--muted)"
+        : load > 0.85
+          ? "var(--orange)"
+          : load < 0.55
+            ? "var(--blue)"
+            : "var(--green)";
+      demandEl.innerHTML = t("demandLine", {
+        x: fmt(routeDemand(route.id)),
+        fare: money(routeFare(route.id))
+      }) + ` · <span style="color:${color}">${status}</span>`;
+    }
+  }
+
+  const gain = prestigeGain();
+  const prestigeBtn = $("#prestigeBtn");
+  if (prestigeBtn) {
+    prestigeBtn.disabled = gain <= 0;
+    prestigeBtn.textContent = gain > 0 ? `${t("prestigeBtn")} +${gain}` : t("prestigeBtn");
+  }
+  const prestigeText = $("#prestigeText");
+  if (prestigeText) {
+    prestigeText.textContent = gain > 0
+      ? t("prestigeReady", { n: gain })
+      : t("prestigeNeed", { cur: money(state.runEarned), goal: money(PRESTIGE_GOAL) });
+  }
+  const prestigeBar = $("#prestigeBar");
+  if (prestigeBar) prestigeBar.style.width = (prestigeProgress() * 100).toFixed(1) + "%";
+
+  refreshAffordability();
+}
+
+function refreshAffordability() {
+  $$("[data-price]").forEach((button) => {
+    const price = safeNum(button.dataset.price);
+    let disabled = state.cash < price;
+    if (button.hasAttribute("data-slot") && totalFleet() >= garageSlots()) disabled = true;
+    if (button.dataset.locked === "1") disabled = true;
+    button.disabled = disabled;
+    if (button.hasAttribute("data-slot") && totalFleet() >= garageSlots()) {
+      button.title = t("toastSlot");
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------
+   8. Actions
+   --------------------------------------------------------------------- */
+
+function setLang(lang) {
+  if (!I18N[lang]) return;
+  if (state.lang === lang) return;
+  state.lang = lang;
+  renderAll();
+  saveGame();
+}
+
+function switchTab(tab) {
+  if (!["routes", "fleet", "upgrades", "achievements", "settings"].includes(tab)) return;
+  state.tab = tab;
+  syncTabs();
+  renderPanel();
+  saveGame();
+}
+
+function selectFleetRoute(routeId) {
+  if (!state.routes[routeId] || !state.routes[routeId].unlocked) return;
+  state.selRoute = routeId;
+  if (state.tab !== "fleet") {
+    state.tab = "fleet";
+    renderAll();
+  } else {
+    renderFleet();
+    refreshAffordability();
+  }
+  saveGame();
+}
+
+function buyBus(routeId, modelId) {
+  const route = ROUTE_BY_ID[routeId];
+  const bus = BUS_BY_ID[modelId];
+  if (!route || !bus) return;
+  if (!state.routes[routeId].unlocked) return;
+  if (!busUnlocked(modelId)) {
+    toast(t("unlockAtEarned", { x: money(bus.unlock) }), "bad");
+    return;
+  }
+  if (totalFleet() >= garageSlots()) {
+    toast(t("toastSlot"), "bad");
+    return;
+  }
+  const cost = busCost(routeId, modelId);
+  if (state.cash < cost) {
+    toast(t("toastPoor"), "bad");
+    return;
+  }
+  state.cash -= cost;
+  state.routes[routeId].fleet[modelId] = (state.routes[routeId].fleet[modelId] || 0) + 1;
+  state.stats.bought += 1;
+  saveGame();
+  checkAchievements();
+  renderPanel();
+  refreshLive();
+  toast(t("toastBought"), "good");
+}
+
+function sellBus(routeId, modelId) {
+  if (!state.routes[routeId] || !BUS_BY_ID[modelId]) return;
+  const owned = state.routes[routeId].fleet[modelId] || 0;
+  if (owned <= 0) return;
+  if (totalFleet() <= 1) {
+    toast(t("toastLastBus"), "bad");
+    return;
+  }
+  const refund = busRefund(routeId, modelId);
+  state.routes[routeId].fleet[modelId] = owned - 1;
+  state.cash += refund;
+  saveGame();
+  checkAchievements();
+  renderPanel();
+  refreshLive();
+  toast(t("toastSold") + " +" + money(refund), "good");
+}
+
+function buyUpgrade(id) {  const upgrade = UPGRADE_BY_ID[id];
+  if (!upgrade) return;
+  const level = upgradeLevel(id);
+  if (level >= upgrade.max) return;
+  const cost = upgradeCost(id);
+  if (state.cash < cost) {
+    toast(t("toastPoor"), "bad");
+    return;
+  }
+  state.cash -= cost;
+  state.upgrades[id] = level + 1;
+  saveGame();
+  checkAchievements();
+  renderPanel();
+  refreshLive();
+  toast(t("toastUpgrade"), "good");
+}
+
+function openUnlockRoute(routeId) {
+  const route = ROUTE_BY_ID[routeId];
+  if (!route || state.routes[routeId].unlocked) return;
+  if (state.cash < route.unlock) {
+    toast(t("toastPoor"), "bad");
+    return;
+  }
+  openModal({
+    kicker: t("routeLocked"),
+    title: t("routeUnlockTitle"),
+    body: `<p>${t("routeUnlockBody", { cost: money(route.unlock), route: t("route." + route.id + ".name") })}</p>`,
+    closeable: true,
+    actions: [
+      {
+        label: `${t("routeUnlockConfirm")} · ${money(route.unlock)}`,
+        primary: true,
+        onClick: () => {
+          if (state.cash < route.unlock) {
+            toast(t("toastPoor"), "bad");
+            return;
+          }
+          state.cash -= route.unlock;
+          state.routes[routeId].unlocked = true;
+          state.selRoute = routeId;
+          state.tab = "fleet";
+          closeModal();
+          saveGame();
+          checkAchievements();
+          renderAll();
+          toast(t("toastUnlocked"), "good");
+        }
+      },
+      { label: t("cancel"), onClick: closeModal }
+    ]
+  });
+}
+
+function openPrestigeModal() {
+  const gain = prestigeGain();
+  if (gain <= 0) {
+    toast(t("prestigeNeed", { cur: money(state.runEarned), goal: money(PRESTIGE_GOAL) }), "bad");
+    return;
+  }
+  openModal({
+    kicker: t("prestige"),
+    title: t("prestigeConfirmTitle"),
+    body: `
+      <p class="muted">${t("prestigeGainLabel")}</p>
+      <p class="big">+${gain}</p>
+      <p>${t("prestigeDesc")}</p>
+      <p class="muted">${t("prestigeConfirmBody", { n: gain })}</p>
+    `,
+    closeable: true,
+    actions: [
+      { label: t("prestigeBtn") + " +" + gain, primary: true, onClick: () => doPrestige(gain) },
+      { label: t("cancel"), onClick: closeModal }
+    ]
+  });
+}
+
+function doPrestige(gain) {
+  state.prestige += gain;
+  state.stats.prestiges += 1;
+  state.cash = 0;
+  state.runEarned = 0;
+  state.upgrades = { garage: 0, maintenance: 0, driver: 0, marketing: 0, fare: 0, digital: 0 };
+  state.routes = Object.fromEntries(ROUTES.map((route) => [route.id, freshRoute(route.id)]));
+  state.perm = { fare: 1, demand: 1, upkeep: 1 };
+  state.selRoute = "b3a";
+  state.tab = "routes";
+  buffs = [];
+  gameTime = 0;
+  eventTimer = 90;
+  accumulator = 0;
+  closeModal();
+  saveGame();
+  renderAll();
+  checkAchievements();
+  toast(t("prestigeDone", { n: gain }), "good");
+}
+
+function openResetModal() {
+  openModal({
+    kicker: t("settingsData"),
+    title: t("resetConfirmTitle"),
+    body: `<p>${t("resetConfirmBody")}</p>`,
+    closeable: true,
+    actions: [
+      {
+        label: t("confirmReset"),
+        primary: true,
+        onClick: () => {
+          const lang = currentLang();
+          state = freshState();
+          state.lang = lang;
+          buffs = [];
+          gameTime = 0;
+          eventTimer = 90;
+          accumulator = 0;
+          lastOffline = null;
+          closeModal();
+          saveGame();
+          renderAll();
+          toast(t("toastSaved"), "good");
+        }
+      },
+      { label: t("cancel"), onClick: closeModal }
+    ]
+  });
+}
+
+function copySave() {
+  const text = exportSave();
+  const area = $("#saveText");
+  if (area) area.value = text;
+  const done = () => toast(t("toastCopied"), "good");
+  const fallback = () => {
+    try {
+      if (area) {
+        area.focus();
+        area.select();
+        document.execCommand("copy");
+        done();
+      }
+    } catch (err) {
+      // Clipboard is unavailable; the textarea still holds the save.
+    }
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+function importSave() {
+  const input = $("#importText");
+  if (!input || !input.value.trim()) return;
+  try {
+    const json = decodeSave(input.value);
+    const data = JSON.parse(json);
+    if (!data || typeof data !== "object" || !data.routes) throw new Error("invalid save");
+    state = hydrate(data);
+    if (!state.lang) state.lang = currentLang();
+    state.lastSeen = Date.now();
+    buffs = [];
+    gameTime = 0;
+    eventTimer = 90;
+    accumulator = 0;
+    lastOffline = null;
+    saveGame();
+    renderAll();
+    toast(t("importOk"), "good");
+  } catch (err) {
+    toast(t("importFail"), "bad");
+  }
+}
+
+function isStandalone() {
+  return window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+}
+
+function isIosDevice() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function updateInstallStrip() {
+  const strip = $("#installStrip");
+  if (strip) strip.hidden = isStandalone();
+}
+
+function showInstallGuide() {
+  const guide = isIosDevice()
+    ? t("installIos")
+    : /android/i.test(navigator.userAgent)
+      ? t("installAndroid")
+      : t("installDesktop");
+  openModal({
+    kicker: t("installAction"),
+    title: t("installTitle"),
+    body: `<p>${guide}</p><p class="muted">${t("installHint")}</p>`,
+    closeable: true,
+    actions: []
+  });
+}
+
+function installApp() {
+  if (isStandalone()) {
+    toast(t("installed"), "good");
+    return;
+  }
+
+  if (!deferredPrompt) {
+    showInstallGuide();
+    return;
+  }
+
+  const prompt = deferredPrompt;
+  deferredPrompt = null;
+  prompt.prompt();
+  prompt.userChoice.then((choice) => {
+    if (choice && choice.outcome === "accepted") {
+      updateInstallStrip();
+      toast(t("installed"), "good");
+    }
+    if (state.tab === "settings") renderSettings();
+  }).catch(() => {
+    if (state.tab === "settings") renderSettings();
+  });
+}
+
+function eventCost(choice) {
+  if (!choice.costPct) return 0;
+  return Math.max(choice.minCost || 0, Math.floor(state.cash * choice.costPct));
+}
+
+/* ---------------------------------------------------------------------
+   9. Modal, events, toasts
+   --------------------------------------------------------------------- */
+
+function openModal(options) {
+  const { kicker = "", title = "", body = "", actions = [], closeable = true, pause = true } = options;
+  modalState = { closeable, pause };
+  $("#modalKicker").textContent = kicker;
+  $("#modalTitle").textContent = title;
+  $("#modalBody").innerHTML = body;
+
+  const actionWrap = $("#modalActions");
+  actionWrap.innerHTML = "";
+  actions.forEach((action) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn " + (action.primary ? "btn-primary" : "");
+    button.textContent = action.label;
+    if (action.disabled) button.disabled = true;
+    button.addEventListener("click", action.onClick);
+    actionWrap.appendChild(button);
+  });
+
+  const closeWrap = $("#modalCloseWrap");
+  closeWrap.innerHTML = "";
+  if (closeable) {
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "btn btn-ghost btn-small";
+    closeButton.textContent = t("close");
+    closeButton.addEventListener("click", closeModal);
+    closeWrap.appendChild(closeButton);
+  }
+
+  $("#modal").classList.remove("hidden");
+  modalOpen = true;
+  if (pause) paused = true;
+  accumulator = 0;
+  lastFrame = performance.now();
+
+  const first = actionWrap.querySelector("button:not(:disabled)") || closeWrap.querySelector("button");
+  if (first) setTimeout(() => first.focus(), 40);
+}
+
+function closeModal() {
+  $("#modal").classList.add("hidden");
+  modalOpen = false;
+  currentEvent = null;
+  const shouldResume = modalState && modalState.pause;
+  modalState = null;
+  if (shouldResume) paused = false;
+  accumulator = 0;
+  lastFrame = performance.now();
+}
+
+function toast(message, tone) {
+  const box = $("#toasts");
+  if (!box) return;
+  const element = document.createElement("div");
+  element.className = "toast " + (tone || "");
+  element.textContent = message;
+  box.appendChild(element);
+  while (box.children.length > 4) box.removeChild(box.firstChild);
+  setTimeout(() => {
+    element.style.opacity = "0";
+    element.style.transform = "translateY(6px)";
+    element.style.transition = "opacity .25s, transform .25s";
+    setTimeout(() => element.remove(), 260);
+  }, 2600);
+}
+
+function showOfflineModal() {
+  if (!lastOffline || lastOffline.gain <= 0) return;
+  const offline = lastOffline;
+  lastOffline = null;
+  openModal({
+    kicker: t("offlineTitle"),
+    title: t("offlineTitle"),
+    body: `
+      <p>${t("offlineBody", { time: formatDuration(offline.seconds), cash: `<span class="big">${money(offline.gain)}</span>` })}</p>
+      <p class="muted">${t("offlineCap")}</p>
+    `,
+    closeable: true,
+    actions: [{ label: t("offlineContinue"), primary: true, onClick: closeModal }]
+  });
+}
+
+function triggerEvent() {
+  if (modalOpen) return;
+  const event = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+  currentEvent = event;
+  const actions = event.choices.map((choice, index) => {
+    const cost = eventCost(choice);
+    return {
+      label: t(choice.label, { cost: money(cost) }),
+      disabled: cost > state.cash,
+      onClick: () => resolveEvent(index)
+    };
+  });
+  openModal({
+    kicker: t("eventKicker"),
+    title: t(event.title),
+    body: `<p>${t(event.body)}</p><p class="muted">${t("eventChoose")}</p>`,
+    actions,
+    closeable: false
+  });
+}
+
+function resolveEvent(index) {
+  const event = currentEvent;
+  if (!event) return;
+  const choice = event.choices[index];
+  if (!choice) return;
+  const cost = eventCost(choice);
+  if (cost > state.cash) return;
+
+  if (cost > 0) state.cash -= cost;
+  applyEffects(choice.effects || []);
+  state.eventsResolved += 1;
+  currentEvent = null;
+  closeModal();
+  eventTimer = 70 + Math.random() * 50;
+  saveGame();
+  checkAchievements();
+  renderAll();
+  toast(t("eventResolved"), "good");
+}
+
+function applyEffects(effects) {
+  for (const effect of effects) {
+    if (effect.type === "buff") {
+      buffs.push({
+        stat: effect.stat,
+        mult: effect.mult,
+        until: gameTime + effect.duration
+      });
+    } else if (effect.type === "perm") {
+      state.perm[effect.stat] = (state.perm[effect.stat] || 1) * effect.mult;
+    } else if (effect.type === "cashSeconds") {
+      const gain = Math.max(0, netIncome()) * effect.seconds;
+      state.cash += gain;
+      state.runEarned += gain;
+      state.allTimeEarned += gain;
+      toast("+" + money(gain), "good");
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------
+   10. Achievements & simulation
+   --------------------------------------------------------------------- */
+
+function checkAchievements() {
+  let changed = false;
+  for (const achievement of ACHIEVEMENTS) {
+    if (!state.achievements[achievement.id] && achievement.check()) {
+      state.achievements[achievement.id] = true;
+      changed = true;
+      toast(t("toastAch", { name: t("ach." + achievement.id + ".name") }), "good");
+    }
+  }
+  if (changed) {
+    saveGame();
+    if (state.tab === "achievements") renderAchievements();
+    renderStats();
+    refreshAffordability();
+  }
+}
+
+function simulate(dt) {
+  gameTime += dt;
+  state.stats.playTime += dt;
+
+  const rate = netIncome();
+  if (rate >= 0) {
+    state.cash += rate * dt;
+    state.runEarned += rate * dt;
+    state.allTimeEarned += rate * dt;
+  } else {
+    state.cash = Math.max(0, state.cash + rate * dt);
+  }
+  if (rate > state.stats.bestNet) state.stats.bestNet = rate;
+
+  state.totalPassengers += totalServed() * dt;
+  for (const route of ROUTES) {
+    if (state.routes[route.id].unlocked) {
+      state.routes[route.id].passengers += routeServed(route.id) * dt;
+    }
+  }
+
+  buffs = buffs.filter((buff) => buff.until > gameTime);
+
+  eventTimer -= dt;
+  if (eventTimer <= 0 && gameTime > 60 && !modalOpen) {
+    triggerEvent();
+  }
+
+  achClock += dt;
+  if (achClock >= 1) {
+    achClock = 0;
+    checkAchievements();
+  }
+
+  saveClock += dt;
+  if (saveClock >= 5) {
+    saveClock = 0;
+    saveGame();
+  }
+}
+
+function loop(now) {
+  const dt = Math.min(0.5, Math.max(0, (now - lastFrame) / 1000));
+  lastFrame = now;
+
+  if (!paused) {
+    accumulator += dt;
+    let steps = 0;
+    while (accumulator >= TICK_SECONDS && steps < 40) {
+      simulate(TICK_SECONDS);
+      accumulator -= TICK_SECONDS;
+      steps += 1;
+      if (paused) break;
+    }
+  } else {
+    accumulator = 0;
+  }
+
+  if (now - uiClock >= 180) {
+    uiClock = now;
+    refreshLive();
+  }
+  requestAnimationFrame(loop);
+}
+
+/* ---------------------------------------------------------------------
+   11. Wiring & boot
+   --------------------------------------------------------------------- */
+
+document.addEventListener("click", (event) => {
+  const raw = event.target;
+  if (!(raw instanceof Element)) return;
+  const find = (attribute) => raw.closest("[" + attribute + "]");
+
+  if (raw.closest("#installStrip")) {
+    installApp();
+    return;
+  }
+
+  const langButton = find("data-lang");
+  if (langButton) {
+    setLang(langButton.dataset.lang);
+    return;
+  }
+
+  const tabButton = find("data-tab");
+  if (tabButton) {
+    switchTab(tabButton.dataset.tab);
+    return;
+  }
+
+  const buyRoute = find("data-buy-route");
+  if (buyRoute) {
+    selectFleetRoute(buyRoute.dataset.buyRoute);
+    return;
+  }
+
+  const fleetRoute = find("data-fleet-route");
+  if (fleetRoute) {
+    selectFleetRoute(fleetRoute.dataset.fleetRoute);
+    return;
+  }
+
+  const buyBusButton = find("data-buy-bus");
+  if (buyBusButton) {
+    const [routeId, modelId] = buyBusButton.dataset.buyBus.split("|");
+    buyBus(routeId, modelId);
+    return;
+  }
+
+  const sellBusButton = find("data-sell-bus");
+  if (sellBusButton) {
+    const [routeId, modelId] = sellBusButton.dataset.sellBus.split("|");
+    sellBus(routeId, modelId);
+    return;
+  }
+
+  const unlockButton = find("data-unlock-route");
+  if (unlockButton) {
+    openUnlockRoute(unlockButton.dataset.unlockRoute);
+    return;
+  }
+
+  const upgradeButton = find("data-upgrade");
+  if (upgradeButton) {
+    buyUpgrade(upgradeButton.dataset.upgrade);
+    return;
+  }
+
+  if (find("data-prestige")) {
+    openPrestigeModal();
+    return;
+  }
+
+  if (find("data-copy-save")) {
+    copySave();
+    return;
+  }
+
+  if (find("data-import-save")) {
+    importSave();
+    return;
+  }
+
+  if (find("data-reset")) {
+    openResetModal();
+    return;
+  }
+
+  if (find("data-install")) {
+    installApp();
+    return;
+  }
+
+  if (find("data-close-modal")) {
+    if (modalState && modalState.closeable) closeModal();
+    return;
+  }
+});
+
+$("#modal").addEventListener("click", (event) => {
+  if (event.target === $("#modal") && modalState && modalState.closeable) closeModal();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && modalOpen && modalState && modalState.closeable) {
+    closeModal();
+  }
+});
+
+let hiddenAt = 0;
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    hiddenAt = Date.now();
+    saveGame();
+    return;
+  }
+
+  const away = hiddenAt ? (Date.now() - hiddenAt) / 1000 : 0;
+  hiddenAt = 0;
+  lastFrame = performance.now();
+  accumulator = 0;
+
+  if (away > 10 && !modalOpen) {
+    const offline = simulateOffline(Math.min(away, MAX_OFFLINE_SECONDS), away > MAX_OFFLINE_SECONDS);
+    if (offline && offline.gain > 0) {
+      toast(t("offlineBody", {
+        time: formatDuration(offline.seconds),
+        cash: money(offline.gain)
+      }), "good");
+      checkAchievements();
+      renderAll();
+    }
+  }
+});
+
+window.addEventListener("pagehide", saveGame);
+window.addEventListener("beforeunload", saveGame);
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredPrompt = event;
+  updateInstallStrip();
+  if (state.tab === "settings") renderSettings();
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredPrompt = null;
+  updateInstallStrip();
+  toast(t("installed"), "good");
+  if (state.tab === "settings") renderSettings();
+});
+
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch((err) => {
+      console.warn("Service worker registration failed:", err);
+    });
+  });
+}
+
+loadGame();
+if (!state.lang) state.lang = detectLang();
+renderAll();
+checkAchievements();
+showOfflineModal();
+lastFrame = performance.now();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "id": "./game.html",
+  "name": "巴士大亨 · Bus Tycoon HK",
+  "short_name": "巴士大亨",
+  "description": "香港公交經營增量遊戲：買巴士、開路線、續專營權，建立你的巴士王國。",
+  "start_url": "./game.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#080d17",
+  "theme_color": "#0b1220",
+  "lang": "zh-HK",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
