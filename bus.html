@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>B3A · 富泰邨 ⇄ 深圳灣口岸</title>
+<style>
+  :root {
+    --bg: #080d17;
+    --panel: rgba(255, 255, 255, 0.055);
+    --line: rgba(255, 255, 255, 0.1);
+    --text: #f5f7fb;
+    --muted: #8b97ad;
+    --accent: #ffd23f;
+    --accent-soft: rgba(255, 210, 63, 0.14);
+    --green: #37e29a;
+    --red: #ff6b6b;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    display: flex;
+    align-items: flex-start;
+    align-items: safe center;
+    justify-content: center;
+    padding: clamp(16px, 4vw, 40px);
+    background:
+      radial-gradient(1100px 600px at 12% -8%, #1b2b4a 0%, transparent 58%),
+      radial-gradient(900px 500px at 108% 110%, #2a1f0a 0%, transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+      "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    width: min(100%, 560px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025));
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: clamp(22px, 5vw, 34px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255,255,255,0.08);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .route-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #12151d;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    padding: 7px 14px;
+    border-radius: 12px;
+    line-height: 1;
+    box-shadow: 0 8px 24px rgba(255, 210, 63, 0.22);
+  }
+
+  .route-badge svg { width: 21px; height: 21px; }
+
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--green);
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(55, 226, 154, 0.28);
+    background: rgba(55, 226, 154, 0.08);
+    margin-top: 5px;
+    white-space: nowrap;
+    transition: color .25s, border-color .25s, background .25s;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(55, 226, 154, 0.5); }
+    70% { box-shadow: 0 0 0 7px rgba(55, 226, 154, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(55, 226, 154, 0); }
+  }
+
+  .journey {
+    margin: 22px 0 0;
+    font-size: clamp(19px, 4.4vw, 24px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+
+  .journey .arrow {
+    color: var(--accent);
+    font-weight: 400;
+    padding: 0 4px;
+  }
+
+  .journey .en {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--muted);
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line) 12%, var(--line) 88%, transparent);
+    margin: 24px 0 6px;
+  }
+
+  #buses { min-height: 240px; }
+
+  .bus-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    animation: rise .45s cubic-bezier(.2,.7,.2,1) both;
+  }
+
+  .bus-row:last-child { border-bottom: 0; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .bus-row.primary { padding-top: 20px; padding-bottom: 22px; }
+
+  .eta-main {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .minutes {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.055em;
+    background: linear-gradient(180deg, #fff 20%, #cfd8e8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bus-row.primary .minutes {
+    font-size: clamp(76px, 17vw, 96px);
+    background: linear-gradient(180deg, #fff6cf 5%, var(--accent) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .unit {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  .bus-row.primary .unit { font-size: 18px; color: #d8c98a; }
+
+  .due .minutes {
+    font-size: clamp(52px, 13vw, 72px);
+    letter-spacing: -0.02em;
+  }
+
+  .bus-row.primary.due .minutes {
+    background: linear-gradient(180deg, #d9ffe9 5%, var(--green) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .meta {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .clock {
+    font-size: 15px;
+    font-weight: 650;
+    color: #d5dceb;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .label {
+    margin-top: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .remark {
+    margin-top: 7px;
+    font-size: 12px;
+    color: var(--accent);
+    max-width: 190px;
+  }
+
+  .state {
+    padding: 54px 10px 58px;
+    text-align: center;
+    animation: rise .4s ease both;
+  }
+
+  .state .icon { font-size: 34px; margin-bottom: 12px; opacity: .9; }
+  .state .title { font-size: 17px; font-weight: 650; }
+  .state .sub { margin-top: 7px; font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .state.error .title { color: var(--red); }
+
+  .skeleton {
+    height: 92px;
+    margin: 10px 0;
+    border-radius: 16px;
+    background: linear-gradient(100deg, rgba(255,255,255,.045) 30%, rgba(255,255,255,.1) 50%, rgba(255,255,255,.045) 70%);
+    background-size: 220% 100%;
+    animation: shimmer 1.3s infinite linear;
+  }
+
+  .skeleton.short { height: 56px; opacity: .65; }
+
+  .return-block {
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+
+  .return-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 4px;
+  }
+
+  .kicker {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .return-title {
+    margin: 0;
+    font-size: clamp(17px, 4vw, 19px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .return-title .arrow { color: var(--accent); font-weight: 400; padding: 0 3px; }
+
+  .return-sub {
+    margin-top: 4px;
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  .return-note {
+    flex-shrink: 0;
+    font-size: 10.5px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.45;
+    padding-top: 20px;
+  }
+
+  .return-block .state { padding: 26px 10px 22px; }
+  .return-block .state .icon { font-size: 24px; margin-bottom: 8px; }
+  .return-block .state .title { font-size: 15px; }
+  .return-block .state .sub { font-size: 12px; }
+
+  .bus-row.compact {
+    padding: 13px 4px;
+    animation: none;
+  }
+
+  .bus-row.compact .minutes {
+    font-size: 38px;
+    letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #fff 20%, #cfd8e8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .bus-row.compact.due .minutes {
+    font-size: 30px;
+    background: linear-gradient(180deg, #d9ffe9 5%, var(--green) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .bus-row.compact .unit { font-size: 13px; }
+  .bus-row.compact .clock { font-size: 13.5px; }
+  .bus-row.compact .label { margin-top: 3px; font-size: 10px; }
+
+  @keyframes shimmer {
+    to { background-position: -220% 0; }
+  }
+
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 20px;
+    padding-top: 17px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .refresh {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ring {
+    --p: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent) calc(var(--p) * 1turn), rgba(255,255,255,0.13) 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+  }
+
+  footer a { color: #a9b6cc; text-decoration: none; border-bottom: 1px solid rgba(169,182,204,.3); }
+  footer a:hover { color: #fff; }
+
+  @media (max-width: 380px) {
+    .minutes { font-size: 54px; }
+    .bus-row.primary .minutes { font-size: 70px; }
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="route-badge">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 16.5V7a2.5 2.5 0 0 1 2.5-2.5h11A2.5 2.5 0 0 1 20 7v9.5M4 12h16M7 16.5h.01M17 16.5h.01M6 19h12a1 1 0 0 0 1-1v-1.5H5V18a1 1 0 0 0 1 1Z" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M7 7.5h4M7 9.8h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      B3A
+    </div>
+    <div class="live" id="live"><span class="dot"></span><span id="liveText">LIVE</span></div>
+  </header>
+
+  <h1 class="journey">
+    富泰邨 <span class="arrow">→</span> 深圳灣口岸
+    <span class="en">Fu Tai Estate → Shenzhen Bay Port</span>
+  </h1>
+
+  <div class="divider" aria-hidden="true"></div>
+
+  <section id="buses-outbound" aria-live="polite" aria-busy="true">
+    <div class="skeleton"></div>
+    <div class="skeleton short"></div>
+  </section>
+
+  <section class="return-block" aria-labelledby="return-title">
+    <div class="return-head">
+      <div>
+        <div class="kicker">Return · 回程</div>
+        <h2 class="return-title" id="return-title">
+          深圳灣口岸 <span class="arrow">→</span> 富泰
+        </h2>
+        <div class="return-sub">Shenzhen Bay Port → Fu Tai</div>
+      </div>
+      <div class="return-note">Alight at<br>Fu Tai Shopping Centre</div>
+    </div>
+    <div id="buses-inbound" aria-live="polite" aria-busy="true">
+      <div class="skeleton short"></div>
+      <div class="skeleton short"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      Next bus in minutes · every 30s<br>
+      Data: <a href="https://data.gov.hk" target="_blank" rel="noopener">DATA.GOV.HK</a> · Citybus
+    </div>
+    <div class="refresh">
+      <span class="ring" id="ring" aria-hidden="true"></span>
+      <span id="refreshText">updating…</span>
+    </div>
+  </footer>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const API_ROOT = "https://rt.data.gov.hk/v2/transport/citybus/eta/CTB";
+  const MAX_ROWS = 3;
+  const INTERVAL_MS = 30_000;
+
+  const DIRECTIONS = [
+    {
+      id: "outbound",
+      dir: "O",
+      stop: "003261",
+      el: document.getElementById("buses-outbound"),
+      compact: false,
+      emptyTitle: "No upcoming buses",
+      emptyText: "No B3A service is currently predicted from Fu Tai Estate.",
+      nextLabel: "Next bus",
+    },
+    {
+      id: "inbound",
+      dir: "I",
+      stop: "003208",
+      el: document.getElementById("buses-inbound"),
+      compact: true,
+      emptyTitle: "No upcoming departures",
+      emptyText: "No B3A service is currently predicted from Shenzhen Bay Port.",
+      nextLabel: "Next departure",
+    },
+  ];
+
+  const state = {};
+  for (const d of DIRECTIONS) {
+    state[d.id] = { arrivals: [], error: null, loading: false, updated: null };
+  }
+
+  const liveEl = document.getElementById("live");
+  const liveTextEl = document.getElementById("liveText");
+  const ringEl = document.getElementById("ring");
+  const refreshTextEl = document.getElementById("refreshText");
+
+  let nextRefreshAt = 0;
+  const lastSignature = {};
+
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+  ));
+
+  const pad = (n) => String(n).padStart(2, "0");
+
+  function timeLabel(date) {
+    return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function minutesUntil(date, now) {
+    return Math.max(0, Math.floor((date.getTime() - now.getTime()) / 60000));
+  }
+
+  // A bus is still boardable while its ETA is within the current minute.
+  function isDue(date, now) {
+    return date.getTime() - now.getTime() < 60000;
+  }
+
+  function renderOne(d, now) {
+    const s = state[d.id];
+    const el = d.el;
+
+    if (s.loading && !s.arrivals.length && !s.updated) {
+      el.innerHTML = d.compact
+        ? '<div class="skeleton short"></div><div class="skeleton short"></div>'
+        : '<div class="skeleton"></div><div class="skeleton short"></div>';
+      el.setAttribute("aria-busy", "true");
+      return;
+    }
+
+    el.setAttribute("aria-busy", "false");
+
+    if (s.error && !s.arrivals.length) {
+      el.innerHTML = `
+        <div class="state error">
+          <div class="icon">⚠️</div>
+          <div class="title">Couldn’t load ${d.compact ? "departures" : "arrivals"}</div>
+          <div class="sub">${esc(s.error)}<br>Retrying automatically in 30 seconds…</div>
+        </div>`;
+      return;
+    }
+
+    if (!s.arrivals.length) {
+      el.innerHTML = `
+        <div class="state">
+          <div class="icon">🌙</div>
+          <div class="title">${d.emptyTitle}</div>
+          <div class="sub">${d.emptyText}<br>Last checked ${s.updated ? timeLabel(s.updated) : "—"}.</div>
+        </div>`;
+      return;
+    }
+
+    el.innerHTML = s.arrivals.slice(0, MAX_ROWS).map((bus, i) => {
+      const due = isDue(bus.at, now);
+      const mins = minutesUntil(bus.at, now);
+      const primary = !d.compact && i === 0 ? " primary" : "";
+      const compact = d.compact ? " compact" : "";
+      const dueClass = due ? " due" : "";
+      const delay = d.compact ? 0 : i * 60;
+      return `
+        <article class="bus-row${primary}${compact}${dueClass}" style="animation-delay:${delay}ms">
+          <div class="eta-main">
+            ${due
+              ? '<span class="minutes">Due</span>'
+              : `<span class="minutes">${mins}</span><span class="unit">min</span>`}
+          </div>
+          <div class="meta">
+            <div class="clock">${timeLabel(bus.at)}</div>
+            <div class="label">${i === 0 ? d.nextLabel : "Later"}</div>
+            ${bus.remark ? `<div class="remark">${esc(bus.remark)}</div>` : ""}
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  function signatureFor(d, now) {
+    const s = state[d.id];
+    return JSON.stringify([
+      s.loading,
+      s.error,
+      s.updated ? s.updated.getTime() : 0,
+      s.arrivals.map((b) => [
+        b.at.getTime(),
+        b.remark,
+        minutesUntil(b.at, now),
+        isDue(b.at, now),
+      ]),
+    ]);
+  }
+
+  function renderAll(force = false) {
+    const now = new Date();
+    for (const d of DIRECTIONS) {
+      const sig = signatureFor(d, now);
+      if (!force && sig === lastSignature[d.id]) continue;
+      lastSignature[d.id] = sig;
+      renderOne(d, now);
+    }
+  }
+
+  function updateChrome() {
+    const now = Date.now();
+    const failed = DIRECTIONS.filter((d) => state[d.id].error).length;
+    const total = DIRECTIONS.length;
+
+    if (failed === total) {
+      liveEl.style.color = "var(--red)";
+      liveEl.style.borderColor = "rgba(255,107,107,.35)";
+      liveEl.style.background = "rgba(255,107,107,.08)";
+      liveTextEl.textContent = "RETRYING";
+    } else if (failed > 0) {
+      liveEl.style.color = "var(--accent)";
+      liveEl.style.borderColor = "rgba(255,210,63,.32)";
+      liveEl.style.background = "rgba(255,210,63,.08)";
+      liveTextEl.textContent = "PARTIAL";
+    } else {
+      liveEl.style.color = "";
+      liveEl.style.borderColor = "";
+      liveEl.style.background = "";
+      liveTextEl.textContent = "LIVE";
+    }
+
+    const remaining = Math.max(0, nextRefreshAt - now);
+    const progress = 1 - remaining / INTERVAL_MS;
+    ringEl.style.setProperty("--p", String(Math.min(1, Math.max(0, progress))));
+    refreshTextEl.textContent = failed
+      ? `retry in ${Math.ceil(remaining / 1000)}s`
+      : `${Math.ceil(remaining / 1000)}s`;
+  }
+
+  function pickArrivals(payload, d) {
+    const now = Date.now();
+    return (payload.data || [])
+      .filter((e) => e.co === "CTB" && e.route === "B3A" && e.dir === d.dir && e.stop === d.stop)
+      .filter((e) => e.eta && !Number.isNaN(Date.parse(e.eta)))
+      .map((e) => ({
+        at: new Date(e.eta),
+        remark: e.rmk_en || e.rmk_tc || "",
+      }))
+      .filter((e) => e.at.getTime() > now - 60_000)   // drop just-departed predictions
+      .sort((a, b) => a.at - b.at)
+      .filter((e, i, list) => i === 0 || e.at - list[i - 1].at > 20_000) // collapse duplicates
+      .slice(0, MAX_ROWS);
+  }
+
+  async function loadDirection(d) {
+    const s = state[d.id];
+    if (s.loading) return;
+    s.loading = true;
+    renderAll();
+
+    try {
+      const res = await fetch(`${API_ROOT}/${d.stop}/B3A?_=${Date.now()}`, {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      });
+      if (!res.ok) throw new Error(`API returned HTTP ${res.status}`);
+
+      const payload = await res.json();
+      if (!payload || !Array.isArray(payload.data)) throw new Error("Unexpected API response");
+
+      s.arrivals = pickArrivals(payload, d);
+      s.error = null;
+      s.updated = new Date();
+    } catch (err) {
+      s.error = err && err.message ? err.message : "Network error";
+      // Keep showing the previous predictions if we have them.
+      if (!s.arrivals.length) s.updated = null;
+    } finally {
+      s.loading = false;
+      renderAll();
+    }
+  }
+
+  async function loadAll() {
+    await Promise.allSettled(DIRECTIONS.map(loadDirection));
+    nextRefreshAt = Date.now() + INTERVAL_MS;
+    renderAll();
+    updateChrome();
+  }
+
+  // Tick once a second so the minute countdown and refresh ring stay honest.
+  setInterval(() => {
+    renderAll();
+    updateChrome();
+  }, 1000);
+
+  setInterval(loadAll, INTERVAL_MS);
+  loadAll();
+})();
+</script>
+</body>
+</html>
