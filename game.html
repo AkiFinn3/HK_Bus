@@ -2151,6 +2151,7 @@ let currentEvent = null;
 let modalState = null;
 let modalOpen = false;
 let deferredPrompt = null;
+let appInstalled = false;
 let lastOffline = null;
 let accumulator = 0;
 let lastFrame = performance.now();
@@ -2839,7 +2840,7 @@ function renderAchievements() {
 
 function renderSettings() {
   const panel = $("#panel-settings");
-  const standalone = isStandalone();
+  const standalone = isStandalone() || appInstalled;
   const installControl = standalone
     ? `<span class="pill good">${t("installed")}</span>`
     : `<button type="button" class="btn btn-primary btn-small" data-install>${t("install")}</button>`;
@@ -3325,7 +3326,7 @@ function isIosDevice() {
 
 function updateInstallStrip() {
   const strip = $("#installStrip");
-  if (strip) strip.hidden = isStandalone();
+  if (strip) strip.hidden = isStandalone() || appInstalled;
 }
 
 function showInstallGuide() {
@@ -3344,7 +3345,7 @@ function showInstallGuide() {
 }
 
 function installApp() {
-  if (isStandalone()) {
+  if (isStandalone() || appInstalled) {
     toast(t("installed"), "good");
     return;
   }
@@ -3359,6 +3360,7 @@ function installApp() {
   prompt.prompt();
   prompt.userChoice.then((choice) => {
     if (choice && choice.outcome === "accepted") {
+      appInstalled = true;
       updateInstallStrip();
       toast(t("installed"), "good");
     }
@@ -3751,6 +3753,7 @@ window.addEventListener("beforeinstallprompt", (event) => {
 
 window.addEventListener("appinstalled", () => {
   deferredPrompt = null;
+  appInstalled = true;
   updateInstallStrip();
   toast(t("installed"), "good");
   if (state.tab === "settings") renderSettings();
