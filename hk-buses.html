@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>全港巴士 · 實時到站</title>
+<style>
+  :root {
+    --bg: #080d17;
+    --panel: rgba(255, 255, 255, 0.055);
+    --line: rgba(255, 255, 255, 0.1);
+    --text: #f5f7fb;
+    --muted: #8b97ad;
+    --accent: #ffd23f;
+    --green: #37e29a;
+    --red: #ff6b6b;
+    --op: var(--accent);
+    --op-ink: #11151d;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { min-height: 100%; }
+
+  body {
+    margin: 0;
+    padding: clamp(12px, 4vw, 34px);
+    background:
+      radial-gradient(1100px 600px at 12% -8%, #1b2b4a 0%, transparent 58%),
+      radial-gradient(900px 500px at 108% 110%, #2a1f0a 0%, transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+      "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app { width: min(100%, 760px); margin: 0 auto; }
+
+  header.top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 6px 4px 20px;
+  }
+
+  .kicker {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 6px 0 0;
+    font-size: clamp(28px, 7vw, 40px);
+    font-weight: 850;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+
+  .sub {
+    margin: 7px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .back {
+    flex: 0 0 auto;
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 11px;
+    border: 1px solid rgba(255, 210, 63, 0.28);
+    border-radius: 999px;
+    background: rgba(255, 210, 63, 0.07);
+    color: var(--accent);
+    font-size: 11.5px;
+    font-weight: 750;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .back:hover { background: rgba(255, 210, 63, 0.13); }
+
+  .panel {
+    margin-bottom: 14px;
+    padding: clamp(16px, 4vw, 24px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.025));
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .operator-chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 1px 1px 5px;
+    scrollbar-width: none;
+  }
+
+  .operator-chips::-webkit-scrollbar { display: none; }
+
+  .op-chip {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+  }
+
+  .op-chip .count {
+    font-size: 9.5px;
+    font-weight: 700;
+    opacity: 0.62;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .op-chip.active {
+    background: var(--op);
+    border-color: transparent;
+    color: var(--op-ink);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  }
+
+  .op-chip.active .count { opacity: 0.72; }
+
+  .field-label {
+    display: block;
+    margin: 19px 0 8px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+
+  .search-wrap:focus-within {
+    border-color: rgba(255, 210, 63, 0.5);
+    box-shadow: 0 0 0 3px rgba(255, 210, 63, 0.07);
+  }
+
+  .search-icon {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .search-wrap input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 15px;
+  }
+
+  .search-wrap input::placeholder { color: #6f7c91; }
+
+  .nearby-btn {
+    flex: 0 0 auto;
+    padding: 7px 11px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #dbe4f2;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .nearby-btn:active { transform: scale(0.97); }
+
+  .hint {
+    margin-top: 8px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .route-results {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 380px;
+    margin-top: 10px;
+    overflow: auto;
+    padding-right: 2px;
+  }
+
+  .route-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035);
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.16s, border-color 0.16s;
+  }
+
+  .route-option:hover,
+  .route-option:focus-visible {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--op);
+    outline: none;
+  }
+
+  .route-main { flex: 1; min-width: 0; }
+
+  .route-name {
+    font-size: 13px;
+    font-weight: 750;
+    line-height: 1.3;
+    color: #f1f5fb;
+  }
+
+  .route-path {
+    margin-top: 2px;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .route-op {
+    flex: 0 0 auto;
+    color: var(--op);
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .route-badge {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 54px;
+    height: 38px;
+    padding: 0 9px;
+    border-radius: 10px;
+    background: var(--op);
+    color: var(--op-ink);
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.015em;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 5px 14px rgba(0, 0, 0, 0.2);
+  }
+
+  .route-badge.long { font-size: 14px; }
+
+  .route-badge.small {
+    min-width: 38px;
+    height: 27px;
+    padding: 0 7px;
+    border-radius: 7px;
+    font-size: 12px;
+  }
+
+  .empty, .error-box {
+    padding: 26px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.028);
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+
+  .error-box { color: var(--red); background: rgba(255, 107, 107, 0.055); }
+
+  .selected-head {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-height: 42px;
+  }
+
+  .selected-info { flex: 1; min-width: 0; }
+
+  .selected-path {
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  .selected-op {
+    margin-top: 3px;
+    color: var(--op);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .fav-btn {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--accent);
+    font-size: 19px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .fav-btn.on {
+    border-color: rgba(255, 210, 63, 0.45);
+    background: rgba(255, 210, 63, 0.12);
+  }
+
+  .dir-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .dir-btn {
+    padding: 10px 11px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.035);
+    color: #cfd8e7;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.16s, border-color 0.16s;
+  }
+
+  .dir-btn strong {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .dir-btn span {
+    display: block;
+    margin-top: 3px;
+    overflow: hidden;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dir-btn.active {
+    border-color: var(--op);
+    background: rgba(255, 255, 255, 0.08);
+    background: color-mix(in srgb, var(--op) 15%, transparent);
+  }
+
+  .dir-single {
+    margin-top: 16px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.035);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .dir-single strong { color: var(--text); font-weight: 750; }
+
+  .stop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-height: 348px;
+    margin-top: 9px;
+    overflow: auto;
+    padding-right: 2px;
+  }
+
+  .stop-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 8px;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 9px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .stop-option:hover { background: rgba(255, 255, 255, 0.055); }
+
+  .stop-option.selected {
+    background: rgba(255, 255, 255, 0.08);
+    background: color-mix(in srgb, var(--op) 14%, transparent);
+  }
+
+  .stop-seq {
+    flex: 0 0 28px;
+    color: #6f7c91;
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .stop-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .stop-dist {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 10.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .eta-panel {
+    border-color: rgba(255, 255, 255, 0.1);
+    border-color: color-mix(in srgb, var(--op) 38%, var(--line));
+  }
+
+  .eta-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .eta-title { flex: 1; min-width: 0; }
+
+  .eta-stop {
+    overflow: hidden;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .eta-sub {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+
+  .eta-updated {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 9.5px;
+    line-height: 1.45;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .eta-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+  }
+
+  .eta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 4px 16px 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-left: 3px solid var(--op);
+  }
+
+  .eta-row:first-child { border-top: 0; }
+
+  .eta-main { display: flex; align-items: baseline; gap: 8px; }
+
+  .eta-min {
+    background: linear-gradient(180deg, #fff 20%, #cfd8e8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 52px;
+    font-weight: 850;
+    letter-spacing: -0.05em;
+    line-height: 0.88;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .eta-row:first-child .eta-min {
+    background: linear-gradient(180deg, #fff6cf 5%, var(--op) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-size: 72px;
+  }
+
+  .eta-min.due {
+    background: linear-gradient(180deg, #d9ffe9 5%, var(--green) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .eta-unit {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 750;
+  }
+
+  .eta-row:first-child .eta-unit { color: #d8c98a; font-size: 16px; }
+
+  .eta-meta {
+    flex: 0 0 auto;
+    text-align: right;
+  }
+
+  .eta-clock {
+    color: #d5dceb;
+    font-size: 14px;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .eta-label {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .eta-remark {
+    margin-top: 5px;
+    max-width: 180px;
+    color: var(--accent);
+    font-size: 10.5px;
+    line-height: 1.35;
+  }
+
+  .skeleton {
+    height: 64px;
+    margin: 6px 0;
+    border-radius: 14px;
+    background: linear-gradient(100deg, rgba(255,255,255,.045) 30%, rgba(255,255,255,.1) 50%, rgba(255,255,255,.045) 70%);
+    background-size: 220% 100%;
+    animation: shimmer 1.3s infinite linear;
+  }
+
+  .skeleton.short { height: 42px; opacity: 0.72; }
+
+  @keyframes shimmer { to { background-position: -220% 0; } }
+
+  .favorites {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 4px 12px;
+    scrollbar-width: none;
+  }
+
+  .favorites::-webkit-scrollbar { display: none; }
+
+  .fav-chip {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 8px 5px 5px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.045);
+    color: #dce5f2;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 650;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .fav-chip:hover { border-color: var(--op); }
+
+  .fav-chip .fav-name {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fav-x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 8px 4px 2px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  footer a { color: #a9b6cc; text-decoration: none; border-bottom: 1px solid rgba(169,182,204,.3); }
+  footer a:hover { color: #fff; }
+
+  .share {
+    flex: 0 0 auto;
+    padding: 7px 11px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #dce5f2;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 20;
+    max-width: min(90vw, 360px);
+    padding: 10px 15px;
+    border: 1px solid rgba(255, 210, 63, 0.28);
+    border-radius: 999px;
+    background: #161e2d;
+    color: #f5f7fb;
+    font-size: 12px;
+    font-weight: 650;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 18px);
+    transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 520px) {
+    header.top { padding-bottom: 16px; }
+    .dir-row { grid-template-columns: 1fr; }
+    .eta-min { font-size: 46px; }
+    .eta-row:first-child .eta-min { font-size: 64px; }
+    .route-results, .stop-list { max-height: 300px; }
+    .eta-updated { display: none; }
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <div>
+      <div class="kicker">Hong Kong · Live arrival</div>
+      <h1>全港巴士</h1>
+      <p class="sub">九巴 · 龍運 · 城巴 · 嶼巴 · 港鐵巴士 · 綠色小巴</p>
+    </div>
+    <a class="back" href="index.html">B3A 看板 →</a>
+  </header>
+
+  <div class="favorites" id="favorites" hidden></div>
+
+  <section class="panel">
+    <div class="operator-chips" id="opChips" role="tablist" aria-label="營辦商"></div>
+
+    <label class="field-label" for="routeSearch">路線／車輛</label>
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="routeSearch" type="search" placeholder="輸入路線號，例如 B3A、968、K51…" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="hint" id="routeHint">輸入路線號、起點或終點搜尋</div>
+    <div class="route-results" id="routeResults" aria-live="polite"></div>
+  </section>
+
+  <section class="panel selected-panel" id="selectedPanel" hidden>
+    <div class="selected-head" id="selectedHead"></div>
+    <div id="dirRow"></div>
+
+    <label class="field-label" for="stopSearch">上車地點</label>
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="stopSearch" type="search" placeholder="搜尋車站…" autocomplete="off" spellcheck="false">
+      <button id="nearbyBtn" class="nearby-btn" type="button">附近</button>
+    </div>
+    <div class="hint" id="stopHint"></div>
+    <div class="stop-list" id="stopList" aria-live="polite"></div>
+  </section>
+
+  <section class="panel eta-panel" id="etaPanel" hidden>
+    <div class="eta-head" id="etaHead"></div>
+    <div id="etaBody" aria-live="polite"></div>
+  </section>
+
+  <footer>
+    <div>資料：<a href="https://data.gov.hk" target="_blank" rel="noopener">DATA.GOV.HK</a> · 30 秒自動更新</div>
+    <button id="shareBtn" class="share" type="button">分享</button>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="mtr-bus-data.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  const OPERATORS = {
+    ALL: { key: "ALL", name: "全部", full: "全部營辦商", color: "#ffd23f", ink: "#11151d" },
+    KMB: { key: "KMB", name: "九巴", full: "九龍巴士", color: "#e2231a", ink: "#ffffff" },
+    LWB: { key: "LWB", name: "龍運", full: "龍運巴士", color: "#f58220", ink: "#161006" },
+    CTB: { key: "CTB", name: "城巴", full: "城巴", color: "#ffd200", ink: "#15130a" },
+    NLB: { key: "NLB", name: "嶼巴", full: "新大嶼山巴士", color: "#00b3a4", ink: "#041412" },
+    MTR: { key: "MTR", name: "港鐵巴士", full: "港鐵巴士", color: "#2f80ed", ink: "#ffffff" },
+    GMB: { key: "GMB", name: "綠色小巴", full: "綠色專線小巴", color: "#27ae60", ink: "#ffffff" }
+  };
+
+  const REGIONS = { HKI: "港島", KLN: "九龍", NT: "新界" };
+  const OPS = ["ALL", "KMB", "LWB", "CTB", "NLB", "MTR", "GMB"];
+  const REFRESH_MS = 30000;
+  const MAX_RESULTS = 60;
+  const TTL_ROUTES = 6 * 60 * 60 * 1000;
+  const TTL_STOPS = 24 * 60 * 60 * 1000;
+
+  const KMB_ROUTES = "https://data.etabus.gov.hk/v1/transport/kmb/route/";
+  const KMB_STOPS = "https://data.etabus.gov.hk/v1/transport/kmb/stop/";
+  const KMB_ROUTE_STOP = "https://data.etabus.gov.hk/v1/transport/kmb/route-stop";
+  const KMB_ETA = "https://data.etabus.gov.hk/v1/transport/kmb/eta";
+  const CTB_ROUTES = "https://rt.data.gov.hk/v2/transport/citybus/route/CTB";
+  const CTB_ROUTE_STOP = "https://rt.data.gov.hk/v2/transport/citybus/route-stop/CTB";
+  const CTB_STOP = "https://rt.data.gov.hk/v2/transport/citybus/stop/";
+  const CTB_ETA = "https://rt.data.gov.hk/v2/transport/citybus/eta/CTB";
+  const NLB_ROUTES = "https://rt.data.gov.hk/v2/transport/nlb/route.php?action=list";
+  const NLB_STOPS = "https://rt.data.gov.hk/v2/transport/nlb/stop.php";
+  const MTR_SCHEDULE = "https://rt.data.gov.hk/v1/transport/mtr/bus/getSchedule";
+  const GMB_ROUTES = "https://data.etagmb.gov.hk/route";
+  const GMB_ROUTE_STOP = "https://data.etagmb.gov.hk/route-stop";
+  const GMB_STOP = "https://data.etagmb.gov.hk/stop/";
+  const GMB_ETA = "https://data.etagmb.gov.hk/eta/route-stop";
+
+  const POPULAR = [
+    "CTB:B3A", "CTB:B3X", "CTB:B3M", "KMB:968", "KMB:59X",
+    "LWB:A43", "LWB:E33", "NLB:1", "MTR:K51",
+    "GMB:HKI:1", "GMB:KLN:1", "GMB:NT:1"
+  ];
+
+  const state = {
+    op: "ALL",
+    groups: [],
+    loaded: false,
+    group: null,
+    variant: null,
+    stops: [],
+    stop: null,
+    stopLoading: false,
+    stopError: null,
+    eta: [],
+    etaLoading: false,
+    etaError: null,
+    etaUpdated: null,
+    routeQuery: "",
+    stopQuery: "",
+    nearby: false,
+    location: null,
+    favorites: readFavorites()
+  };
+
+  const mem = new Map();
+  const els = {
+    opChips: document.getElementById("opChips"),
+    routeSearch: document.getElementById("routeSearch"),
+    routeHint: document.getElementById("routeHint"),
+    routeResults: document.getElementById("routeResults"),
+    selectedPanel: document.getElementById("selectedPanel"),
+    selectedHead: document.getElementById("selectedHead"),
+    dirRow: document.getElementById("dirRow"),
+    stopSearch: document.getElementById("stopSearch"),
+    nearbyBtn: document.getElementById("nearbyBtn"),
+    stopHint: document.getElementById("stopHint"),
+    stopList: document.getElementById("stopList"),
+    etaPanel: document.getElementById("etaPanel"),
+    etaHead: document.getElementById("etaHead"),
+    etaBody: document.getElementById("etaBody"),
+    favorites: document.getElementById("favorites"),
+    shareBtn: document.getElementById("shareBtn"),
+    toast: document.getElementById("toast")
+  };
+
+  let routeDebounce = null;
+  let stopDebounce = null;
+  let etaToken = 0;
+  let stopToken = 0;
+  let toastTimer = null;
+
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+  ));
+
+  const norm = (s) => String(s ?? "").toLowerCase().replace(/\s+/g, "");
+
+  const num = (v) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const pad = (n) => String(n).padStart(2, "0");
+
+  function timeLabel(date) {
+    return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function opMeta(op) {
+    return OPERATORS[op] || OPERATORS.ALL;
+  }
+
+  function groupKey(op, route, region) {
+    return region ? `${op}:${region}:${route}` : `${op}:${route}`;
+  }
+
+  function opStyle(op) {
+    const meta = opMeta(op);
+    return `--op:${meta.color};--op-ink:${meta.ink}`;
+  }
+
+  function badge(route, op, cls = "") {
+    const long = String(route).length > 3 ? " long" : "";
+    return `<span class="route-badge${long}${cls ? ` ${cls}` : ""}" style="${opStyle(op)}">${esc(route)}</span>`;
+  }
+
+  function readFavorites() {
+    try {
+      const raw = localStorage.getItem("hkbus.favorites.v1");
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveFavorites() {
+    try {
+      localStorage.setItem("hkbus.favorites.v1", JSON.stringify(state.favorites));
+    } catch {
+      /* storage can be unavailable in private mode */
+    }
+  }
+
+  function getCache(key) {
+    if (mem.has(key)) {
+      const item = mem.get(key);
+      if (Date.now() - item.t < item.ttl) return item.v;
+      mem.delete(key);
+    }
+    try {
+      const raw = localStorage.getItem(`hkbus.cache.${key}`);
+      if (!raw) return null;
+      const item = JSON.parse(raw);
+      if (!item || !item.t || Date.now() - item.t > item.ttl) return null;
+      mem.set(key, item);
+      return item.v;
+    } catch {
+      return null;
+    }
+  }
+
+  function setCache(key, value, ttl) {
+    const item = { t: Date.now(), ttl, v: value };
+    mem.set(key, item);
+    try {
+      localStorage.setItem(`hkbus.cache.${key}`, JSON.stringify(item));
+    } catch {
+      /* ignore quota errors */
+    }
+  }
+
+  async function fetchJSON(url, opts = {}) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 18000);
+    try {
+      const res = await fetch(url, { ...opts, signal: controller.signal });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  async function cachedJSON(key, ttl, url, opts = {}) {
+    const cached = getCache(key);
+    if (cached) return cached;
+    const value = await fetchJSON(url, opts);
+    setCache(key, value, ttl);
+    return value;
+  }
+
+  async function mapLimit(items, limit, fn) {
+    const out = new Array(items.length);
+    let cursor = 0;
+    async function worker() {
+      while (cursor < items.length) {
+        const index = cursor++;
+        out[index] = await fn(items[index], index);
+      }
+    }
+    await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+    return out;
+  }
+
+  function isLWB(route) {
+    return /^(A|E|R|NA)\d/i.test(route);
+  }
+
+  function dirWord(bound) {
+    return bound === "I" ? "inbound" : "outbound";
+  }
+
+  function groupPath(group) {
+    const variant = group.variants && group.variants[0];
+    if (variant && variant.orig) return `${variant.orig} → ${variant.dest}`;
+    if (group.op === "GMB") return `${REGIONS[group.region] || group.region} · 專線小巴`;
+    return "";
+  }
+
+  function groupText(group) {
+    const parts = [group.route, opMeta(group.op).name, REGIONS[group.region] || ""];
+    for (const variant of group.variants || []) {
+      parts.push(variant.orig, variant.dest);
+    }
+    return norm(parts.join(" "));
+  }
+
+  function addGroup(map, group) {
+    const key = group.key || groupKey(group.op, group.route, group.region);
+    const existing = map.get(key);
+    if (existing) {
+      for (const variant of group.variants || []) {
+        if (!existing.variants.some((v) => v.bound === variant.bound)) {
+          existing.variants.push(variant);
+        }
+      }
+      return existing;
+    }
+    group.key = key;
+    map.set(key, group);
+    return group;
+  }
+
+  async function loadKMB() {
+    const payload = await cachedJSON("kmb.routes", TTL_ROUTES, KMB_ROUTES);
+    const map = new Map();
+    for (const row of payload.data || []) {
+      const op = isLWB(row.route) ? "LWB" : "KMB";
+      const key = groupKey(op, row.route);
+      let group = map.get(key);
+      if (!group) {
+        group = { key, op, route: row.route, region: null, variants: [] };
+        map.set(key, group);
+      }
+      const variant = {
+        bound: row.bound,
+        orig: row.orig_tc || row.orig_en || "",
+        dest: row.dest_tc || row.dest_en || "",
+        serviceType: row.service_type || "1",
+        raw: row
+      };
+      const current = group.variants.find((v) => v.bound === variant.bound);
+      if (!current) {
+        group.variants.push(variant);
+      } else if (current.serviceType !== "1" && variant.serviceType === "1") {
+        group.variants[group.variants.indexOf(current)] = variant;
+      }
+    }
+    for (const group of map.values()) {
+      group.variants.sort((a, b) => (a.bound === "O" ? -1 : 1) - (b.bound === "O" ? -1 : 1));
+      state.groups.push(group);
+    }
+  }
+
+  async function loadCTB() {
+    const payload = await cachedJSON("ctb.routes", TTL_ROUTES, CTB_ROUTES);
+    for (const row of payload.data || []) {
+      const orig = row.orig_tc || row.orig_en || "";
+      const dest = row.dest_tc || row.dest_en || "";
+      state.groups.push({
+        key: groupKey("CTB", row.route),
+        op: "CTB",
+        route: row.route,
+        region: null,
+        variants: [
+          { bound: "O", orig, dest, serviceType: "1", raw: row },
+          { bound: "I", orig: dest, dest: orig, serviceType: "1", raw: row }
+        ]
+      });
+    }
+  }
+
+  async function loadNLB() {
+    const payload = await cachedJSON("nlb.routes", TTL_ROUTES, NLB_ROUTES);
+    const map = new Map();
+    for (const row of payload.routes || []) {
+      const key = groupKey("NLB", row.routeNo);
+      let group = map.get(key);
+      if (!group) {
+        group = { key, op: "NLB", route: row.routeNo, region: null, variants: [] };
+        map.set(key, group);
+      }
+      const name = row.routeName_c || row.routeName_e || "";
+      const parts = name.split(/\s*>\s*/);
+      let bound = group.variants.some((v) => v.bound === "O") ? "I" : "O";
+      if (group.variants.some((v) => v.bound === bound)) bound = bound === "O" ? "I" : "O";
+      if (group.variants.some((v) => v.bound === bound)) continue;
+      group.variants.push({
+        bound,
+        orig: parts[0] || name,
+        dest: parts[1] || "",
+        serviceType: "1",
+        raw: row
+      });
+    }
+    for (const group of map.values()) {
+      group.variants.sort((a, b) => (a.bound === "O" ? -1 : 1) - (b.bound === "O" ? -1 : 1));
+      state.groups.push(group);
+    }
+  }
+
+  function loadMTR() {
+    const data = window.MTR_BUS_DATA;
+    if (!data) return;
+    for (const [routeId, meta] of Object.entries(data.routes || {})) {
+      const stopData = (data.stops || {})[routeId] || {};
+      const variants = [];
+      for (const bound of ["O", "I"]) {
+        const stops = stopData[bound] || [];
+        if (!stops.length) continue;
+        variants.push({
+          bound,
+          orig: stops[0].nameTc || "",
+          dest: stops[stops.length - 1].nameTc || "",
+          serviceType: "1",
+          raw: { routeId, meta }
+        });
+      }
+      if (!variants.length) continue;
+      state.groups.push({
+        key: groupKey("MTR", routeId),
+        op: "MTR",
+        route: routeId,
+        region: null,
+        variants
+      });
+    }
+  }
+
+  async function loadGMB() {
+    const regions = Object.keys(REGIONS);
+    const results = await Promise.allSettled(regions.map((region) => (
+      cachedJSON(`gmb.routes.${region}`, TTL_ROUTES, `${GMB_ROUTES}/${region}`)
+    )));
+    results.forEach((result, index) => {
+      if (result.status !== "fulfilled") return;
+      const region = regions[index];
+      const codes = result.value && result.value.data && result.value.data.routes;
+      for (const code of codes || []) {
+        state.groups.push({
+          key: groupKey("GMB", code, region),
+          op: "GMB",
+          route: code,
+          region,
+          variants: []
+        });
+      }
+    });
+  }
+
+  async function loadAllCatalogs() {
+    els.routeHint.textContent = "正在載入全港路線資料…";
+    renderRouteResults(true);
+    const jobs = [
+      loadKMB().catch((error) => console.warn("KMB routes", error)),
+      loadCTB().catch((error) => console.warn("CTB routes", error)),
+      loadNLB().catch((error) => console.warn("NLB routes", error)),
+      Promise.resolve().then(loadMTR).catch((error) => console.warn("MTR routes", error)),
+      loadGMB().catch((error) => console.warn("GMB routes", error))
+    ];
+    await Promise.allSettled(jobs);
+    state.groups.sort((a, b) => (
+      String(a.route).localeCompare(String(b.route), "zh-HK", { numeric: true })
+      || String(a.op).localeCompare(String(b.op))
+      || String(a.region || "").localeCompare(String(b.region || ""))
+    ));
+    state.loaded = true;
+    renderOpChips();
+    renderRouteResults();
+    renderFavorites();
+    await restoreFromURL();
+  }
+
+  function countByOp() {
+    const counts = {};
+    for (const group of state.groups) counts[group.op] = (counts[group.op] || 0) + 1;
+    return counts;
+  }
+
+  function renderOpChips() {
+    const counts = countByOp();
+    els.opChips.innerHTML = OPS.map((key) => {
+      const meta = opMeta(key);
+      const count = key === "ALL" ? state.groups.length : (counts[key] || 0);
+      return `<button class="op-chip${state.op === key ? " active" : ""}" type="button" role="tab" aria-selected="${state.op === key}" data-op="${key}" style="--op:${meta.color};--op-ink:${meta.ink}">
+        ${meta.name}<span class="count">${count || ""}</span>
+      </button>`;
+    }).join("");
+  }
+
+  function renderRouteResults(loading = false) {
+    if (loading || (!state.loaded && !state.groups.length)) {
+      els.routeResults.innerHTML = '<div class="skeleton"></div><div class="skeleton short"></div><div class="skeleton short"></div>';
+      return;
+    }
+
+    const query = norm(state.routeQuery);
+    let groups = state.groups.filter((group) => state.op === "ALL" || group.op === state.op);
+    let result;
+
+    if (query) {
+      const scored = [];
+      for (const group of groups) {
+        const route = norm(group.route);
+        let score = 99;
+        if (route === query) score = 0;
+        else if (route.startsWith(query)) score = 1;
+        else if (route.includes(query)) score = 2;
+        else if (groupText(group).includes(query)) score = 3;
+        if (score < 99) scored.push([score, group]);
+      }
+      scored.sort((a, b) => (
+        a[0] - b[0]
+        || String(a[1].route).localeCompare(String(b[1].route), "zh-HK", { numeric: true })
+        || String(a[1].op).localeCompare(String(b[1].op))
+      ));
+      result = scored.map((item) => item[1]);
+      els.routeHint.textContent = result.length
+        ? `找到 ${result.length} 條路線${result.length > MAX_RESULTS ? `，顯示前 ${MAX_RESULTS} 條` : ""}`
+        : "沒有符合的路線，試試其他號碼或地點";
+    } else {
+      const byKey = new Map(groups.map((group) => [group.key, group]));
+      const popular = POPULAR.map((key) => byKey.get(key)).filter(Boolean);
+      const seen = new Set(popular.map((group) => group.key));
+      const rest = groups.filter((group) => !seen.has(group.key));
+      result = popular.concat(rest);
+      els.routeHint.textContent = state.op === "ALL"
+        ? "熱門路線 · 也可輸入路線號、起點或終點"
+        : `熱門 ${opMeta(state.op).name} 路線 · 也可輸入路線號或地點`;
+    }
+
+    const shown = result.slice(0, MAX_RESULTS);
+    if (!shown.length) {
+      els.routeResults.innerHTML = '<div class="empty">沒有符合的路線。</div>';
+      return;
+    }
+
+    els.routeResults.innerHTML = shown.map((group) => {
+      const meta = opMeta(group.op);
+      const path = groupPath(group);
+      const fallback = group.op === "GMB" && group.region
+        ? `${REGIONS[group.region] || group.region}專線小巴`
+        : meta.full;
+      return `<button class="route-option" type="button" data-key="${esc(group.key)}" style="${opStyle(group.op)}">
+        ${badge(group.route, group.op)}
+        <span class="route-main">
+          <span class="route-name">${esc(path || fallback)}</span>
+        </span>
+        <span class="route-op">${esc(meta.name)}${group.region ? ` · ${esc(REGIONS[group.region] || group.region)}` : ""}</span>
+      </button>`;
+    }).join("");
+  }
+
+  function findGroup(op, route, region) {
+    return state.groups.find((group) => (
+      group.op === op
+      && String(group.route) === String(route)
+      && String(group.region || "") === String(region || "")
+    ));
+  }
+
+  async function loadGMBVariants(group) {
+    if (group.variants && group.variants.length) return;
+    const payload = await cachedJSON(
+      `gmb.route.${group.region}.${group.route}`,
+      TTL_ROUTES,
+      `${GMB_ROUTES}/${group.region}/${encodeURIComponent(group.route)}`
+    );
+    const variants = [];
+    for (const item of payload.data || []) {
+      for (const direction of item.directions || []) {
+        const bound = String(direction.route_seq) === "2" ? "I" : "O";
+        if (variants.some((variant) => variant.bound === bound)) continue;
+        variants.push({
+          bound,
+          orig: direction.orig_tc || direction.orig_en || "",
+          dest: direction.dest_tc || direction.dest_en || "",
+          serviceType: "1",
+          raw: {
+            region: item.region || group.region,
+            route_id: item.route_id,
+            route_seq: direction.route_seq,
+            route_code: item.route_code || group.route
+          }
+        });
+      }
+    }
+    group.variants = variants;
+  }
+
+  async function selectRoute(group, opts = {}) {
+    state.group = group;
+    state.variant = null;
+    state.stops = [];
+    state.stop = null;
+    state.stopError = null;
+    state.stopLoading = false;
+    state.eta = [];
+    state.etaError = null;
+    state.etaUpdated = null;
+    state.nearby = false;
+    state.location = null;
+
+    if (group.op === "GMB" && !group.variants.length) {
+      state.stopLoading = true;
+      els.stopHint.textContent = "正在載入小巴路線資料…";
+      try {
+        await loadGMBVariants(group);
+      } catch (error) {
+        state.stopError = error && error.message ? error.message : "載入路線失敗";
+      }
+      state.stopLoading = false;
+    }
+
+    if (!state.variant) {
+      state.variant = (opts.bound && group.variants.find((variant) => variant.bound === opts.bound))
+        || group.variants[0]
+        || null;
+    }
+
+    state.routeQuery = group.route;
+    els.routeSearch.value = group.route;
+    els.stopSearch.value = "";
+    state.stopQuery = "";
+    renderOpChips();
+    renderRouteResults();
+    renderSelected();
+
+    if (!opts.skipURL) updateURL();
+
+    if (state.variant) {
+      await loadStops();
+      if (opts.stopId) {
+        const stop = state.stops.find((item) => String(item.id) === String(opts.stopId));
+        if (stop) await selectStop(stop, { skipURL: true, scroll: false });
+      }
+    }
+
+    if (opts.scroll !== false) {
+      setTimeout(() => els.selectedPanel.scrollIntoView({ behavior: "smooth", block: "start" }), 40);
+    }
+  }
+
+  async function chooseBound(bound) {
+    if (!state.group) return;
+    const variant = state.group.variants.find((item) => item.bound === bound);
+    if (!variant || variant === state.variant) return;
+    state.variant = variant;
+    state.stops = [];
+    state.stop = null;
+    state.stopError = null;
+    state.eta = [];
+    state.etaError = null;
+    state.etaUpdated = null;
+    state.nearby = false;
+    state.location = null;
+    els.stopSearch.value = "";
+    state.stopQuery = "";
+    renderSelected();
+    updateURL();
+    await loadStops();
+  }
+
+  function renderSelected() {
+    const group = state.group;
+    if (!group) {
+      els.selectedPanel.hidden = true;
+      return;
+    }
+    const meta = opMeta(group.op);
+    const variant = state.variant;
+    els.selectedPanel.hidden = false;
+    els.selectedPanel.style.setProperty("--op", meta.color);
+    els.selectedPanel.style.setProperty("--op-ink", meta.ink);
+
+    els.selectedHead.innerHTML = `
+      ${badge(group.route, group.op)}
+      <div class="selected-info">
+        <div class="selected-path">${esc(variant ? `${variant.orig} → ${variant.dest}` : groupPath(group))}</div>
+        <div class="selected-op">${esc(meta.full)}${group.region ? ` · ${esc(REGIONS[group.region] || group.region)}` : ""}${variant && variant.serviceType !== "1" ? " · 特別班次" : ""}</div>
+      </div>
+      <button class="fav-btn${isFavorite() ? " on" : ""}" id="favBtn" type="button" aria-label="收藏">${isFavorite() ? "★" : "☆"}</button>`;
+
+    const bounds = uniqueBounds(group.variants);
+    if (bounds.length > 1) {
+      els.dirRow.innerHTML = `<div class="dir-row">${bounds.map((bound) => {
+        const item = group.variants.find((v) => v.bound === bound);
+        return `<button class="dir-btn${state.variant && state.variant.bound === bound ? " active" : ""}" type="button" data-bound="${bound}">
+          <strong>${bound === "O" ? "去程" : "回程"}</strong>
+          <span>${esc(item ? `${item.orig} → ${item.dest}` : "")}</span>
+        </button>`;
+      }).join("")}</div>`;
+    } else if (variant) {
+      els.dirRow.innerHTML = `<div class="dir-single"><strong>${esc(variant.orig)}</strong> → ${esc(variant.dest)}</div>`;
+    } else {
+      els.dirRow.innerHTML = "";
+    }
+
+    const favButton = document.getElementById("favBtn");
+    if (favButton) favButton.addEventListener("click", toggleFavorite);
+
+    renderStops();
+    renderEta();
+  }
+
+  function uniqueBounds(variants) {
+    const result = [];
+    for (const variant of variants || []) {
+      if (!result.includes(variant.bound)) result.push(variant.bound);
+    }
+    return result;
+  }
+
+  async function loadStops() {
+    if (!state.group || !state.variant) return;
+    const token = ++stopToken;
+    state.stopLoading = true;
+    state.stopError = null;
+    state.stops = [];
+    state.stop = null;
+    els.stopHint.textContent = "正在載入車站…";
+    renderStops();
+    renderEta();
+
+    try {
+      const stops = await fetchStops(state.group, state.variant);
+      if (token !== stopToken) return;
+      if (!stops.length) throw new Error("這條路線暫時沒有車站資料");
+      state.stops = stops;
+      els.stopHint.textContent = `共 ${stops.length} 個站 · 選擇上車地點`;
+    } catch (error) {
+      if (token !== stopToken) return;
+      state.stopError = error && error.message ? error.message : "載入車站失敗";
+      els.stopHint.textContent = "載入車站失敗，請重試";
+    } finally {
+      if (token === stopToken) {
+        state.stopLoading = false;
+        renderStops();
+      }
+    }
+  }
+
+  async function fetchStops(group, variant) {
+    if (group.op === "KMB" || group.op === "LWB") return fetchKMBStops(group, variant);
+    if (group.op === "CTB") return fetchCTBStops(group, variant);
+    if (group.op === "NLB") return fetchNLBStops(group, variant);
+    if (group.op === "MTR") return fetchMTRStops(group, variant);
+    if (group.op === "GMB") return fetchGMBStops(group, variant);
+    return [];
+  }
+
+  async function fetchKMBStops(group, variant) {
+    const url = `${KMB_ROUTE_STOP}/${encodeURIComponent(group.route)}/${dirWord(variant.bound)}/${variant.serviceType}/`;
+    const payload = await fetchJSON(url);
+    const rows = payload.data || [];
+    if (!rows.length) return [];
+
+    let stopMap = new Map();
+    try {
+      const all = await cachedJSON("kmb.stops", TTL_STOPS, KMB_STOPS);
+      stopMap = new Map((all.data || []).map((stop) => [stop.stop, stop]));
+    } catch {
+      /* fall back to per-stop requests */
+    }
+
+    return mapLimit(rows, 8, async (row, index) => {
+      let detail = stopMap.get(row.stop);
+      if (!detail) {
+        try {
+          const one = await cachedJSON(`kmb.stop.${row.stop}`, TTL_STOPS, `https://data.etabus.gov.hk/v1/transport/kmb/stop/${encodeURIComponent(row.stop)}`);
+          detail = one.data || {};
+        } catch {
+          detail = {};
+        }
+      }
+      return {
+        id: row.stop,
+        seq: Number(row.seq) || index + 1,
+        nameTc: detail.name_tc || row.stop,
+        nameEn: detail.name_en || "",
+        lat: num(detail.lat),
+        lng: num(detail.long)
+      };
+    });
+  }
+
+  async function fetchCTBStops(group, variant) {
+    const url = `${CTB_ROUTE_STOP}/${encodeURIComponent(group.route)}/${dirWord(variant.bound)}`;
+    const payload = await fetchJSON(url);
+    const rows = payload.data || [];
+    return mapLimit(rows, 8, async (row, index) => {
+      let detail = {};
+      try {
+        const one = await cachedJSON(`ctb.stop.${row.stop}`, TTL_STOPS, `${CTB_STOP}${encodeURIComponent(row.stop)}`);
+        detail = one.data || {};
+      } catch {
+        detail = {};
+      }
+      return {
+        id: row.stop,
+        seq: Number(row.seq) || index + 1,
+        nameTc: detail.name_tc || row.stop,
+        nameEn: detail.name_en || "",
+        lat: num(detail.lat),
+        lng: num(detail.long)
+      };
+    });
+  }
+
+  async function fetchNLBStops(group, variant) {
+    const routeId = variant.raw && variant.raw.routeId;
+    const url = `${NLB_STOPS}?action=list&routeId=${encodeURIComponent(routeId)}`;
+    const payload = await fetchJSON(url);
+    return (payload.stops || []).map((stop, index) => ({
+      id: String(stop.stopId),
+      seq: Number(stop.stopSeq) || index + 1,
+      nameTc: stop.stopName_c || stop.stopName_e || String(stop.stopId),
+      nameEn: stop.stopName_e || "",
+      lat: num(stop.latitude),
+      lng: num(stop.longitude)
+    }));
+  }
+
+  async function fetchMTRStops(group, variant) {
+    const data = window.MTR_BUS_DATA;
+    const stops = data && data.stops && data.stops[group.route] && data.stops[group.route][variant.bound];
+    return (stops || []).map((stop) => ({
+      id: stop.id,
+      seq: stop.seq,
+      nameTc: stop.nameTc,
+      nameEn: stop.nameEn,
+      lat: num(stop.lat),
+      lng: num(stop.lng)
+    }));
+  }
+
+  async function fetchGMBStops(group, variant) {
+    const raw = variant.raw || {};
+    const url = `${GMB_ROUTE_STOP}/${raw.route_id}/${raw.route_seq}`;
+    const payload = await fetchJSON(url);
+    return (payload.data && payload.data.route_stops || []).map((stop) => ({
+      id: String(stop.stop_id),
+      seq: Number(stop.stop_seq),
+      nameTc: stop.name_tc || stop.name_en || String(stop.stop_id),
+      nameEn: stop.name_en || "",
+      lat: null,
+      lng: null
+    }));
+  }
+
+  function stopDistance(stop) {
+    if (!state.location || stop.lat == null || stop.lng == null) return null;
+    return haversine(state.location.lat, state.location.lng, stop.lat, stop.lng);
+  }
+
+  function haversine(lat1, lng1, lat2, lng2) {
+    const toRad = (deg) => deg * Math.PI / 180;
+    const r = 6371000;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat / 2) ** 2
+      + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    return 2 * r * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function formatDistance(meters) {
+    if (meters == null) return "";
+    if (meters < 1000) return `${Math.round(meters)}m`;
+    return `${(meters / 1000).toFixed(1)}km`;
+  }
+
+  function renderStops() {
+    if (!state.group) return;
+
+    if (state.stopLoading) {
+      els.stopList.innerHTML = '<div class="skeleton short"></div><div class="skeleton short"></div><div class="skeleton short"></div>';
+      return;
+    }
+
+    if (state.stopError) {
+      els.stopList.innerHTML = `<div class="error-box">${esc(state.stopError)}</div>`;
+      return;
+    }
+
+    if (!state.stops.length) {
+      els.stopList.innerHTML = '<div class="empty">選擇路線後，這裡會列出上車站。</div>';
+      return;
+    }
+
+    const query = norm(state.stopQuery);
+    let list = state.stops.filter((stop) => {
+      if (!query) return true;
+      return norm(stop.nameTc).includes(query)
+        || norm(stop.nameEn).includes(query)
+        || norm(stop.id).includes(query);
+    });
+
+    if (state.nearby && state.location) {
+      list = list
+        .map((stop) => ({ ...stop, distance: stopDistance(stop) }))
+        .filter((stop) => stop.distance != null)
+        .sort((a, b) => a.distance - b.distance);
+      els.stopHint.textContent = list.length
+        ? `由近至遠 · ${list.length} 個站`
+        : "附近沒有可定位的車站，請按「附近」返回全部";
+    } else {
+      list = list.slice();
+      els.stopHint.textContent = query
+        ? `找到 ${list.length} 個站`
+        : `共 ${state.stops.length} 個站 · 選擇上車地點`;
+    }
+
+    if (!list.length) {
+      els.stopList.innerHTML = '<div class="empty">沒有符合的車站。</div>';
+      return;
+    }
+
+    els.stopList.innerHTML = list.map((stop) => `
+      <button class="stop-option${state.stop && String(state.stop.id) === String(stop.id) ? " selected" : ""}" type="button" data-stop="${esc(stop.id)}">
+        <span class="stop-seq">${esc(stop.seq)}</span>
+        <span class="stop-name">${esc(stop.nameTc)}</span>
+        ${stop.distance != null ? `<span class="stop-dist">${formatDistance(stop.distance)}</span>` : ""}
+      </button>
+    `).join("");
+  }
+
+  async function selectStop(stop, opts = {}) {
+    state.stop = stop;
+    state.eta = [];
+    state.etaError = null;
+    state.etaUpdated = null;
+    renderSelected();
+    if (!opts.skipURL) updateURL();
+    await loadEta();
+    if (opts.scroll !== false) {
+      setTimeout(() => els.etaPanel.scrollIntoView({ behavior: "smooth", block: "start" }), 40);
+    }
+  }
+
+  async function loadEta() {
+    if (!state.group || !state.variant || !state.stop) return;
+    const token = ++etaToken;
+    state.etaLoading = true;
+    state.etaError = null;
+    renderEta();
+
+    try {
+      const rows = await fetchEta(state.group, state.variant, state.stop);
+      if (token !== etaToken) return;
+      state.eta = normalizeEta(rows);
+      state.etaUpdated = new Date();
+    } catch (error) {
+      if (token !== etaToken) return;
+      state.etaError = error && error.message ? error.message : "載入到站時間失敗";
+      if (!state.eta.length) state.etaUpdated = null;
+    } finally {
+      if (token === etaToken) {
+        state.etaLoading = false;
+        renderEta();
+      }
+    }
+  }
+
+  async function fetchEta(group, variant, stop) {
+    if (group.op === "KMB" || group.op === "LWB") {
+      const url = `${KMB_ETA}/${encodeURIComponent(stop.id)}/${encodeURIComponent(group.route)}/${variant.serviceType}`;
+      const payload = await fetchJSON(url);
+      return (payload.data || [])
+        .filter((row) => row.eta && (!row.dir || row.dir === variant.bound))
+        .map((row) => ({ at: new Date(row.eta), remark: row.rmk_tc || row.rmk_en || "" }));
+    }
+
+    if (group.op === "CTB") {
+      const url = `${CTB_ETA}/${encodeURIComponent(stop.id)}/${encodeURIComponent(group.route)}`;
+      const payload = await fetchJSON(url);
+      return (payload.data || [])
+        .filter((row) => row.eta && (!row.dir || row.dir === variant.bound))
+        .map((row) => ({ at: new Date(row.eta), remark: row.rmk_tc || row.rmk_en || "" }));
+    }
+
+    if (group.op === "NLB") {
+      const routeId = variant.raw && variant.raw.routeId;
+      const url = `${NLB_STOPS}?action=estimatedArrivals&routeId=${encodeURIComponent(routeId)}&stopId=${encodeURIComponent(stop.id)}&language=en`;
+      const payload = await fetchJSON(url);
+      return (payload.estimatedArrivals || [])
+        .filter((row) => row.estimatedArrivalTime && String(row.departed) !== "1")
+        .map((row) => {
+          const at = new Date(String(row.estimatedArrivalTime).replace(" ", "T") + "+08:00");
+          const scheduled = String(row.noGPS) === "1";
+          return { at, remark: scheduled ? "預定班次" : "" };
+        });
+    }
+
+    if (group.op === "MTR") {
+      const payload = await fetchJSON(MTR_SCHEDULE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language: "en", routeName: group.route })
+      });
+      const entry = (payload.busStop || []).find((item) => String(item.busStopId) === String(stop.id));
+      if (!entry) return [];
+      const now = Date.now();
+      return (entry.bus || []).map((bus) => {
+        let seconds = Number(bus.arrivalTimeInSecond);
+        if (!Number.isFinite(seconds) || seconds <= 0 || seconds > 86400) {
+          seconds = Number(bus.departureTimeInSecond);
+        }
+        if (!Number.isFinite(seconds)) return null;
+        return {
+          at: new Date(now + seconds * 1000),
+          remark: String(bus.isScheduled) === "1" ? "預定班次" : (bus.busRemark || "")
+        };
+      }).filter(Boolean);
+    }
+
+    if (group.op === "GMB") {
+      const raw = variant.raw || {};
+      const url = `${GMB_ETA}/${raw.route_id}/${raw.route_seq}/${stop.seq}`;
+      const payload = await fetchJSON(url);
+      const rows = payload.data && payload.data.eta || [];
+      return rows
+        .filter((row) => row.timestamp)
+        .map((row) => ({ at: new Date(row.timestamp), remark: row.remarks_tc || row.remarks_en || "" }));
+    }
+
+    return [];
+  }
+
+  function normalizeEta(rows) {
+    const now = Date.now();
+    return rows
+      .filter((row) => row.at instanceof Date && !Number.isNaN(row.at.getTime()))
+      .filter((row) => row.at.getTime() > now - 60000)
+      .sort((a, b) => a.at - b.at)
+      .filter((row, index, list) => index === 0 || row.at - list[index - 1].at > 20000)
+      .slice(0, 3);
+  }
+
+  function etaMinutes(date) {
+    const diff = date.getTime() - Date.now();
+    if (diff < 60000) return { text: "即將", due: true };
+    return { text: String(Math.floor(diff / 60000)), due: false };
+  }
+
+  function renderEta() {
+    const group = state.group;
+    const variant = state.variant;
+    const stop = state.stop;
+
+    if (!group || !variant || !stop) {
+      els.etaPanel.hidden = true;
+      return;
+    }
+
+    const meta = opMeta(group.op);
+    els.etaPanel.hidden = false;
+    els.etaPanel.style.setProperty("--op", meta.color);
+    els.etaPanel.style.setProperty("--op-ink", meta.ink);
+
+    els.etaHead.innerHTML = `
+      ${badge(group.route, group.op)}
+      <div class="eta-title">
+        <div class="eta-stop">${esc(stop.nameTc)}</div>
+        <div class="eta-sub">往 ${esc(variant.dest)} · ${esc(meta.full)}</div>
+      </div>
+      <div class="eta-updated">${state.etaUpdated ? `更新於<br>${timeLabel(state.etaUpdated)}` : "LIVE"}</div>`;
+
+    if (state.etaLoading && !state.eta.length) {
+      els.etaBody.innerHTML = '<div class="eta-list"><div class="skeleton"></div><div class="skeleton short"></div></div>';
+      return;
+    }
+
+    if (state.etaError && !state.eta.length) {
+      els.etaBody.innerHTML = `<div class="error-box">${esc(state.etaError)}<br>30 秒後自動重試</div>`;
+      return;
+    }
+
+    if (!state.eta.length) {
+      els.etaBody.innerHTML = '<div class="empty">暫時沒有預定班次。<br>可能已收班，或資料尚未更新。</div>';
+      return;
+    }
+
+    els.etaBody.innerHTML = `<div class="eta-list">${state.eta.map((bus, index) => {
+      const time = etaMinutes(bus.at);
+      return `<article class="eta-row">
+        <div class="eta-main">
+          <span class="eta-min${time.due ? " due" : ""}">${esc(time.text)}</span>
+          ${time.due ? "" : '<span class="eta-unit">分鐘</span>'}
+        </div>
+        <div class="eta-meta">
+          <div class="eta-clock">${timeLabel(bus.at)}</div>
+          <div class="eta-label">${index === 0 ? "下一班" : "其後"}</div>
+          ${bus.remark ? `<div class="eta-remark">${esc(bus.remark)}</div>` : ""}
+        </div>
+      </article>`;
+    }).join("")}</div>`;
+  }
+
+  function isFavorite() {
+    if (!state.group || !state.variant || !state.stop) return false;
+    return state.favorites.some((favorite) => favoriteKey(favorite) === currentFavoriteKey());
+  }
+
+  function currentFavoriteKey() {
+    return [
+      state.group.op,
+      state.group.route,
+      state.group.region || "",
+      state.variant.bound,
+      state.stop.id
+    ].join("|");
+  }
+
+  function favoriteKey(favorite) {
+    return [
+      favorite.op,
+      favorite.route,
+      favorite.region || "",
+      favorite.bound,
+      favorite.stopId
+    ].join("|");
+  }
+
+  function toggleFavorite() {
+    if (!state.group || !state.variant || !state.stop) return;
+    const key = currentFavoriteKey();
+    const exists = state.favorites.findIndex((favorite) => favoriteKey(favorite) === key);
+    if (exists >= 0) {
+      state.favorites.splice(exists, 1);
+      toast("已取消收藏");
+    } else {
+      state.favorites.push({
+        op: state.group.op,
+        route: state.group.route,
+        region: state.group.region || "",
+        bound: state.variant.bound,
+        stopId: state.stop.id,
+        stopName: state.stop.nameTc,
+        label: `${state.group.route} · ${state.stop.nameTc}`
+      });
+      toast("已加入收藏");
+    }
+    saveFavorites();
+    renderFavorites();
+    const button = document.getElementById("favBtn");
+    if (button) {
+      const on = isFavorite();
+      button.classList.toggle("on", on);
+      button.textContent = on ? "★" : "☆";
+    }
+  }
+
+  function renderFavorites() {
+    if (!state.favorites.length) {
+      els.favorites.hidden = true;
+      els.favorites.innerHTML = "";
+      return;
+    }
+    els.favorites.hidden = false;
+    els.favorites.innerHTML = state.favorites.map((favorite) => {
+      const meta = opMeta(favorite.op);
+      return `<button class="fav-chip" type="button" data-fav="${esc(favoriteKey(favorite))}" style="${opStyle(favorite.op)}" title="${esc(favorite.label)}">
+        ${badge(favorite.route, favorite.op, "small")}
+        <span class="fav-name">${esc(favorite.stopName || favorite.label)}</span>
+        <span class="fav-x" data-remove="${esc(favoriteKey(favorite))}" role="button" aria-label="移除收藏">×</span>
+      </button>`;
+    }).join("");
+  }
+
+  async function openFavorite(favorite) {
+    const group = findGroup(favorite.op, favorite.route, favorite.region);
+    if (!group) {
+      toast("找不到這條路線");
+      return;
+    }
+    await selectRoute(group, {
+      bound: favorite.bound,
+      stopId: favorite.stopId,
+      skipURL: true,
+      scroll: false
+    });
+    updateURL();
+    setTimeout(() => els.etaPanel.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  }
+
+  async function findNearby() {
+    if (state.nearby) {
+      state.nearby = false;
+      state.location = null;
+      els.nearbyBtn.textContent = "附近";
+      renderStops();
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      toast("此瀏覽器不支援定位");
+      return;
+    }
+
+    els.nearbyBtn.textContent = "定位中…";
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      state.location = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+      state.nearby = true;
+      if (state.group && state.group.op === "GMB" && state.stops.some((stop) => stop.lat == null)) {
+        els.stopHint.textContent = "正在取得小巴站位置…";
+        await ensureGMBStopCoords(state.stops);
+      }
+      els.nearbyBtn.textContent = "全部";
+      renderStops();
+    }, () => {
+      els.nearbyBtn.textContent = "附近";
+      state.nearby = false;
+      toast("無法取得位置，請檢查定位權限");
+    }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
+  }
+
+  async function ensureGMBStopCoords(stops) {
+    await mapLimit(stops, 6, async (stop) => {
+      if (stop.lat != null && stop.lng != null) return;
+      try {
+        const payload = await cachedJSON(`gmb.stop.${stop.id}`, TTL_STOPS, `${GMB_STOP}${encodeURIComponent(stop.id)}`);
+        const coords = payload.data && payload.data.coordinates && payload.data.coordinates.wgs84;
+        if (coords) {
+          stop.lat = num(coords.latitude);
+          stop.lng = num(coords.longitude);
+        }
+      } catch {
+        /* skip stop without coordinates */
+      }
+    });
+  }
+
+  function updateURL() {
+    if (!state.group) return;
+    const params = new URLSearchParams();
+    params.set("op", state.group.op);
+    params.set("route", state.group.route);
+    if (state.group.region) params.set("region", state.group.region);
+    if (state.variant) params.set("bound", state.variant.bound);
+    if (state.stop) params.set("stop", state.stop.id);
+    const query = params.toString();
+    history.replaceState(null, "", `${location.pathname}${query ? `?${query}` : ""}${location.hash}`);
+  }
+
+  async function restoreFromURL() {
+    const params = new URLSearchParams(location.search);
+    const op = params.get("op");
+    const route = params.get("route");
+    if (!op || !route) return;
+    const group = findGroup(op, route, params.get("region"));
+    if (!group) return;
+    await selectRoute(group, {
+      bound: params.get("bound"),
+      stopId: params.get("stop"),
+      skipURL: true,
+      scroll: false
+    });
+    updateURL();
+  }
+
+  function toast(message) {
+    els.toast.textContent = message;
+    els.toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => els.toast.classList.remove("show"), 2200);
+  }
+
+  function fallbackCopy(text) {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.select();
+    try {
+      document.execCommand("copy");
+      toast("連結已複製，可分享給同學");
+    } catch {
+      window.prompt("複製這條連結：", text);
+    }
+    document.body.removeChild(area);
+  }
+
+  async function share() {
+    const url = location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: document.title, url });
+        return;
+      } catch (error) {
+        if (error && error.name === "AbortError") return;
+      }
+    }
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(url);
+        toast("連結已複製，可分享給同學");
+        return;
+      } catch {
+        /* fall through to the older copy method */
+      }
+    }
+    fallbackCopy(url);
+  }
+
+  els.opChips.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-op]");
+    if (!button) return;
+    state.op = button.dataset.op;
+    renderOpChips();
+    renderRouteResults();
+  });
+
+  els.routeResults.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-key]");
+    if (!button) return;
+    const group = state.groups.find((item) => item.key === button.dataset.key);
+    if (group) selectRoute(group);
+  });
+
+  els.routeSearch.addEventListener("input", () => {
+    state.routeQuery = els.routeSearch.value;
+    clearTimeout(routeDebounce);
+    routeDebounce = setTimeout(() => renderRouteResults(), 100);
+  });
+
+  els.stopSearch.addEventListener("input", () => {
+    state.stopQuery = els.stopSearch.value;
+    clearTimeout(stopDebounce);
+    stopDebounce = setTimeout(() => renderStops(), 100);
+  });
+
+  els.stopList.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-stop]");
+    if (!button) return;
+    const stop = state.stops.find((item) => String(item.id) === button.dataset.stop);
+    if (stop) selectStop(stop);
+  });
+
+  els.dirRow.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-bound]");
+    if (!button) return;
+    chooseBound(button.dataset.bound);
+  });
+
+  els.favorites.addEventListener("click", (event) => {
+    const remove = event.target.closest("[data-remove]");
+    if (remove) {
+      event.stopPropagation();
+      const key = remove.dataset.remove;
+      state.favorites = state.favorites.filter((favorite) => favoriteKey(favorite) !== key);
+      saveFavorites();
+      renderFavorites();
+      const button = document.getElementById("favBtn");
+      if (button) {
+        const on = isFavorite();
+        button.classList.toggle("on", on);
+        button.textContent = on ? "★" : "☆";
+      }
+      return;
+    }
+    const chip = event.target.closest("[data-fav]");
+    if (!chip) return;
+    const favorite = state.favorites.find((item) => favoriteKey(item) === chip.dataset.fav);
+    if (favorite) openFavorite(favorite);
+  });
+
+  els.nearbyBtn.addEventListener("click", findNearby);
+  els.shareBtn.addEventListener("click", share);
+
+  setInterval(() => {
+    if (state.stop && state.group && state.variant) loadEta();
+  }, REFRESH_MS);
+
+  setInterval(() => {
+    if (state.stop && state.eta.length) renderEta();
+  }, 5000);
+
+  renderOpChips();
+  renderFavorites();
+  renderRouteResults(true);
+  loadAllCatalogs();
+})();
+</script>
+</body>
+</html>

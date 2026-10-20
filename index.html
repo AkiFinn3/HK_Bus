@@ -130,6 +130,21 @@
     color: var(--muted);
   }
 
+  .all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 13px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgba(255, 210, 63, 0.32);
+    color: var(--accent);
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .all-link:hover { border-bottom-color: var(--accent); }
+
   .divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--line) 12%, var(--line) 88%, transparent);
@@ -390,6 +405,8 @@
     富泰邨 <span class="arrow">→</span> 深圳灣口岸
     <span class="en">Fu Tai Estate → Shenzhen Bay Port</span>
   </h1>
+
+  <a class="all-link" href="hk-buses.html">全港巴士 · 所有路線 <span aria-hidden="true">→</span></a>
 
   <div class="divider" aria-hidden="true"></div>
 
