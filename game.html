@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b1220">
+<meta name="theme-color" content="#05070f">
 <meta name="description" content="巴士大亨：一款香港公交經營增量遊戲。買巴士、開路線、續專營權，建立你的巴士王國。">
 <title>巴士大亨 · Bus Tycoon HK</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -15,19 +15,21 @@
 <meta name="apple-mobile-web-app-title" content="巴士大亨">
 <style>
   :root {
-    --bg: #080d17;
-    --panel: rgba(255, 255, 255, 0.055);
-    --panel-2: rgba(255, 255, 255, 0.085);
-    --line: rgba(255, 255, 255, 0.1);
-    --text: #f5f7fb;
-    --muted: #8b97ad;
-    --accent: #ffd23f;
-    --accent-soft: rgba(255, 210, 63, 0.14);
-    --green: #37e29a;
-    --blue: #6ea8ff;
-    --red: #ff6b6b;
-    --orange: #ff9f43;
-    --pink: #ff6b9d;
+    --bg: #05070f;
+    --panel: rgba(7, 18, 32, 0.72);
+    --panel-2: rgba(9, 24, 42, 0.9);
+    --line: rgba(0, 245, 255, 0.16);
+    --text: #eafcff;
+    --muted: #7f9bb3;
+    --accent: #00f5ff;
+    --accent-soft: rgba(0, 245, 255, 0.14);
+    --accent-2: #ff2bd6;
+    --green: #39ff88;
+    --blue: #3aa0ff;
+    --red: #ff3b5c;
+    --orange: #ffb020;
+    --pink: #ff2bd6;
+    --violet: #b45cff;
     --radius: 18px;
   }
 
@@ -36,22 +38,51 @@
   html, body { min-height: 100%; }
 
   body {
+    position: relative;
     margin: 0;
     padding: clamp(12px, 3vw, 28px);
     background:
-      radial-gradient(1100px 600px at 12% -8%, #1b2b4a 0%, transparent 58%),
-      radial-gradient(900px 500px at 108% 110%, #2a1f0a 0%, transparent 55%),
+      radial-gradient(900px 560px at 7% -12%, rgba(0, 245, 255, .16), transparent 62%),
+      radial-gradient(820px 520px at 106% 4%, rgba(255, 43, 214, .14), transparent 60%),
+      radial-gradient(760px 540px at 50% 118%, rgba(57, 255, 136, .08), transparent 64%),
       var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
       "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", sans-serif;
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0, 245, 255, .045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 43, 214, .035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 78%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 78%, transparent);
+    animation: gridDrift 22s linear infinite;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .18) 0 1px, transparent 1px 3px);
+    opacity: .15;
+    mix-blend-mode: overlay;
   }
 
   button, input, textarea { font: inherit; }
 
-  .app { width: min(100%, 1080px); margin: 0 auto; }
+  .app { position: relative; z-index: 1; width: min(100%, 1080px); margin: 0 auto; }
 
   .hidden { display: none !important; }
 
@@ -1190,12 +1221,615 @@
     .route-stats b { font-size: 15px; }
   }
 
+  /* =====================================================================
+     Cyberpunk arcade layer
+     ===================================================================== */
+
+  @keyframes gridDrift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(44px, 44px, 0); }
+  }
+
+  @keyframes brandFloat {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-3px) rotate(1deg); }
+  }
+
+  @keyframes titlePulse {
+    0%, 100% { text-shadow: 0 0 18px rgba(0,245,255,.26), 3px 0 rgba(255,43,214,.2), -3px 0 rgba(0,245,255,.18); }
+    50% { text-shadow: 0 0 28px rgba(0,245,255,.44), 4px 0 rgba(255,43,214,.3), -4px 0 rgba(0,245,255,.26); }
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(12px) scale(.985); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes railFlow {
+    from { background-position: 0 0; }
+    to { background-position: 32px 0; }
+  }
+
+  @keyframes stopPulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--route) 45%, transparent); opacity: .55; }
+    50% { box-shadow: 0 0 0 5px transparent; opacity: 1; }
+  }
+
+  @keyframes drive {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(100% - 40px)); }
+  }
+
+  @keyframes busBob {
+    0%, 100% { transform: translateY(-1px); }
+    50% { transform: translateY(1px); }
+  }
+
+  @keyframes barSweep {
+    0% { transform: translateX(-120%); }
+    55%, 100% { transform: translateX(120%); }
+  }
+
+  @keyframes hitPulse {
+    0% { filter: brightness(1); }
+    30% { filter: brightness(1.6); }
+    100% { filter: brightness(1); }
+  }
+
+  @keyframes fxBurst {
+    from { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    to { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.15) rotate(var(--r)); }
+  }
+
+  @keyframes fxFloat {
+    0% { opacity: 0; transform: translate(-50%, -20%) scale(.78); }
+    18% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -180%) scale(1.05); }
+  }
+
+  @keyframes fxFlash {
+    0% { opacity: 0; }
+    14% { opacity: .26; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes readyGlow {
+    0%, 100% { box-shadow: 0 0 0 rgba(0,245,255,0), inset 0 0 26px rgba(0,245,255,.03); }
+    50% { box-shadow: 0 0 30px rgba(0,245,255,.14), inset 0 0 34px rgba(255,43,214,.06); }
+  }
+
+  .brand-icon {
+    color: #031018;
+    background: linear-gradient(145deg, #b8feff, var(--accent) 44%, var(--accent-2));
+    box-shadow: 0 0 0 1px rgba(0,245,255,.4), 0 0 28px rgba(0,245,255,.28), 0 0 52px rgba(255,43,214,.14), inset 0 1px 0 rgba(255,255,255,.65);
+    animation: brandFloat 4.5s ease-in-out infinite;
+  }
+
+  .kicker {
+    color: var(--accent-2);
+    text-shadow: 0 0 12px rgba(255,43,214,.45);
+  }
+
+  h1 {
+    color: #f2feff;
+    text-shadow: 0 0 18px rgba(0,245,255,.26), 3px 0 rgba(255,43,214,.2), -3px 0 rgba(0,245,255,.18);
+    animation: titlePulse 5.5s ease-in-out infinite;
+  }
+
+  .tagline { color: #9fb7c9; }
+
+  .hero-hud {
+    display: flex;
+    gap: 12px;
+    margin-top: 7px;
+    color: rgba(0,245,255,.58);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .hero-hud span:last-child { color: rgba(255,43,214,.62); }
+
+  .install-strip {
+    border-color: rgba(0,245,255,.34);
+    background: linear-gradient(135deg, rgba(0,245,255,.11), rgba(255,43,214,.06));
+    box-shadow: inset 0 0 22px rgba(0,245,255,.03);
+  }
+
+  .install-strip:hover {
+    border-color: rgba(0,245,255,.62);
+    background: linear-gradient(135deg, rgba(0,245,255,.17), rgba(255,43,214,.1));
+  }
+
+  .install-strip-action {
+    background: linear-gradient(135deg, var(--accent), #9dfcff);
+    box-shadow: 0 0 16px rgba(0,245,255,.35);
+  }
+
+  .lang-switch, .rating {
+    border-color: rgba(0,245,255,.18);
+    background: rgba(0,245,255,.04);
+  }
+
+  .lang-switch button.active {
+    background: linear-gradient(135deg, var(--accent), #9dfcff);
+    color: #031018;
+    box-shadow: 0 0 14px rgba(0,245,255,.3);
+  }
+
+  .rating { color: var(--accent); box-shadow: inset 0 0 18px rgba(0,245,255,.03); }
+
+  .stat {
+    border-color: rgba(0,245,255,.14);
+    background: linear-gradient(160deg, rgba(0,245,255,.06), rgba(255,43,214,.022));
+    box-shadow: inset 0 0 24px rgba(0,245,255,.025);
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+
+  .stat:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,245,255,.32);
+    box-shadow: 0 0 24px rgba(0,245,255,.07), inset 0 0 28px rgba(0,245,255,.04);
+  }
+
+  .stat::after {
+    background: radial-gradient(130px 70px at 100% 0, rgba(255,43,214,.16), transparent 72%);
+  }
+
+  .stat.accent {
+    border-color: rgba(0,245,255,.36);
+    box-shadow: inset 0 0 30px rgba(0,245,255,.055), 0 0 28px rgba(0,245,255,.07);
+  }
+
+  .stat-value { text-shadow: 0 0 14px rgba(0,245,255,.12); }
+
+  .stat.accent .stat-value {
+    color: var(--accent);
+    text-shadow: 0 0 18px rgba(0,245,255,.42);
+  }
+
+  .buff {
+    border-color: rgba(0,245,255,.26);
+    background: rgba(0,245,255,.06);
+    color: var(--accent);
+    box-shadow: 0 0 14px rgba(0,245,255,.06);
+  }
+
+  .buff.bad {
+    border-color: rgba(255,43,214,.3);
+    background: rgba(255,43,214,.08);
+    color: #ff7ce8;
+  }
+
+  .tabs {
+    border-color: rgba(0,245,255,.2);
+    background: rgba(3,10,20,.86);
+    box-shadow: 0 0 26px rgba(0,245,255,.05), inset 0 0 20px rgba(0,245,255,.025);
+  }
+
+  .tabs button.active {
+    background: linear-gradient(135deg, rgba(0,245,255,.2), rgba(255,43,214,.13));
+    color: #f4ffff;
+    box-shadow: inset 0 0 0 1px rgba(0,245,255,.34), 0 0 18px rgba(0,245,255,.1);
+  }
+
+  .tabs .tab-dot {
+    background: var(--accent-2);
+    box-shadow: 0 0 9px var(--accent-2);
+  }
+
+  .panel { animation: rise .34s cubic-bezier(.2,.7,.2,1) both; }
+
+  .route-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 2px 13px;
+  }
+
+  .route-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid rgba(0,245,255,.14);
+    border-radius: 999px;
+    background: rgba(0,245,255,.035);
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background .16s, border-color .16s, color .16s, box-shadow .16s;
+  }
+
+  .route-filter span {
+    color: rgba(0,245,255,.7);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9.5px;
+  }
+
+  .route-filter:hover {
+    color: var(--text);
+    border-color: rgba(0,245,255,.35);
+    background: rgba(0,245,255,.07);
+  }
+
+  .route-filter.active {
+    color: #031018;
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--accent), #9dfcff);
+    box-shadow: 0 0 16px rgba(0,245,255,.24);
+  }
+
+  .route-filter.active span { color: rgba(3,16,24,.65); }
+
+  .route-grid.enter .route-card {
+    animation: cardIn .44s cubic-bezier(.2,.8,.2,1) both;
+    animation-delay: calc(var(--i, 0) * 42ms);
+  }
+
+  .route-card {
+    border-color: rgba(0,245,255,.13);
+    background: linear-gradient(160deg, rgba(0,245,255,.055), rgba(255,43,214,.022));
+    box-shadow: inset 0 0 26px rgba(0,245,255,.022);
+    transition: transform .22s, border-color .22s, box-shadow .22s;
+  }
+
+  .route-card::before {
+    opacity: .15;
+    background: radial-gradient(420px 160px at 100% 0, var(--route), transparent 70%);
+  }
+
+  .route-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 58px;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, var(--route));
+    box-shadow: 0 0 14px var(--route);
+    opacity: .8;
+  }
+
+  .route-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--route) 58%, transparent);
+    box-shadow: 0 18px 46px rgba(0,0,0,.42), 0 0 28px color-mix(in srgb, var(--route) 16%, transparent), inset 0 0 28px color-mix(in srgb, var(--route) 5%, transparent);
+  }
+
+  .route-card.locked:hover { transform: none; border-color: rgba(0,245,255,.13); box-shadow: inset 0 0 26px rgba(0,245,255,.022); }
+
+  .route-badge {
+    color: #031018;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--route) 34%, transparent), inset 0 0 10px rgba(255,255,255,.3);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .route-name { color: #eefcff; }
+
+  .route-track {
+    border-color: rgba(0,245,255,.11);
+    background:
+      linear-gradient(rgba(0,245,255,.035) 1px, transparent 1px) 0 0 / 100% 8px,
+      rgba(0,0,0,.34);
+    box-shadow: inset 0 0 24px rgba(0,245,255,.035);
+  }
+
+  .route-track::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(0,245,255,.055), transparent);
+  }
+
+  .rail {
+    background: repeating-linear-gradient(90deg, rgba(0,245,255,.34) 0 8px, transparent 8px 16px);
+    background-size: 32px 2px;
+    animation: railFlow 1.1s linear infinite;
+    box-shadow: 0 0 9px rgba(0,245,255,.14);
+  }
+
+  .rail::before, .rail::after {
+    background: var(--route);
+    box-shadow: 0 0 7px var(--route);
+    animation: stopPulse 2.2s ease-in-out infinite;
+  }
+
+  .runner-lane {
+    position: absolute;
+    inset: 0;
+    animation: drive var(--dur, 14s) linear infinite;
+    animation-delay: var(--delay, 0s);
+    will-change: transform;
+  }
+
+  .runner {
+    left: 0;
+    animation: busBob 1.7s ease-in-out infinite;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,.45)) drop-shadow(0 0 7px color-mix(in srgb, var(--route) 42%, transparent));
+  }
+
+  .runner::before {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 7px;
+    width: 26px;
+    height: 9px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--route) 52%, transparent), transparent);
+    filter: blur(4px);
+    opacity: .8;
+  }
+
+  .runner::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    width: 30px;
+    height: 4px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--route) 28%, transparent);
+    filter: blur(3px);
+  }
+
+  .route-card.offscreen .runner-lane,
+  .route-card.offscreen .rail,
+  body.app-paused .runner-lane,
+  body.app-paused .rail {
+    animation-play-state: paused;
+  }
+
+  .route-card.busy .runner {
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,.45)) drop-shadow(0 0 12px var(--route));
+  }
+
+  .route-card.idle .runner { opacity: .58; }
+
+  .track-empty { color: #7190a8; text-shadow: 0 0 12px rgba(0,245,255,.12); }
+
+  .load-track {
+    border: 1px solid rgba(0,245,255,.08);
+    background: rgba(0,245,255,.055);
+  }
+
+  .load-track i {
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--route) 32%, transparent);
+  }
+
+  .load-track i::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.52), transparent);
+    animation: barSweep 2.5s ease-in-out infinite;
+  }
+
+  .load-track.high i {
+    background: linear-gradient(90deg, var(--accent-2), #ff8aef);
+    box-shadow: 0 0 14px rgba(255,43,214,.35);
+  }
+
+  .load-track.low i {
+    background: linear-gradient(90deg, var(--green), var(--accent));
+    box-shadow: 0 0 14px rgba(57,255,136,.25);
+  }
+
+  .btn {
+    border-color: rgba(0,245,255,.16);
+    background: rgba(0,245,255,.045);
+  }
+
+  .btn:hover:not(:disabled) {
+    border-color: rgba(0,245,255,.38);
+    background: rgba(0,245,255,.1);
+    box-shadow: 0 0 18px rgba(0,245,255,.08);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #9dfcff 55%, #b8feff);
+    color: #031018;
+    box-shadow: 0 8px 24px rgba(0,245,255,.16), 0 0 20px rgba(255,43,214,.08);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #8ffcff, var(--accent) 45%, #ff8aef);
+    box-shadow: 0 8px 30px rgba(0,245,255,.24), 0 0 26px rgba(255,43,214,.12);
+  }
+
+  .chip {
+    border-color: rgba(0,245,255,.14);
+    background: rgba(0,245,255,.035);
+  }
+
+  .chip.active {
+    background: linear-gradient(135deg, var(--accent), #9dfcff);
+    color: #031018;
+    box-shadow: 0 0 16px rgba(0,245,255,.2);
+  }
+
+  .bus-card, .upg-card {
+    border-color: rgba(0,245,255,.11);
+    background: linear-gradient(165deg, rgba(0,245,255,.045), rgba(255,43,214,.018));
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+
+  .bus-card:hover, .upg-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,245,255,.28);
+    box-shadow: 0 14px 34px rgba(0,0,0,.3), 0 0 22px rgba(0,245,255,.06);
+  }
+
+  .bus-icon {
+    background: color-mix(in srgb, var(--bus) 12%, transparent);
+    border-color: color-mix(in srgb, var(--bus) 32%, transparent);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--bus) 18%, transparent);
+  }
+
+  .upg-effect {
+    background: rgba(0,245,255,.05);
+    border-color: rgba(0,245,255,.14);
+    color: #b8f7ff;
+  }
+
+  .level-pill { border: 1px solid rgba(0,245,255,.08); }
+
+  .level-pill.max {
+    background: rgba(57,255,136,.1);
+    color: var(--green);
+    box-shadow: 0 0 12px rgba(57,255,136,.12);
+  }
+
+  .ach-card {
+    border-color: rgba(0,245,255,.1);
+    background: linear-gradient(160deg, rgba(0,245,255,.04), rgba(255,43,214,.018));
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+
+  .ach-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,245,255,.26);
+  }
+
+  .ach-card:not(.locked) {
+    border-color: rgba(0,245,255,.22);
+    box-shadow: inset 0 0 24px rgba(0,245,255,.03), 0 0 18px rgba(0,245,255,.04);
+  }
+
+  .ach-card:not(.locked) .ach-icon {
+    background: linear-gradient(135deg, rgba(0,245,255,.18), rgba(255,43,214,.14));
+    box-shadow: 0 0 16px rgba(0,245,255,.12);
+  }
+
+  .ach-card.locked { filter: grayscale(.85) brightness(.72); }
+
+  .prestige-bar {
+    border-color: rgba(0,245,255,.2);
+    background: linear-gradient(120deg, rgba(0,245,255,.07), rgba(255,43,214,.045));
+    box-shadow: inset 0 0 26px rgba(0,245,255,.025);
+  }
+
+  .prestige-bar.ready {
+    animation: readyGlow 2.4s ease-in-out infinite;
+    border-color: rgba(0,245,255,.38);
+  }
+
+  .btn.ready { animation: readyGlow 2.4s ease-in-out infinite; }
+
+  .route-card.locked::after { opacity: .22; }
+
+  body.app-paused::before { animation-play-state: paused; }
+
+  .prestige-top b { color: var(--accent); text-shadow: 0 0 12px rgba(0,245,255,.32); }
+
+  .mini-bar i {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 14px rgba(0,245,255,.3);
+  }
+
+  .modal {
+    border-color: rgba(0,245,255,.24);
+    background: linear-gradient(180deg, #0b1a2b, #040812);
+    box-shadow: 0 40px 100px rgba(0,0,0,.7), 0 0 42px rgba(0,245,255,.09), inset 0 0 32px rgba(0,245,255,.025);
+  }
+
+  .modal-kicker { color: var(--accent-2); text-shadow: 0 0 12px rgba(255,43,214,.32); }
+
+  .modal h2 { text-shadow: 0 0 16px rgba(0,245,255,.2); }
+
+  .modal-body .big {
+    color: var(--accent);
+    text-shadow: 0 0 22px rgba(0,245,255,.4);
+  }
+
+  .modal-actions .btn-primary { box-shadow: 0 0 24px rgba(0,245,255,.2); }
+
+  .toast {
+    border-color: rgba(0,245,255,.2);
+    border-left-color: var(--accent);
+    background: rgba(4,14,25,.96);
+    box-shadow: 0 14px 40px rgba(0,0,0,.5), 0 0 20px rgba(0,245,255,.06);
+  }
+
+  .toast.good { border-left-color: var(--green); box-shadow: 0 14px 40px rgba(0,0,0,.5), 0 0 20px rgba(57,255,136,.08); }
+  .toast.bad { border-left-color: var(--accent-2); box-shadow: 0 14px 40px rgba(0,0,0,.5), 0 0 20px rgba(255,43,214,.1); }
+
+  .fx-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .fx-particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c, var(--accent));
+    box-shadow: 0 0 12px var(--c, var(--accent));
+    animation: fxBurst .78s cubic-bezier(.2,.7,.3,1) forwards;
+  }
+
+  .fx-float {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    color: var(--c, var(--green));
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .02em;
+    white-space: nowrap;
+    text-shadow: 0 0 12px var(--c, var(--green));
+    animation: fxFloat 1.05s ease-out forwards;
+  }
+
+  .fx-flash {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 44%, var(--c, var(--accent)), transparent 62%);
+    animation: fxFlash .82s ease-out forwards;
+  }
+
+  .fx-hit { animation: hitPulse .52s ease-out; }
+
+  @media (max-width: 760px) {
+    .route-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .route-filters::-webkit-scrollbar { display: none; }
+    .route-filter { flex: 0 0 auto; }
+    .route-card:hover { transform: none; }
+    .bus-card:hover, .upg-card:hover { transform: none; }
+    .hero-hud { font-size: 7.5px; gap: 8px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: .001ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: .001ms !important;
     }
+
+    body::before,
+    .runner-lane,
+    .runner,
+    .rail,
+    .rail::before,
+    .rail::after,
+    .load-track i::after {
+      animation: none !important;
+    }
+
+    .runner-lane { transform: translateX(34%); }
+    .runner-lane:nth-child(2n) { transform: translateX(68%); }
   }
 </style>
 </head>
@@ -1216,9 +1850,10 @@
         </svg>
       </div>
       <div>
-        <div class="kicker" data-i18n="kicker">香港公交帝國</div>
+        <div class="kicker" data-i18n="kicker">香港公交帝國 // NEO HK</div>
         <h1 data-i18n="appName">巴士大亨</h1>
-        <p class="tagline" data-i18n="tagline">由一條路線開始，建立你的巴士王國</p>
+        <p class="tagline" data-i18n="tagline">由一條路線開始，接管霓虹下的巴士王國</p>
+        <div class="hero-hud" aria-hidden="true"><span>● SYS.ONLINE</span><span>HKG // 2049</span></div>
       </div>
     </div>
     <div class="hero-actions">
@@ -1308,6 +1943,8 @@
   </div>
 </div>
 
+<div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
+
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script>
@@ -1326,8 +1963,8 @@ const I18N = {
   zhHant: {
     pageTitle: "巴士大亨 · Bus Tycoon HK",
     appName: "巴士大亨",
-    kicker: "香港公交帝國",
-    tagline: "由一條路線開始，建立你的巴士王國",
+    kicker: "香港公交帝國 // NEO HK",
+    tagline: "由一條路線開始，接管霓虹下的巴士王國",
     disclaimer: "非官方粉絲作品 · 路線名稱僅作致敬 · 一切數據為遊戲虛構",
     rating: "評級",
     ratingTitle: "公司評級 {n} / 5 星",
@@ -1348,6 +1985,13 @@ const I18N = {
     prestigeBonus: "收入 +{x}%",
     routesTitle: "路線網絡",
     routesHint: "增加巴士提升運力；市場推廣可以帶來更多客流。",
+    filterLabel: "路線篩選",
+    filterAll: "全部",
+    filterBorder: "口岸",
+    filterTuenMun: "屯門",
+    filterYuenLong: "元朗",
+    filterAirport: "機場",
+    filterCrossHarbour: "過海",
     fleetTitle: "車隊採購",
     fleetHint: "購入的巴士會直接派到所選路線。車位有限，高載客量車型更划算。",
     upgradesTitle: "公司升級",
@@ -1467,10 +2111,15 @@ const I18N = {
     minuteShort: "分",
     secondShort: "秒",
     "route.b3a.name": "富泰邨 ⇄ 深圳灣口岸",
+    "route.b1.name": "元朗站 ⇄ 落馬洲站",
     "route.k51.name": "富泰 ⇄ 大欖",
+    "route.b2.name": "元朗站 ⇄ 深圳灣口岸",
     "route.r506.name": "屯門碼頭 ⇄ 兆麟",
+    "route.b3.name": "屯門碼頭 ⇄ 深圳灣口岸",
     "route.e33.name": "屯門市中心 ⇄ 機場",
+    "route.k52.name": "屯門站 ⇄ 龍鼓灘",
     "route.r968.name": "元朗 ⇄ 銅鑼灣",
+    "route.a33x.name": "屯門（富泰） ⇄ 機場",
     "bus.shuttle.name": "單層巴士",
     "bus.shuttle.desc": "靈活穿梭窄街，入門首選。",
     "bus.double.name": "雙層巴士",
@@ -1498,13 +2147,17 @@ const I18N = {
     "ach.fleet10.name": "車隊成形",
     "ach.fleet10.desc": "擁有 10 輛巴士",
     "ach.fleet50.name": "巴士王國",
-    "ach.fleet50.desc": "擁有 50 輛巴士",
+    "ach.fleet50.desc": "累計購入 50 輛巴士",
     "ach.fleet100.name": "百車大軍",
-    "ach.fleet100.desc": "擁有 100 輛巴士",
+    "ach.fleet100.desc": "累計購入 100 輛巴士",
     "ach.routes2.name": "拓展網絡",
     "ach.routes2.desc": "解鎖 2 條路線",
-    "ach.routes5.name": "全港覆蓋",
-    "ach.routes5.desc": "解鎖全部 5 條路線",
+    "ach.routes5.name": "五線營運",
+    "ach.routes5.desc": "解鎖 5 條路線",
+    "ach.routes8.name": "八線網絡",
+    "ach.routes8.desc": "解鎖 8 條路線",
+    "ach.routesAll.name": "全港覆蓋",
+    "ach.routesAll.desc": "解鎖全部路線",
     "ach.upgrades10.name": "現代化",
     "ach.upgrades10.desc": "累計升級 10 級",
     "ach.million.name": "百萬大亨",
@@ -1540,14 +2193,22 @@ const I18N = {
     "event.tourist.title": "旅客潮",
     "event.tourist.body": "黃金週將至，口岸人流預計創新高。",
     "event.tourist.cash": "把握機會 → 即時獲得 30 秒收入",
-    "event.tourist.demand": "加強宣傳 → 客流 +35%，90 秒"
+    "event.tourist.demand": "加強宣傳 → 客流 +35%，90 秒",
+    "event.typhoon.title": "機場颱風",
+    "event.typhoon.body": "颱風逼近，機場路線大亂。你要加派接駁，還是冒險維持班次？",
+    "event.typhoon.pay": "啟動應急接駁（花費 {cost}）→ 客流 +35%，90 秒",
+    "event.typhoon.risk": "維持班次 → 運力 -35%，60 秒",
+    "event.golden.title": "邊境黃金周",
+    "event.golden.body": "黃金周將至，口岸人流急升，跨境路線需求爆表。",
+    "event.golden.pay": "加開跨境班次（花費 {cost}）→ 客流 +50%，80 秒",
+    "event.golden.skip": "維持正常班次"
   },
 
   zhHans: {
     pageTitle: "巴士大亨 · Bus Tycoon HK",
     appName: "巴士大亨",
-    kicker: "香港公交帝国",
-    tagline: "从一条路线开始，建立你的巴士王国",
+    kicker: "香港公交帝国 // NEO HK",
+    tagline: "从一条路线开始，接管霓虹下的巴士王国",
     disclaimer: "非官方粉丝作品 · 路线名称仅作致敬 · 一切数据为游戏虚构",
     rating: "评级",
     ratingTitle: "公司评级 {n} / 5 星",
@@ -1568,6 +2229,13 @@ const I18N = {
     prestigeBonus: "收入 +{x}%",
     routesTitle: "路线网络",
     routesHint: "增加巴士提升运力；市场推广可以带来更多客流。",
+    filterLabel: "路线筛选",
+    filterAll: "全部",
+    filterBorder: "口岸",
+    filterTuenMun: "屯门",
+    filterYuenLong: "元朗",
+    filterAirport: "机场",
+    filterCrossHarbour: "过海",
     fleetTitle: "车队采购",
     fleetHint: "购入的巴士会直接派到所选路线。车位有限，高载客量车型更划算。",
     upgradesTitle: "公司升级",
@@ -1687,10 +2355,15 @@ const I18N = {
     minuteShort: "分",
     secondShort: "秒",
     "route.b3a.name": "富泰邨 ⇄ 深圳湾口岸",
+    "route.b1.name": "元朗站 ⇄ 落马洲站",
     "route.k51.name": "富泰 ⇄ 大榄",
+    "route.b2.name": "元朗站 ⇄ 深圳湾口岸",
     "route.r506.name": "屯门码头 ⇄ 兆麟",
+    "route.b3.name": "屯门码头 ⇄ 深圳湾口岸",
     "route.e33.name": "屯门市中心 ⇄ 机场",
+    "route.k52.name": "屯门站 ⇄ 龙鼓滩",
     "route.r968.name": "元朗 ⇄ 铜锣湾",
+    "route.a33x.name": "屯门（富泰） ⇄ 机场",
     "bus.shuttle.name": "单层巴士",
     "bus.shuttle.desc": "灵活穿梭窄街，入门首选。",
     "bus.double.name": "双层巴士",
@@ -1718,13 +2391,17 @@ const I18N = {
     "ach.fleet10.name": "车队成形",
     "ach.fleet10.desc": "拥有 10 辆巴士",
     "ach.fleet50.name": "巴士王国",
-    "ach.fleet50.desc": "拥有 50 辆巴士",
+    "ach.fleet50.desc": "累计购入 50 辆巴士",
     "ach.fleet100.name": "百车大军",
-    "ach.fleet100.desc": "拥有 100 辆巴士",
+    "ach.fleet100.desc": "累计购入 100 辆巴士",
     "ach.routes2.name": "拓展网络",
     "ach.routes2.desc": "解锁 2 条路线",
-    "ach.routes5.name": "全港覆盖",
-    "ach.routes5.desc": "解锁全部 5 条路线",
+    "ach.routes5.name": "五线营运",
+    "ach.routes5.desc": "解锁 5 条路线",
+    "ach.routes8.name": "八线网络",
+    "ach.routes8.desc": "解锁 8 条路线",
+    "ach.routesAll.name": "全港覆盖",
+    "ach.routesAll.desc": "解锁全部路线",
     "ach.upgrades10.name": "现代化",
     "ach.upgrades10.desc": "累计升级 10 级",
     "ach.million.name": "百万大亨",
@@ -1760,14 +2437,22 @@ const I18N = {
     "event.tourist.title": "旅客潮",
     "event.tourist.body": "黄金周将至，口岸人流预计创新高。",
     "event.tourist.cash": "把握机会 → 即时获得 30 秒收入",
-    "event.tourist.demand": "加强宣传 → 客流 +35%，90 秒"
+    "event.tourist.demand": "加强宣传 → 客流 +35%，90 秒",
+    "event.typhoon.title": "机场台风",
+    "event.typhoon.body": "台风逼近，机场路线大乱。你要加派接驳，还是冒险维持班次？",
+    "event.typhoon.pay": "启动应急接驳（花费 {cost}）→ 客流 +35%，90 秒",
+    "event.typhoon.risk": "维持班次 → 运力 -35%，60 秒",
+    "event.golden.title": "边境黄金周",
+    "event.golden.body": "黄金周将至，口岸人流急升，跨境路线需求爆表。",
+    "event.golden.pay": "加开跨境班次（花费 {cost}）→ 客流 +50%，80 秒",
+    "event.golden.skip": "维持正常班次"
   },
 
   en: {
     pageTitle: "Bus Tycoon · Hong Kong",
     appName: "Bus Tycoon",
-    kicker: "HONG KONG TRANSIT EMPIRE",
-    tagline: "Start with one route. Build a bus empire.",
+    kicker: "HONG KONG TRANSIT // NEO HK",
+    tagline: "Start with one route. Take over the neon transit empire.",
     disclaimer: "Unofficial fan project · Route names are an homage · All numbers are fictional",
     rating: "RATING",
     ratingTitle: "Company rating {n} / 5 stars",
@@ -1788,6 +2473,13 @@ const I18N = {
     prestigeBonus: "+{x}% income",
     routesTitle: "Route network",
     routesHint: "More buses add capacity. Marketing brings more passengers.",
+    filterLabel: "Route filters",
+    filterAll: "All",
+    filterBorder: "Border",
+    filterTuenMun: "Tuen Mun",
+    filterYuenLong: "Yuen Long",
+    filterAirport: "Airport",
+    filterCrossHarbour: "Cross-harbour",
     fleetTitle: "Fleet depot",
     fleetHint: "Buses are assigned to the selected route. Slots are limited — high-capacity models go further.",
     upgradesTitle: "Company upgrades",
@@ -1907,10 +2599,15 @@ const I18N = {
     minuteShort: "m",
     secondShort: "s",
     "route.b3a.name": "Fu Tai Estate ⇄ Shenzhen Bay Port",
+    "route.b1.name": "Yuen Long Station ⇄ Lok Ma Chau Station",
     "route.k51.name": "Fu Tai ⇄ Tai Lam",
+    "route.b2.name": "Yuen Long Station ⇄ Shenzhen Bay Port",
     "route.r506.name": "Tuen Mun Ferry Pier ⇄ Siu Lun",
+    "route.b3.name": "Tuen Mun Ferry Pier ⇄ Shenzhen Bay Port",
     "route.e33.name": "Tuen Mun Town Centre ⇄ Airport",
+    "route.k52.name": "Tuen Mun Station ⇄ Lung Kwu Tan",
     "route.r968.name": "Yuen Long ⇄ Causeway Bay",
+    "route.a33x.name": "Tuen Mun (Fu Tai) ⇄ Airport",
     "bus.shuttle.name": "Single-decker",
     "bus.shuttle.desc": "Nimble through narrow streets. The starter bus.",
     "bus.double.name": "Double-decker",
@@ -1938,13 +2635,17 @@ const I18N = {
     "ach.fleet10.name": "Fleet Builder",
     "ach.fleet10.desc": "Own 10 buses",
     "ach.fleet50.name": "Bus Kingdom",
-    "ach.fleet50.desc": "Own 50 buses",
+    "ach.fleet50.desc": "Purchase 50 buses in total",
     "ach.fleet100.name": "Hundred Strong",
-    "ach.fleet100.desc": "Own 100 buses",
+    "ach.fleet100.desc": "Purchase 100 buses in total",
     "ach.routes2.name": "Network Expansion",
     "ach.routes2.desc": "Unlock 2 routes",
-    "ach.routes5.name": "Citywide",
-    "ach.routes5.desc": "Unlock all 5 routes",
+    "ach.routes5.name": "Five-Line Network",
+    "ach.routes5.desc": "Unlock 5 routes",
+    "ach.routes8.name": "Eight-Line Network",
+    "ach.routes8.desc": "Unlock 8 routes",
+    "ach.routesAll.name": "Citywide",
+    "ach.routesAll.desc": "Unlock every route",
     "ach.upgrades10.name": "Modernisation",
     "ach.upgrades10.desc": "Reach 10 total upgrade levels",
     "ach.million.name": "Millionaire",
@@ -1980,7 +2681,15 @@ const I18N = {
     "event.tourist.title": "Tourist wave",
     "event.tourist.body": "Golden Week is coming. Border traffic is expected to hit a record.",
     "event.tourist.cash": "Seize the moment → Gain 30 seconds of income",
-    "event.tourist.demand": "Promote harder → Demand +35% for 90s"
+    "event.tourist.demand": "Promote harder → Demand +35% for 90s",
+    "event.typhoon.title": "Airport typhoon",
+    "event.typhoon.body": "A typhoon is closing in and airport routes are in chaos. Add emergency shuttles or risk the timetable?",
+    "event.typhoon.pay": "Start emergency shuttles (cost {cost}) → Demand +35% for 90s",
+    "event.typhoon.risk": "Keep running → Capacity -35% for 60s",
+    "event.golden.title": "Border golden week",
+    "event.golden.body": "Golden Week is here. Cross-border demand is off the charts.",
+    "event.golden.pay": "Add cross-border services (cost {cost}) → Demand +50% for 80s",
+    "event.golden.skip": "Keep the normal timetable"
   }
 };
 
@@ -1995,12 +2704,28 @@ const TICK_SECONDS = 0.1;
 const PRESTIGE_GOAL = 5e5;
 
 const ROUTES = [
-  { id: "b3a",  num: "B3A",  color: "#ffd23f", unlock: 0,       demand: 2.6, fare: 5.2, trip: 35 },
-  { id: "k51",  num: "K51",  color: "#37e29a", unlock: 2500,    demand: 7,   fare: 6,   trip: 45 },
-  { id: "r506", num: "506",  color: "#6ea8ff", unlock: 25000,   demand: 20,  fare: 8,   trip: 55 },
-  { id: "e33",  num: "E33",  color: "#ff9f43", unlock: 250000,  demand: 65,  fare: 16,  trip: 70 },
-  { id: "r968", num: "968",  color: "#ff6b9d", unlock: 2500000, demand: 220, fare: 24,  trip: 90 }
+  { id: "b3a",  num: "B3A",  color: "#ffd23f", unlock: 0,       demand: 2.6, fare: 5.2, trip: 35, regions: ["border", "tuenMun"] },
+  { id: "b1",   num: "B1",   color: "#2dd4bf", unlock: 600,     demand: 4.2, fare: 5.6, trip: 40, regions: ["border", "yuenLong"] },
+  { id: "k51",  num: "K51",  color: "#37e29a", unlock: 2500,    demand: 7,   fare: 6,   trip: 45, regions: ["tuenMun"] },
+  { id: "b2",   num: "B2",   color: "#38bdf8", unlock: 6000,    demand: 12,  fare: 7.4, trip: 50, regions: ["border", "yuenLong"] },
+  { id: "r506", num: "506",  color: "#6ea8ff", unlock: 25000,   demand: 20,  fare: 8,   trip: 55, regions: ["tuenMun"] },
+  { id: "b3",   num: "B3",   color: "#a3e635", unlock: 60000,   demand: 36,  fare: 10.5, trip: 62, regions: ["border", "tuenMun"] },
+  { id: "e33",  num: "E33",  color: "#ff9f43", unlock: 250000,  demand: 65,  fare: 16,  trip: 70, regions: ["airport", "tuenMun"] },
+  { id: "k52",  num: "K52",  color: "#fb7185", unlock: 600000,  demand: 110, fare: 18,  trip: 78, regions: ["tuenMun"] },
+  { id: "r968", num: "968",  color: "#ff6b9d", unlock: 2500000, demand: 220, fare: 24,  trip: 90, regions: ["yuenLong", "crossHarbour"] },
+  { id: "a33x", num: "A33X", color: "#c084fc", unlock: 6000000, demand: 330, fare: 32,  trip: 96, regions: ["airport", "tuenMun"] }
 ];
+
+const ROUTE_FILTERS = [
+  ["all", "filterAll"],
+  ["border", "filterBorder"],
+  ["tuenMun", "filterTuenMun"],
+  ["yuenLong", "filterYuenLong"],
+  ["airport", "filterAirport"],
+  ["crossHarbour", "filterCrossHarbour"]
+];
+
+let routeFilter = "all";
 
 const BUSES = [
   { id: "shuttle",  color: "#ffd23f", cost: 25,        capacity: 40,  speed: 1.00, upkeep: 0.05, unlock: 0 },
@@ -2026,10 +2751,12 @@ const UPGRADE_BY_ID = Object.fromEntries(UPGRADES.map((u) => [u.id, u]));
 const ACHIEVEMENTS = [
   { id: "firstFare",  icon: "🎫", check: () => state.allTimeEarned >= 100 },
   { id: "fleet10",    icon: "🚌", check: () => totalFleet() >= 10 },
-  { id: "fleet50",    icon: "🚍", check: () => totalFleet() >= 50 },
-  { id: "fleet100",   icon: "🏙️", check: () => totalFleet() >= 100 },
+  { id: "fleet50",    icon: "🚍", check: () => state.stats.bought >= 50 },
+  { id: "fleet100",   icon: "🏙️", check: () => state.stats.bought >= 100 },
   { id: "routes2",    icon: "🗺️", check: () => unlockedRouteCount() >= 2 },
   { id: "routes5",    icon: "🌏", check: () => unlockedRouteCount() >= 5 },
+  { id: "routes8",    icon: "🛰️", check: () => unlockedRouteCount() >= 8 },
+  { id: "routesAll",  icon: "🌐", check: () => unlockedRouteCount() >= ROUTES.length },
   { id: "upgrades10", icon: "🛠️", check: () => totalUpgradeLevels() >= 10 },
   { id: "million",    icon: "💰", check: () => state.runEarned >= 1e6 },
   { id: "billion",    icon: "💎", check: () => state.allTimeEarned >= 1e9 },
@@ -2091,6 +2818,24 @@ const EVENTS = [
     choices: [
       { label: "event.tourist.cash", effects: [{ type: "cashSeconds", seconds: 30 }] },
       { label: "event.tourist.demand", effects: [{ type: "buff", stat: "demand", mult: 1.35, duration: 90 }] }
+    ]
+  },
+  {
+    id: "typhoon",
+    title: "event.typhoon.title",
+    body: "event.typhoon.body",
+    choices: [
+      { label: "event.typhoon.pay", costPct: 0.10, minCost: 40, effects: [{ type: "buff", stat: "demand", mult: 1.35, duration: 90 }] },
+      { label: "event.typhoon.risk", effects: [{ type: "buff", stat: "throughput", mult: 0.65, duration: 60 }] }
+    ]
+  },
+  {
+    id: "golden",
+    title: "event.golden.title",
+    body: "event.golden.body",
+    choices: [
+      { label: "event.golden.pay", costPct: 0.08, minCost: 30, effects: [{ type: "buff", stat: "demand", mult: 1.5, duration: 80 }] },
+      { label: "event.golden.skip", effects: [] }
     ]
   }
 ];
@@ -2158,6 +2903,8 @@ let lastFrame = performance.now();
 let uiClock = 0;
 let achClock = 0;
 let saveClock = 0;
+let lastCashFx = 0;
+let routeObserver = null;
 
 function safeNum(value, fallback = 0) {
   const n = Number(value);
@@ -2339,8 +3086,8 @@ function achievementMultiplier() {
 
 function ratingStars() {
   const score = totalFleet() * 0.9 + unlockedRouteCount() * 10 + totalUpgradeLevels() * 1.1;
-  if (score >= 320) return 5;
-  if (score >= 160) return 4;
+  if (score >= 220) return 5;
+  if (score >= 140) return 4;
   if (score >= 70) return 3;
   if (score >= 25) return 2;
   return 1;
@@ -2485,6 +3232,8 @@ function hydrate(raw) {
   for (const route of ROUTES) {
     for (const bus of BUSES) fleetTotal += next.routes[route.id].fleet[bus.id] || 0;
   }
+  // Old saves did not always track lifetime purchases. Current fleet is a safe floor.
+  next.stats.bought = Math.max(next.stats.bought, fleetTotal);
   if (fleetTotal === 0) next.routes.b3a.fleet.shuttle = 1;
 
   return next;
@@ -2568,6 +3317,100 @@ function decodeSave(text) {
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function burstAt(x, y, color = "#00f5ff", count = 12) {
+  if (reducedMotion.matches) return;
+  const layer = $("#fxLayer");
+  if (!layer) return;
+  for (let i = 0; i < count; i += 1) {
+    const particle = document.createElement("i");
+    particle.className = "fx-particle";
+    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+    const distance = 24 + Math.random() * 48;
+    const size = 3 + Math.random() * 4;
+    particle.style.left = x + "px";
+    particle.style.top = y + "px";
+    particle.style.width = size + "px";
+    particle.style.height = size + "px";
+    particle.style.setProperty("--dx", Math.cos(angle) * distance + "px");
+    particle.style.setProperty("--dy", Math.sin(angle) * distance + "px");
+    particle.style.setProperty("--r", Math.random() * 360 + "deg");
+    particle.style.setProperty("--c", color);
+    particle.style.animationDelay = Math.random() * 70 + "ms";
+    layer.appendChild(particle);
+    setTimeout(() => particle.remove(), 1000);
+  }
+}
+
+function spawnBurst(target, color = "#00f5ff", count = 12) {
+  const element = typeof target === "string" ? $(target) : target;
+  if (!element || reducedMotion.matches) return;
+  const rect = element.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  burstAt(rect.left + rect.width / 2, rect.top + rect.height / 2, color, count);
+}
+
+function spawnFloat(text, target, color = "#39ff88") {
+  const element = typeof target === "string" ? $(target) : target;
+  if (!element || reducedMotion.matches) return;
+  const layer = $("#fxLayer");
+  if (!layer) return;
+  const rect = element.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  const label = document.createElement("span");
+  label.className = "fx-float";
+  label.textContent = text;
+  label.style.left = rect.left + rect.width / 2 + "px";
+  label.style.top = rect.top + rect.height * 0.32 + "px";
+  label.style.setProperty("--c", color);
+  layer.appendChild(label);
+  setTimeout(() => label.remove(), 1300);
+}
+
+function flashScreen(color = "#00f5ff") {
+  if (reducedMotion.matches) return;
+  const layer = $("#fxLayer");
+  if (!layer) return;
+  const flash = document.createElement("div");
+  flash.className = "fx-flash";
+  flash.style.setProperty("--c", color);
+  layer.appendChild(flash);
+  setTimeout(() => flash.remove(), 900);
+}
+
+function celebrate(color = "#00f5ff") {
+  flashScreen(color);
+  burstAt(window.innerWidth / 2, window.innerHeight * 0.42, color, 28);
+}
+
+function pulse(element, className = "fx-hit") {
+  if (!element || reducedMotion.matches) return;
+  element.classList.remove(className);
+  void element.offsetWidth;
+  element.classList.add(className);
+  setTimeout(() => element.classList.remove(className), 560);
+}
+
+function animateCounts(root = document) {
+  root.querySelectorAll("[data-count-to]").forEach((element) => {
+    const target = Number(element.dataset.countTo);
+    if (!Number.isFinite(target)) return;
+    if (reducedMotion.matches) {
+      element.textContent = money(target);
+      return;
+    }
+    const duration = Number(element.dataset.countDuration) || 720;
+    const started = performance.now();
+    const step = (now) => {
+      const progress = Math.min(1, (now - started) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      element.textContent = money(target * eased);
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
 
 function busIconSvg() {
   return '<svg viewBox="0 0 40 24" fill="none" aria-hidden="true">' +
@@ -2624,7 +3467,7 @@ function upgradeEffectText(id) {
    7. Panels
    --------------------------------------------------------------------- */
 
-function routeCard(route) {
+function routeCard(route, index = 0) {
   const run = state.routes[route.id];
   const unlocked = run.unlocked;
   const count = routeFleetCount(route.id);
@@ -2646,7 +3489,7 @@ function routeCard(route) {
     const duration = Math.max(7, route.trip / 3);
     for (let i = 0; i < visible; i += 1) {
       const delay = -(i * duration) / visible;
-      runners += `<div class="runner" style="--dur:${duration}s;animation-delay:${delay}s">${busIconSvg()}</div>`;
+      runners += `<div class="runner-lane" style="--dur:${duration}s;--delay:${delay}s"><div class="runner">${busIconSvg()}</div></div>`;
     }
   }
 
@@ -2677,8 +3520,9 @@ function routeCard(route) {
       </div>
     `;
 
+  const cardState = count === 0 ? "idle" : load > 0.85 ? "busy" : "";
   return `
-    <article class="route-card ${unlocked ? "" : "locked"}" style="--route:${route.color}">
+    <article class="route-card ${unlocked ? "" : "locked"} ${cardState}" data-route-card="${route.id}" style="--route:${route.color};--i:${index}">
       <div class="route-head">
         <span class="route-badge">${route.num}</span>
         <div class="route-title-wrap">
@@ -2692,8 +3536,13 @@ function routeCard(route) {
   `;
 }
 
-function renderRoutes() {
+function renderRoutes(animate = true) {
   const panel = $("#panel-routes");
+  const visibleRoutes = ROUTES.filter((route) => routeFilter === "all" || route.regions.includes(routeFilter));
+  const filterChips = ROUTE_FILTERS.map(([id, key]) => {
+    const count = id === "all" ? ROUTES.length : ROUTES.filter((route) => route.regions.includes(id)).length;
+    return `<button type="button" class="route-filter ${routeFilter === id ? "active" : ""}" data-route-filter="${id}" aria-pressed="${routeFilter === id}">${t(key)} <span>${count}</span></button>`;
+  }).join("");
   panel.innerHTML = `
     <div class="section-head">
       <div>
@@ -2702,8 +3551,19 @@ function renderRoutes() {
       </div>
       <div class="section-meta">${unlockedRouteCount()} / ${ROUTES.length}</div>
     </div>
-    <div class="route-grid">${ROUTES.map(routeCard).join("")}</div>
+    <div class="route-filters" role="group" aria-label="${t("filterLabel")}">${filterChips}</div>
+    <div class="route-grid ${animate ? "enter" : ""}">${visibleRoutes.map(routeCard).join("")}</div>
   `;
+  observeRouteCards();
+}
+
+function observeRouteCards() {
+  if (!("IntersectionObserver" in window)) return;
+  if (routeObserver) routeObserver.disconnect();
+  routeObserver = new IntersectionObserver((entries) => {
+    for (const entry of entries) entry.target.classList.toggle("offscreen", !entry.isIntersecting);
+  }, { rootMargin: "140px" });
+  $$(".route-card").forEach((card) => routeObserver.observe(card));
 }
 
 function renderFleet() {
@@ -2728,7 +3588,7 @@ function renderFleet() {
     const canSell = owned > 0 && totalFleet() > 1;
     const disabled = locked ? " disabled data-locked=\"1\"" : "";
     return `
-      <article class="bus-card" style="--bus:${bus.color}">
+      <article class="bus-card" data-bus-card="${bus.id}" style="--bus:${bus.color}">
         <div class="bus-head">
           <div class="bus-icon">${busIconSvg()}</div>
           <div class="bus-title">
@@ -2777,7 +3637,7 @@ function renderUpgrades() {
     const maxed = level >= upgrade.max;
     const cost = upgradeCost(upgrade.id);
     return `
-      <article class="upg-card">
+      <article class="upg-card" data-upg-card="${upgrade.id}">
         <div class="upg-head">
           <div class="upg-icon">${upgrade.icon}</div>
           <div class="upg-title">
@@ -2914,7 +3774,7 @@ function renderSettings() {
   syncLangButtons();
 }
 
-function renderPanel() {
+function renderPanel(animate = true) {
   const panels = {
     routes: $("#panel-routes"),
     fleet: $("#panel-fleet"),
@@ -2926,7 +3786,7 @@ function renderPanel() {
     if (element) element.classList.toggle("hidden", key !== state.tab);
   }
 
-  if (state.tab === "routes") renderRoutes();
+  if (state.tab === "routes") renderRoutes(animate);
   else if (state.tab === "fleet") renderFleet();
   else if (state.tab === "upgrades") renderUpgrades();
   else if (state.tab === "achievements") renderAchievements();
@@ -3043,6 +3903,14 @@ function refreshLive() {
   }
   const prestigeBar = $("#prestigeBar");
   if (prestigeBar) prestigeBar.style.width = (prestigeProgress() * 100).toFixed(1) + "%";
+  const prestigePanel = document.querySelector(".prestige-bar");
+  if (prestigePanel) prestigePanel.classList.toggle("ready", gain > 0);
+  if (prestigeBtn) prestigeBtn.classList.toggle("ready", gain > 0);
+
+  if (netIncome() > 0 && performance.now() - lastCashFx > 2600) {
+    lastCashFx = performance.now();
+    spawnFloat(`+${money(netIncome() * 2.6)}`, $("#statCash"), "#39ff88");
+  }
 
   refreshAffordability();
 }
@@ -3116,8 +3984,14 @@ function buyBus(routeId, modelId) {
   state.stats.bought += 1;
   saveGame();
   checkAchievements();
-  renderPanel();
+  renderPanel(false);
   refreshLive();
+  requestAnimationFrame(() => {
+    const card = document.querySelector(`[data-bus-card="${modelId}"]`);
+    spawnBurst(card, bus.color, 12);
+    pulse(card);
+    spawnFloat(`-${money(cost)}`, card, "#ff2bd6");
+  });
   toast(t("toastBought"), "good");
 }
 
@@ -3134,8 +4008,13 @@ function sellBus(routeId, modelId) {
   state.cash += refund;
   saveGame();
   checkAchievements();
-  renderPanel();
+  renderPanel(false);
   refreshLive();
+  requestAnimationFrame(() => {
+    const card = document.querySelector(`[data-bus-card="${modelId}"]`);
+    spawnBurst(card, "#39ff88", 9);
+    spawnFloat(`+${money(refund)}`, card, "#39ff88");
+  });
   toast(t("toastSold") + " +" + money(refund), "good");
 }
 
@@ -3152,8 +4031,14 @@ function buyUpgrade(id) {  const upgrade = UPGRADE_BY_ID[id];
   state.upgrades[id] = level + 1;
   saveGame();
   checkAchievements();
-  renderPanel();
+  renderPanel(false);
   refreshLive();
+  requestAnimationFrame(() => {
+    const card = document.querySelector(`[data-upg-card="${id}"]`);
+    spawnBurst(card, "#00f5ff", 14);
+    pulse(card);
+    spawnFloat(`Lv ${level + 1}`, card, "#00f5ff");
+  });
   toast(t("toastUpgrade"), "good");
 }
 
@@ -3186,6 +4071,8 @@ function openUnlockRoute(routeId) {
           saveGame();
           checkAchievements();
           renderAll();
+          celebrate(route.color);
+          spawnFloat(`${route.num} ONLINE`, $("#statCash"), route.color);
           toast(t("toastUnlocked"), "good");
         }
       },
@@ -3235,6 +4122,8 @@ function doPrestige(gain) {
   saveGame();
   renderAll();
   checkAchievements();
+  celebrate("#ff2bd6");
+  spawnFloat(`+${gain} FRANCHISE`, $("#statPrestige"), "#00f5ff");
   toast(t("prestigeDone", { n: gain }), "good");
 }
 
@@ -3385,6 +4274,7 @@ function openModal(options) {
   $("#modalKicker").textContent = kicker;
   $("#modalTitle").textContent = title;
   $("#modalBody").innerHTML = body;
+  animateCounts($("#modalBody"));
 
   const actionWrap = $("#modalActions");
   actionWrap.innerHTML = "";
@@ -3454,7 +4344,7 @@ function showOfflineModal() {
     kicker: t("offlineTitle"),
     title: t("offlineTitle"),
     body: `
-      <p>${t("offlineBody", { time: formatDuration(offline.seconds), cash: `<span class="big">${money(offline.gain)}</span>` })}</p>
+      <p>${t("offlineBody", { time: formatDuration(offline.seconds), cash: `<span class="big" data-count-to="${offline.gain}" data-count-duration="900">${money(0)}</span>` })}</p>
       <p class="muted">${t("offlineCap")}</p>
     `,
     closeable: true,
@@ -3500,6 +4390,11 @@ function resolveEvent(index) {
   saveGame();
   checkAchievements();
   renderAll();
+  const good = !(choice.effects || []).some((effect) =>
+    (effect.type === "buff" && effect.stat === "throughput" && effect.mult < 1)
+    || (effect.type === "buff" && effect.stat === "upkeep" && effect.mult > 1)
+  );
+  spawnBurst($("#statCash"), good ? "#39ff88" : "#ff3b5c", 14);
   toast(t("eventResolved"), "good");
 }
 
@@ -3541,6 +4436,11 @@ function checkAchievements() {
     if (state.tab === "achievements") renderAchievements();
     renderStats();
     refreshAffordability();
+    const achTab = document.querySelector('[data-tab="achievements"]');
+    pulse(achTab);
+    if (state.tab === "achievements") {
+      spawnBurst(achTab, "#ff2bd6", 16);
+    }
   }
 }
 
@@ -3635,6 +4535,13 @@ document.addEventListener("click", (event) => {
     return;
   }
 
+  const routeFilterButton = find("data-route-filter");
+  if (routeFilterButton) {
+    routeFilter = routeFilterButton.dataset.routeFilter;
+    renderRoutes(true);
+    return;
+  }
+
   const buyRoute = find("data-buy-route");
   if (buyRoute) {
     selectFleetRoute(buyRoute.dataset.buyRoute);
@@ -3717,6 +4624,8 @@ document.addEventListener("keydown", (event) => {
 let hiddenAt = 0;
 
 document.addEventListener("visibilitychange", () => {
+  document.body.classList.toggle("app-paused", document.hidden);
+
   if (document.hidden) {
     hiddenAt = Date.now();
     saveGame();
