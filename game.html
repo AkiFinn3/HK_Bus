@@ -1115,6 +1115,8 @@
 
   .ach-card.locked .ach-icon { background: rgba(255,255,255,.05); }
 
+  .ach-body { min-width: 0; flex: 1; }
+
   .ach-name { font-size: 12.5px; font-weight: 780; }
 
   .ach-desc { margin-top: 2px; font-size: 10.5px; color: var(--muted); line-height: 1.4; }
@@ -1126,6 +1128,34 @@
     letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--green);
+  }
+
+  .ach-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 7px;
+  }
+
+  .ach-track {
+    height: 4px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+  }
+
+  .ach-track i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 8px rgba(0,245,255,.35);
+  }
+
+  .ach-progress span {
+    color: var(--muted);
+    font-size: 9.5px;
+    font-variant-numeric: tabular-nums;
   }
 
   .ach-card.locked .ach-state { color: var(--muted); }
@@ -2181,7 +2211,7 @@ const I18N = {
     filterAirport: "機場",
     filterCrossHarbour: "過海",
     fleetTitle: "車隊採購",
-    fleetHint: "購入的巴士會直接派到所選路線。車位有限，高載客量車型更划算。",
+    fleetHint: "由紅Van到星際巴士，購入的巴士會直接派到所選路線；升級車廠可大幅擴充車位。",
     upgradesTitle: "公司技能樹",
     upgradesHint: "三條分支永久生效；新節點需要前置升級，價格會隨等級上升。",
     branchFilterLabel: "技能樹分支",
@@ -2238,6 +2268,7 @@ const I18N = {
     effectAdvertising: "總收入 +{n}%",
     effectTunnel: "過海路線票價 +{n}%",
     achCount: "{done} / {total} 已達成",
+    achProgress: "{value} / {target}",
     achUnlocked: "已達成",
     achLocked: "未達成",
     settingsLanguage: "語言",
@@ -2331,8 +2362,18 @@ const I18N = {
     "bus.electric.desc": "安靜、環保，維護成本更低。",
     "bus.hydrogen.name": "氫能巴士",
     "bus.hydrogen.desc": "新一代零排放旗艦車款。",
+    "bus.minibus.name": "紅Van小巴",
+    "bus.minibus.desc": "車細位少但夠快，專攻窄街短途。",
+    "bus.coach.name": "跨境豪華巴士",
+    "bus.coach.desc": "大容量過境主力，維護費較高。",
+    "bus.amphibious.name": "兩棲巴士",
+    "bus.amphibious.desc": "落海都行，過海唔使排隧道。",
+    "bus.hover.name": "反重力懸浮巴士",
+    "bus.hover.desc": "離地飛行，塞車與你無關。",
+    "bus.rocket.name": "星際巴士",
+    "bus.rocket.desc": "由屯門直上軌道，單程飛越維港。",
     "upgrade.garage.name": "車廠擴建",
-    "upgrade.garage.desc": "每級增加 2 個車位。",
+    "upgrade.garage.desc": "每級增加 3 個車位，上限 40 級。",
     "upgrade.maintenance.name": "維修團隊",
     "upgrade.maintenance.desc": "每級降低 5% 維護費。",
     "upgrade.driver.name": "司機培訓",
@@ -2359,10 +2400,12 @@ const I18N = {
     "ach.firstFare.desc": "累計收入達到 $100",
     "ach.fleet10.name": "車隊成形",
     "ach.fleet10.desc": "擁有 10 輛巴士",
+    "ach.fleet25.name": "車隊擴編",
+    "ach.fleet25.desc": "擁有 25 輛巴士",
     "ach.fleet50.name": "巴士王國",
-    "ach.fleet50.desc": "累計購入 50 輛巴士",
+    "ach.fleet50.desc": "擁有 50 輛巴士",
     "ach.fleet100.name": "百車大軍",
-    "ach.fleet100.desc": "累計購入 100 輛巴士",
+    "ach.fleet100.desc": "擁有 100 輛巴士",
     "ach.routes2.name": "拓展網絡",
     "ach.routes2.desc": "解鎖 2 條路線",
     "ach.routes5.name": "五線營運",
@@ -2373,6 +2416,10 @@ const I18N = {
     "ach.routesAll.desc": "解鎖全部路線",
     "ach.upgrades10.name": "現代化",
     "ach.upgrades10.desc": "累計升級 10 級",
+    "ach.busTypes.name": "全車種制霸",
+    "ach.busTypes.desc": "每種巴士至少擁有 1 輛",
+    "ach.rocket1.name": "衝出大氣層",
+    "ach.rocket1.desc": "擁有 1 輛星際巴士",
     "ach.million.name": "百萬大亨",
     "ach.million.desc": "本輪收入達到 $1M",
     "ach.billion.name": "十億巨頭",
@@ -2450,7 +2497,7 @@ const I18N = {
     filterAirport: "机场",
     filterCrossHarbour: "过海",
     fleetTitle: "车队采购",
-    fleetHint: "购入的巴士会直接派到所选路线。车位有限，高载客量车型更划算。",
+    fleetHint: "由红Van到星际巴士，购入的巴士会直接派到所选路线；升级车厂可大幅扩充车位。",
     upgradesTitle: "公司技能树",
     upgradesHint: "三条分支永久生效；新节点需要前置升级，价格会随等级上升。",
     branchFilterLabel: "技能树分支",
@@ -2507,6 +2554,7 @@ const I18N = {
     effectAdvertising: "总收入 +{n}%",
     effectTunnel: "过海路线票价 +{n}%",
     achCount: "{done} / {total} 已达成",
+    achProgress: "{value} / {target}",
     achUnlocked: "已达成",
     achLocked: "未达成",
     settingsLanguage: "语言",
@@ -2600,8 +2648,18 @@ const I18N = {
     "bus.electric.desc": "安静、环保，维护成本更低。",
     "bus.hydrogen.name": "氢能巴士",
     "bus.hydrogen.desc": "新一代零排放旗舰车款。",
+    "bus.minibus.name": "红Van小巴",
+    "bus.minibus.desc": "车小位少但够快，专攻窄街短途。",
+    "bus.coach.name": "跨境豪华巴士",
+    "bus.coach.desc": "大容量过境主力，维护费较高。",
+    "bus.amphibious.name": "两栖巴士",
+    "bus.amphibious.desc": "落海都行，过海不用排隧道。",
+    "bus.hover.name": "反重力悬浮巴士",
+    "bus.hover.desc": "离地飞行，堵车与你无关。",
+    "bus.rocket.name": "星际巴士",
+    "bus.rocket.desc": "由屯门直上轨道，单程飞越维港。",
     "upgrade.garage.name": "车厂扩建",
-    "upgrade.garage.desc": "每级增加 2 个车位。",
+    "upgrade.garage.desc": "每级增加 3 个车位，上限 40 级。",
     "upgrade.maintenance.name": "维修团队",
     "upgrade.maintenance.desc": "每级降低 5% 维护费。",
     "upgrade.driver.name": "司机培训",
@@ -2628,10 +2686,12 @@ const I18N = {
     "ach.firstFare.desc": "累计收入达到 $100",
     "ach.fleet10.name": "车队成形",
     "ach.fleet10.desc": "拥有 10 辆巴士",
+    "ach.fleet25.name": "车队扩编",
+    "ach.fleet25.desc": "拥有 25 辆巴士",
     "ach.fleet50.name": "巴士王国",
-    "ach.fleet50.desc": "累计购入 50 辆巴士",
+    "ach.fleet50.desc": "拥有 50 辆巴士",
     "ach.fleet100.name": "百车大军",
-    "ach.fleet100.desc": "累计购入 100 辆巴士",
+    "ach.fleet100.desc": "拥有 100 辆巴士",
     "ach.routes2.name": "拓展网络",
     "ach.routes2.desc": "解锁 2 条路线",
     "ach.routes5.name": "五线营运",
@@ -2642,6 +2702,10 @@ const I18N = {
     "ach.routesAll.desc": "解锁全部路线",
     "ach.upgrades10.name": "现代化",
     "ach.upgrades10.desc": "累计升级 10 级",
+    "ach.busTypes.name": "全车种制霸",
+    "ach.busTypes.desc": "每种巴士至少拥有 1 辆",
+    "ach.rocket1.name": "冲出大气层",
+    "ach.rocket1.desc": "拥有 1 辆星际巴士",
     "ach.million.name": "百万大亨",
     "ach.million.desc": "本轮收入达到 $1M",
     "ach.billion.name": "十亿巨头",
@@ -2719,7 +2783,7 @@ const I18N = {
     filterAirport: "Airport",
     filterCrossHarbour: "Cross-harbour",
     fleetTitle: "Fleet depot",
-    fleetHint: "Buses are assigned to the selected route. Slots are limited — high-capacity models go further.",
+    fleetHint: "From red minibuses to starships. Buses go straight to the selected route; upgrade the depot to raise the fleet cap.",
     upgradesTitle: "Company skill trees",
     upgradesHint: "Three permanent branches. New nodes need prerequisite upgrades; prices rise with each level.",
     branchFilterLabel: "Skill tree branches",
@@ -2776,6 +2840,7 @@ const I18N = {
     effectAdvertising: "Total income +{n}%",
     effectTunnel: "Cross-harbour fare +{n}%",
     achCount: "{done} / {total} unlocked",
+    achProgress: "{value} / {target}",
     achUnlocked: "Unlocked",
     achLocked: "Locked",
     settingsLanguage: "Language",
@@ -2869,8 +2934,18 @@ const I18N = {
     "bus.electric.desc": "Quiet, clean and cheaper to maintain.",
     "bus.hydrogen.name": "Hydrogen bus",
     "bus.hydrogen.desc": "The zero-emission flagship.",
+    "bus.minibus.name": "Red minibus",
+    "bus.minibus.desc": "Small, quick and built for narrow streets.",
+    "bus.coach.name": "Cross-border coach",
+    "bus.coach.desc": "High-capacity border flagship. Thirsty on upkeep.",
+    "bus.amphibious.name": "Amphibious bus",
+    "bus.amphibious.desc": "Swims across the harbour. Tunnel queues not included.",
+    "bus.hover.name": "Anti-grav hover bus",
+    "bus.hover.desc": "Floats above traffic on anti-grav thrusters.",
+    "bus.rocket.name": "Starship bus",
+    "bus.rocket.desc": "Tuen Mun to orbit in a single fare stage.",
     "upgrade.garage.name": "Depot expansion",
-    "upgrade.garage.desc": "+2 garage slots per level.",
+    "upgrade.garage.desc": "+3 garage slots per level, up to Lv 40.",
     "upgrade.maintenance.name": "Maintenance crew",
     "upgrade.maintenance.desc": "-5% upkeep per level.",
     "upgrade.driver.name": "Driver training",
@@ -2897,10 +2972,12 @@ const I18N = {
     "ach.firstFare.desc": "Earn $100 in total",
     "ach.fleet10.name": "Fleet Builder",
     "ach.fleet10.desc": "Own 10 buses",
+    "ach.fleet25.name": "Fleet Expansion",
+    "ach.fleet25.desc": "Own 25 buses",
     "ach.fleet50.name": "Bus Kingdom",
-    "ach.fleet50.desc": "Purchase 50 buses in total",
+    "ach.fleet50.desc": "Own 50 buses",
     "ach.fleet100.name": "Hundred Strong",
-    "ach.fleet100.desc": "Purchase 100 buses in total",
+    "ach.fleet100.desc": "Own 100 buses",
     "ach.routes2.name": "Network Expansion",
     "ach.routes2.desc": "Unlock 2 routes",
     "ach.routes5.name": "Five-Line Network",
@@ -2911,6 +2988,10 @@ const I18N = {
     "ach.routesAll.desc": "Unlock every route",
     "ach.upgrades10.name": "Modernisation",
     "ach.upgrades10.desc": "Reach 10 total upgrade levels",
+    "ach.busTypes.name": "Full Garage",
+    "ach.busTypes.desc": "Own at least one of every bus type",
+    "ach.rocket1.name": "To the Stars",
+    "ach.rocket1.desc": "Own a Starship bus",
     "ach.million.name": "Millionaire",
     "ach.million.desc": "Earn $1M in one run",
     "ach.billion.name": "Billionaire",
@@ -2992,11 +3073,16 @@ let routeFilter = "all";
 let upgradeBranch = "all";
 
 const BUSES = [
-  { id: "shuttle",  color: "#ffd23f", cost: 25,        capacity: 40,  speed: 1.00, upkeep: 0.05, unlock: 0 },
-  { id: "double",   color: "#6ea8ff", cost: 320,       capacity: 100, speed: 0.95, upkeep: 0.12, unlock: 0 },
-  { id: "artic",    color: "#37e29a", cost: 7000,      capacity: 180, speed: 0.85, upkeep: 0.30, unlock: 12000 },
-  { id: "electric", color: "#b388ff", cost: 90000,     capacity: 260, speed: 1.05, upkeep: 0.40, unlock: 250000 },
-  { id: "hydrogen", color: "#ff6b9d", cost: 1800000,   capacity: 440, speed: 1.10, upkeep: 1.20, unlock: 3000000 }
+  { id: "shuttle",   color: "#ffd23f", cost: 25,         capacity: 40,    speed: 1.00, upkeep: 0.05, unlock: 0 },
+  { id: "minibus",   color: "#ff5d5d", cost: 20,         capacity: 24,    speed: 1.35, upkeep: 0.03, unlock: 0 },
+  { id: "double",    color: "#6ea8ff", cost: 320,        capacity: 100,   speed: 0.95, upkeep: 0.12, unlock: 0 },
+  { id: "artic",     color: "#37e29a", cost: 7000,       capacity: 180,   speed: 0.85, upkeep: 0.30, unlock: 12000 },
+  { id: "electric",  color: "#b388ff", cost: 90000,      capacity: 260,   speed: 1.05, upkeep: 0.40, unlock: 250000 },
+  { id: "coach",     color: "#36d6ff", cost: 1200000,    capacity: 620,   speed: 0.92, upkeep: 2.40, unlock: 1000000 },
+  { id: "hydrogen",  color: "#ff6b9d", cost: 1800000,    capacity: 440,   speed: 1.10, upkeep: 1.20, unlock: 3000000 },
+  { id: "amphibious",color: "#59f7c4", cost: 6000000,    capacity: 1200,  speed: 0.88, upkeep: 7.00, unlock: 2e7 },
+  { id: "hover",     color: "#8a7dff", cost: 120000000,  capacity: 3500,  speed: 1.35, upkeep: 40.0, unlock: 2.5e8 },
+  { id: "rocket",    color: "#ff9f43", cost: 600000000,  capacity: 12000, speed: 1.80, upkeep: 500,  unlock: 1e9 }
 ];
 
 const UPGRADE_BRANCHES = [
@@ -3006,7 +3092,7 @@ const UPGRADE_BRANCHES = [
 ];
 
 const UPGRADES = [
-  { id: "garage",      branch: "operations", tier: 1, icon: "🏭", max: 20, base: 80,    growth: 1.65 },
+  { id: "garage",      branch: "operations", tier: 1, icon: "🏭", max: 40, base: 80,    growth: 1.50 },
   { id: "maintenance", branch: "operations", tier: 2, icon: "🔧", max: 15, base: 200,   growth: 1.75 },
   { id: "dispatch",    branch: "operations", tier: 2, icon: "📡", max: 20, base: 1500,  growth: 1.68, requires: { id: "garage", level: 2 } },
   { id: "automation",  branch: "operations", tier: 3, icon: "🤖", max: 15, base: 50000, growth: 1.80, requires: { id: "dispatch", level: 4 } },
@@ -3027,20 +3113,23 @@ const BUS_BY_ID = Object.fromEntries(BUSES.map((b) => [b.id, b]));
 const UPGRADE_BY_ID = Object.fromEntries(UPGRADES.map((u) => [u.id, u]));
 
 const ACHIEVEMENTS = [
-  { id: "firstFare",  icon: "🎫", check: () => state.allTimeEarned >= 100 },
-  { id: "fleet10",    icon: "🚌", check: () => totalFleet() >= 10 },
-  { id: "fleet50",    icon: "🚍", check: () => state.stats.bought >= 50 },
-  { id: "fleet100",   icon: "🏙️", check: () => state.stats.bought >= 100 },
-  { id: "routes2",    icon: "🗺️", check: () => unlockedRouteCount() >= 2 },
-  { id: "routes5",    icon: "🌏", check: () => unlockedRouteCount() >= 5 },
-  { id: "routes8",    icon: "🛰️", check: () => unlockedRouteCount() >= 8 },
-  { id: "routesAll",  icon: "🌐", check: () => unlockedRouteCount() >= ROUTES.length },
-  { id: "upgrades10", icon: "🛠️", check: () => totalUpgradeLevels() >= 10 },
-  { id: "million",    icon: "💰", check: () => state.runEarned >= 1e6 },
-  { id: "billion",    icon: "💎", check: () => state.allTimeEarned >= 1e9 },
-  { id: "prestige1",  icon: "👑", check: () => state.stats.prestiges >= 1 },
-  { id: "rating5",    icon: "⭐", check: () => ratingStars() >= 5 },
-  { id: "events5",    icon: "🧯", check: () => state.eventsResolved >= 5 }
+  { id: "firstFare",  icon: "🎫", money: true, check: () => state.allTimeEarned >= 100,      progress: () => [state.allTimeEarned, 100] },
+  { id: "fleet10",    icon: "🚌", check: () => totalFleet() >= 10,                           progress: () => [totalFleet(), 10] },
+  { id: "fleet25",    icon: "🚐", check: () => totalFleet() >= 25,                           progress: () => [totalFleet(), 25] },
+  { id: "fleet50",    icon: "🚍", check: () => totalFleet() >= 50,                           progress: () => [totalFleet(), 50] },
+  { id: "fleet100",   icon: "🏙️", check: () => totalFleet() >= 100,                          progress: () => [totalFleet(), 100] },
+  { id: "routes2",    icon: "🗺️", check: () => unlockedRouteCount() >= 2,                    progress: () => [unlockedRouteCount(), 2] },
+  { id: "routes5",    icon: "🌏", check: () => unlockedRouteCount() >= 5,                    progress: () => [unlockedRouteCount(), 5] },
+  { id: "routes8",    icon: "🛰️", check: () => unlockedRouteCount() >= 8,                    progress: () => [unlockedRouteCount(), 8] },
+  { id: "routesAll",  icon: "🌐", check: () => unlockedRouteCount() >= ROUTES.length,         progress: () => [unlockedRouteCount(), ROUTES.length] },
+  { id: "upgrades10", icon: "🛠️", check: () => totalUpgradeLevels() >= 10,                   progress: () => [totalUpgradeLevels(), 10] },
+  { id: "busTypes",   icon: "🛸", check: () => ownedBusTypes() >= BUSES.length,              progress: () => [ownedBusTypes(), BUSES.length] },
+  { id: "rocket1",    icon: "🚀", check: () => ownedBusCount("rocket") >= 1,                 progress: () => [ownedBusCount("rocket"), 1] },
+  { id: "million",    icon: "💰", money: true, check: () => state.runEarned >= 1e6,          progress: () => [state.runEarned, 1e6] },
+  { id: "billion",    icon: "💎", money: true, check: () => state.allTimeEarned >= 1e9,      progress: () => [state.allTimeEarned, 1e9] },
+  { id: "prestige1",  icon: "👑", check: () => state.stats.prestiges >= 1,                   progress: () => [state.stats.prestiges, 1] },
+  { id: "rating5",    icon: "⭐", check: () => ratingStars() >= 5,                           progress: () => [ratingStars(), 5] },
+  { id: "events5",    icon: "🧯", check: () => state.eventsResolved >= 5,                    progress: () => [state.eventsResolved, 5] }
 ];
 
 const EVENTS = [
@@ -3134,7 +3223,7 @@ const storage = (() => {
 })();
 
 function freshFleet() {
-  return { shuttle: 0, double: 0, artic: 0, electric: 0, hydrogen: 0 };
+  return Object.fromEntries(BUSES.map((bus) => [bus.id, 0]));
 }
 
 function freshRoute(id) {
@@ -3280,7 +3369,7 @@ function upgradeCost(id) {
 }
 
 function garageSlots() {
-  return 3 + upgradeLevel("garage") * 2;
+  return 4 + upgradeLevel("garage") * 3;
 }
 
 function totalFleet() {
@@ -3297,6 +3386,16 @@ function routeFleetCount(routeId) {
   let total = 0;
   for (const bus of BUSES) total += fleet[bus.id] || 0;
   return total;
+}
+
+function ownedBusCount(modelId) {
+  let total = 0;
+  for (const route of ROUTES) total += state.routes[route.id].fleet[modelId] || 0;
+  return total;
+}
+
+function ownedBusTypes() {
+  return BUSES.reduce((total, bus) => total + (ownedBusCount(bus.id) > 0 ? 1 : 0), 0);
 }
 
 function unlockedRouteCount() {
@@ -3708,7 +3807,55 @@ function animateCounts(root = document) {
   });
 }
 
-function busIconSvg() {
+function busIconSvg(busId) {
+  if (busId === "minibus") {
+    return '<svg viewBox="0 0 40 24" fill="none" aria-hidden="true">' +
+      '<rect x="7" y="3" width="28" height="15" rx="4" fill="currentColor"/>' +
+      '<rect x="10" y="6" width="10" height="6" rx="1.5" fill="#0b1220" opacity=".82"/>' +
+      '<rect x="23" y="6" width="9" height="6" rx="1.5" fill="#0b1220" opacity=".82"/>' +
+      '<circle cx="14" cy="20" r="2.8" fill="#0b1220"/>' +
+      '<circle cx="29" cy="20" r="2.8" fill="#0b1220"/>' +
+      '</svg>';
+  }
+  if (busId === "coach") {
+    return '<svg viewBox="0 0 40 24" fill="none" aria-hidden="true">' +
+      '<rect x="2" y="3" width="36" height="15" rx="4" fill="currentColor"/>' +
+      '<rect x="5" y="6" width="8" height="6" rx="1.5" fill="#0b1220" opacity=".82"/>' +
+      '<rect x="16" y="6" width="8" height="6" rx="1.5" fill="#0b1220" opacity=".82"/>' +
+      '<rect x="27" y="6" width="8" height="6" rx="1.5" fill="#0b1220" opacity=".82"/>' +
+      '<path d="M3 16h34" stroke="#0b1220" stroke-width="1.4" opacity=".45"/>' +
+      '<circle cx="10" cy="20" r="3" fill="#0b1220"/>' +
+      '<circle cx="30" cy="20" r="3" fill="#0b1220"/>' +
+      '</svg>';
+  }
+  if (busId === "amphibious") {
+    return '<svg viewBox="0 0 40 24" fill="none" aria-hidden="true">' +
+      '<path d="M3 11h34l-5 8H8z" fill="currentColor"/>' +
+      '<rect x="9" y="5" width="22" height="7" rx="2" fill="currentColor"/>' +
+      '<rect x="12" y="7" width="7" height="3.5" rx="1" fill="#0b1220" opacity=".82"/>' +
+      '<rect x="22" y="7" width="6" height="3.5" rx="1" fill="#0b1220" opacity=".82"/>' +
+      '<circle cx="13" cy="19" r="2.6" fill="#0b1220"/>' +
+      '<circle cx="28" cy="19" r="2.6" fill="#0b1220"/>' +
+      '<path d="M1 22c3-2 6 2 9 0s6 2 9 0 6 2 9 0 6 2 11 0" stroke="currentColor" stroke-width="1" opacity=".55"/>' +
+      '</svg>';
+  }
+  if (busId === "hover") {
+    return '<svg viewBox="0 0 40 24" fill="none" aria-hidden="true">' +
+      '<ellipse cx="20" cy="20" rx="14" ry="2.4" fill="currentColor" opacity=".18"/>' +
+      '<path d="M5 13c0-4 4-7 9-7h12c5 0 9 3 9 7 0 4-4 6-9 6H14c-5 0-9-2-9-6Z" fill="currentColor"/>' +
+      '<rect x="10" y="8" width="8" height="4" rx="1.5" fill="#0b1220" opacity=".82"/>' +
+      '<rect x="22" y="8" width="8" height="4" rx="1.5" fill="#0b1220" opacity=".82"/>' +
+      '<path d="M8 21h5M27 21h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".55"/>' +
+      '</svg>';
+  }
+  if (busId === "rocket") {
+    return '<svg viewBox="0 0 40 24" fill="none" aria-hidden="true">' +
+      '<path d="M20 1c5 4 7 9 7 15H13C13 10 15 5 20 1Z" fill="currentColor"/>' +
+      '<circle cx="20" cy="9" r="3" fill="#0b1220" opacity=".85"/>' +
+      '<path d="M13 13 8 18v3l5-2M27 13l5 5v3l-5-2" fill="currentColor" opacity=".72"/>' +
+      '<path d="M17 17h6l-3 6z" fill="#ff9f43"/>' +
+      '</svg>';
+  }
   return '<svg viewBox="0 0 40 24" fill="none" aria-hidden="true">' +
     '<rect x="2" y="3" width="36" height="15" rx="4" fill="currentColor"/>' +
     '<rect x="6" y="6" width="11" height="6" rx="1.5" fill="#0b1220" opacity=".82"/>' +
@@ -3749,7 +3896,7 @@ function renderStatic() {
 function upgradeEffectText(id) {
   const level = upgradeLevel(id);
   switch (id) {
-    case "garage": return t("effectGarage", { n: level * 2 });
+    case "garage": return t("effectGarage", { n: level * 3 });
     case "maintenance": return t("effectMaintenance", { n: level * 5 });
     case "dispatch": return t("effectDispatch", { n: level * 8 });
     case "automation": return t("effectAutomation", { a: level * 4, b: level * 4 });
@@ -3892,7 +4039,7 @@ function renderFleet() {
     return `
       <article class="bus-card" data-bus-card="${bus.id}" style="--bus:${bus.color}">
         <div class="bus-head">
-          <div class="bus-icon">${busIconSvg()}</div>
+          <div class="bus-icon">${busIconSvg(bus.id)}</div>
           <div class="bus-title">
             <div class="bus-name">${t("bus." + bus.id + ".name")}</div>
             <div class="bus-desc">${t("bus." + bus.id + ".desc")}</div>
@@ -4022,13 +4169,22 @@ function renderAchievements() {
   const done = achievementCount();
   const cards = ACHIEVEMENTS.map((achievement) => {
     const unlocked = !!state.achievements[achievement.id];
+    const progress = achievement.progress ? achievement.progress() : null;
+    const ratio = progress ? clamp(progress[0] / progress[1], 0, 1) : 0;
+    const formatProgress = (value) => achievement.money ? money(value) : fmt(value);
     return `
       <article class="ach-card ${unlocked ? "" : "locked"}">
         <div class="ach-icon">${achievement.icon}</div>
-        <div>
+        <div class="ach-body">
           <div class="ach-name">${t("ach." + achievement.id + ".name")}</div>
           <div class="ach-desc">${t("ach." + achievement.id + ".desc")}</div>
           <div class="ach-state">${unlocked ? t("achUnlocked") : t("achLocked")}</div>
+          ${!unlocked && progress ? `
+            <div class="ach-progress">
+              <div class="ach-track"><i style="width:${Math.round(ratio * 100)}%"></i></div>
+              <span>${t("achProgress", { value: formatProgress(progress[0]), target: formatProgress(progress[1]) })}</span>
+            </div>
+          ` : ""}
         </div>
       </article>
     `;

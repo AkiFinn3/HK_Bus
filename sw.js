@@ -1,7 +1,7 @@
 /* Bus Tycoon HK — service worker
    Only handles the game's own assets. Other pages on the site are untouched. */
 
-const CACHE = "bus-tycoon-v5";
+const CACHE = "bus-tycoon-v6";
 const CORE = [
   "./game.html",
   "./manifest.webmanifest",
