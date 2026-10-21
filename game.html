@@ -837,6 +837,7 @@
   /* ---------- Upgrades ---------- */
 
   .upg-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -892,6 +893,193 @@
   }
 
   .upg-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; }
+
+  .upg-tree-filters { margin-bottom: 14px; }
+
+  .upg-tree-filter {
+    --branch: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid color-mix(in srgb, var(--branch) 22%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--branch) 5%, transparent);
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background .16s, border-color .16s, color .16s, box-shadow .16s;
+  }
+
+  .upg-tree-filter b {
+    color: color-mix(in srgb, var(--branch) 78%, white);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9.5px;
+  }
+
+  .upg-tree-filter:hover {
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--branch) 48%, transparent);
+    background: color-mix(in srgb, var(--branch) 10%, transparent);
+  }
+
+  .upg-tree-filter.active {
+    color: #031018;
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--branch), color-mix(in srgb, var(--branch) 58%, white));
+    box-shadow: 0 0 16px color-mix(in srgb, var(--branch) 30%, transparent);
+  }
+
+  .upg-tree-filter.active b { color: rgba(3,16,24,.68); }
+
+  .skill-trees {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 12px;
+    align-items: start;
+  }
+
+  .skill-trees.single { max-width: 680px; margin-inline: auto; }
+
+  .skill-tree {
+    --branch: var(--accent);
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid color-mix(in srgb, var(--branch) 18%, transparent);
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 0 0, color-mix(in srgb, var(--branch) 8%, transparent), transparent 44%),
+      linear-gradient(165deg, rgba(255,255,255,.04), rgba(255,255,255,.012));
+  }
+
+  .skill-tree-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 2px 2px 12px;
+    border-bottom: 1px solid color-mix(in srgb, var(--branch) 16%, transparent);
+  }
+
+  .skill-tree-icon {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--branch) 11%, transparent);
+    border: 1px solid color-mix(in srgb, var(--branch) 24%, transparent);
+    font-size: 17px;
+  }
+
+  .skill-tree-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .skill-tree-title b { font-size: 12.5px; letter-spacing: .04em; }
+  .skill-tree-title span {
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .skill-nodes {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 14px;
+  }
+
+  .skill-nodes::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 14px;
+    bottom: 14px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--branch), color-mix(in srgb, var(--branch) 16%, transparent));
+    opacity: .55;
+  }
+
+  .skill-node { position: relative; min-width: 0; }
+
+  .skill-node::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 22px;
+    z-index: 1;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--branch);
+    box-shadow: 0 0 10px var(--branch);
+  }
+
+  .skill-node.locked::before { background: var(--muted); box-shadow: none; opacity: .55; }
+
+  .skill-tree .upg-card {
+    border-color: color-mix(in srgb, var(--branch) 15%, transparent);
+    background: linear-gradient(165deg, color-mix(in srgb, var(--branch) 5%, transparent), rgba(255,255,255,.02));
+  }
+
+  .skill-tree .upg-card::after {
+    content: "";
+    position: absolute;
+    inset: 10px auto 10px 0;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--branch);
+    opacity: .38;
+  }
+
+  .upg-card.locked { opacity: .62; }
+  .upg-card.locked .upg-icon { filter: grayscale(1); }
+
+  .upg-tags {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .upg-tier {
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--branch) 12%, transparent);
+    color: color-mix(in srgb, var(--branch) 74%, white);
+    font-size: 8.5px;
+    font-weight: 900;
+    letter-spacing: .08em;
+  }
+
+  .upg-req {
+    padding: 7px 9px;
+    border: 1px dashed color-mix(in srgb, var(--branch) 24%, transparent);
+    border-radius: 9px;
+    background: rgba(255,255,255,.035);
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .price.locked { color: var(--muted); }
+
+  @media (min-width: 761px) and (max-width: 1099px) {
+    .skill-trees { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .skill-trees .skill-tree:nth-child(3):last-child {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: calc(50% - 6px);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .skill-trees { grid-template-columns: minmax(0, 1fr); }
+    .skill-trees.single { max-width: none; }
+  }
 
   /* ---------- Achievements ---------- */
 
@@ -1994,8 +2182,14 @@ const I18N = {
     filterCrossHarbour: "過海",
     fleetTitle: "車隊採購",
     fleetHint: "購入的巴士會直接派到所選路線。車位有限，高載客量車型更划算。",
-    upgradesTitle: "公司升級",
-    upgradesHint: "每項升級永久生效，價格會隨等級上升。",
+    upgradesTitle: "公司技能樹",
+    upgradesHint: "三條分支永久生效；新節點需要前置升級，價格會隨等級上升。",
+    branchFilterLabel: "技能樹分支",
+    "branch.all": "全部",
+    "branch.operations": "營運",
+    "branch.service": "服務",
+    "branch.commerce": "商業",
+    requiresUpgrade: "需要「{name}」Lv {n}",
     achievementsTitle: "成就",
     achievementsHint: "每個成就永久提升 1% 總收入。",
     settingsTitle: "設定",
@@ -2037,6 +2231,12 @@ const I18N = {
     effectMarketing: "客流 +{n}%",
     effectFare: "票價 +{a}% · 客流 -{b}%",
     effectDigital: "總收入 +{n}%",
+    effectDispatch: "運力 +{n}%",
+    effectAutomation: "運力 +{a}% · 總收入 +{b}%",
+    effectCustomer: "客流 +{n}%",
+    effectSafety: "維護費 -{n}%",
+    effectAdvertising: "總收入 +{n}%",
+    effectTunnel: "過海路線票價 +{n}%",
     achCount: "{done} / {total} 已達成",
     achUnlocked: "已達成",
     achLocked: "未達成",
@@ -2098,6 +2298,7 @@ const I18N = {
     toastLastBus: "不能出售最後一輛巴士",
     toastUnlocked: "路線已解鎖",
     toastUpgrade: "升級完成",
+    toastPrereq: "需要先將「{name}」升級至 Lv {n}",
     toastAch: "成就達成：{name}",
     toastSlot: "車廠已滿，請升級車廠",
     toastPoor: "現金不足",
@@ -2142,6 +2343,18 @@ const I18N = {
     "upgrade.fare.desc": "每級票價 +10%，客流 -2%。",
     "upgrade.digital.name": "電子支付",
     "upgrade.digital.desc": "每級提升 10% 總收入。",
+    "upgrade.dispatch.name": "智能調度",
+    "upgrade.dispatch.desc": "每級提升 8% 運力。",
+    "upgrade.automation.name": "自動駕駛",
+    "upgrade.automation.desc": "每級提升 4% 運力與 4% 總收入。",
+    "upgrade.customer.name": "顧客服務",
+    "upgrade.customer.desc": "每級提升 15% 客流。",
+    "upgrade.safety.name": "安全系統",
+    "upgrade.safety.desc": "每級降低 4% 維護費。",
+    "upgrade.advertising.name": "車身廣告",
+    "upgrade.advertising.desc": "每級提升 6% 總收入。",
+    "upgrade.tunnel.name": "過海特許",
+    "upgrade.tunnel.desc": "每級提升 12% 過海路線票價。",
     "ach.firstFare.name": "首程車費",
     "ach.firstFare.desc": "累計收入達到 $100",
     "ach.fleet10.name": "車隊成形",
@@ -2238,8 +2451,14 @@ const I18N = {
     filterCrossHarbour: "过海",
     fleetTitle: "车队采购",
     fleetHint: "购入的巴士会直接派到所选路线。车位有限，高载客量车型更划算。",
-    upgradesTitle: "公司升级",
-    upgradesHint: "每项升级永久生效，价格会随等级上升。",
+    upgradesTitle: "公司技能树",
+    upgradesHint: "三条分支永久生效；新节点需要前置升级，价格会随等级上升。",
+    branchFilterLabel: "技能树分支",
+    "branch.all": "全部",
+    "branch.operations": "运营",
+    "branch.service": "服务",
+    "branch.commerce": "商业",
+    requiresUpgrade: "需要「{name}」Lv {n}",
     achievementsTitle: "成就",
     achievementsHint: "每个成就永久提升 1% 总收入。",
     settingsTitle: "设置",
@@ -2281,6 +2500,12 @@ const I18N = {
     effectMarketing: "客流 +{n}%",
     effectFare: "票价 +{a}% · 客流 -{b}%",
     effectDigital: "总收入 +{n}%",
+    effectDispatch: "运力 +{n}%",
+    effectAutomation: "运力 +{a}% · 总收入 +{b}%",
+    effectCustomer: "客流 +{n}%",
+    effectSafety: "维护费 -{n}%",
+    effectAdvertising: "总收入 +{n}%",
+    effectTunnel: "过海路线票价 +{n}%",
     achCount: "{done} / {total} 已达成",
     achUnlocked: "已达成",
     achLocked: "未达成",
@@ -2342,6 +2567,7 @@ const I18N = {
     toastLastBus: "不能出售最后一辆巴士",
     toastUnlocked: "路线已解锁",
     toastUpgrade: "升级完成",
+    toastPrereq: "需要先将「{name}」升级至 Lv {n}",
     toastAch: "成就达成：{name}",
     toastSlot: "车厂已满，请升级车厂",
     toastPoor: "现金不足",
@@ -2386,6 +2612,18 @@ const I18N = {
     "upgrade.fare.desc": "每级票价 +10%，客流 -2%。",
     "upgrade.digital.name": "电子支付",
     "upgrade.digital.desc": "每级提升 10% 总收入。",
+    "upgrade.dispatch.name": "智能调度",
+    "upgrade.dispatch.desc": "每级提升 8% 运力。",
+    "upgrade.automation.name": "自动驾驶",
+    "upgrade.automation.desc": "每级提升 4% 运力与 4% 总收入。",
+    "upgrade.customer.name": "顾客服务",
+    "upgrade.customer.desc": "每级提升 15% 客流。",
+    "upgrade.safety.name": "安全系统",
+    "upgrade.safety.desc": "每级降低 4% 维护费。",
+    "upgrade.advertising.name": "车身广告",
+    "upgrade.advertising.desc": "每级提升 6% 总收入。",
+    "upgrade.tunnel.name": "过海特许",
+    "upgrade.tunnel.desc": "每级提升 12% 过海路线票价。",
     "ach.firstFare.name": "首程车费",
     "ach.firstFare.desc": "累计收入达到 $100",
     "ach.fleet10.name": "车队成形",
@@ -2482,8 +2720,14 @@ const I18N = {
     filterCrossHarbour: "Cross-harbour",
     fleetTitle: "Fleet depot",
     fleetHint: "Buses are assigned to the selected route. Slots are limited — high-capacity models go further.",
-    upgradesTitle: "Company upgrades",
-    upgradesHint: "Every upgrade is permanent. Prices rise with each level.",
+    upgradesTitle: "Company skill trees",
+    upgradesHint: "Three permanent branches. New nodes need prerequisite upgrades; prices rise with each level.",
+    branchFilterLabel: "Skill tree branches",
+    "branch.all": "All",
+    "branch.operations": "Operations",
+    "branch.service": "Service",
+    "branch.commerce": "Commerce",
+    requiresUpgrade: "Requires {name} Lv {n}",
     achievementsTitle: "Achievements",
     achievementsHint: "Each achievement permanently adds 1% to all income.",
     settingsTitle: "Settings",
@@ -2525,6 +2769,12 @@ const I18N = {
     effectMarketing: "Demand +{n}%",
     effectFare: "Fare +{a}% · Demand -{b}%",
     effectDigital: "Total income +{n}%",
+    effectDispatch: "Capacity +{n}%",
+    effectAutomation: "Capacity +{a}% · Total income +{b}%",
+    effectCustomer: "Demand +{n}%",
+    effectSafety: "Upkeep -{n}%",
+    effectAdvertising: "Total income +{n}%",
+    effectTunnel: "Cross-harbour fare +{n}%",
     achCount: "{done} / {total} unlocked",
     achUnlocked: "Unlocked",
     achLocked: "Locked",
@@ -2586,6 +2836,7 @@ const I18N = {
     toastLastBus: "You cannot sell your last bus",
     toastUnlocked: "Route opened",
     toastUpgrade: "Upgrade complete",
+    toastPrereq: "Upgrade {name} to Lv {n} first",
     toastAch: "Achievement: {name}",
     toastSlot: "Depot full — upgrade your depot",
     toastPoor: "Not enough cash",
@@ -2630,6 +2881,18 @@ const I18N = {
     "upgrade.fare.desc": "+10% fare and -2% demand per level.",
     "upgrade.digital.name": "Contactless payments",
     "upgrade.digital.desc": "+10% total income per level.",
+    "upgrade.dispatch.name": "Smart dispatch",
+    "upgrade.dispatch.desc": "+8% capacity per level.",
+    "upgrade.automation.name": "Autonomous fleet",
+    "upgrade.automation.desc": "+4% capacity and +4% total income per level.",
+    "upgrade.customer.name": "Customer service",
+    "upgrade.customer.desc": "+15% passenger demand per level.",
+    "upgrade.safety.name": "Safety systems",
+    "upgrade.safety.desc": "-4% upkeep per level.",
+    "upgrade.advertising.name": "Bus advertising",
+    "upgrade.advertising.desc": "+6% total income per level.",
+    "upgrade.tunnel.name": "Harbour tunnel permit",
+    "upgrade.tunnel.desc": "+12% cross-harbour fare per level.",
     "ach.firstFare.name": "First Fare",
     "ach.firstFare.desc": "Earn $100 in total",
     "ach.fleet10.name": "Fleet Builder",
@@ -2726,6 +2989,7 @@ const ROUTE_FILTERS = [
 ];
 
 let routeFilter = "all";
+let upgradeBranch = "all";
 
 const BUSES = [
   { id: "shuttle",  color: "#ffd23f", cost: 25,        capacity: 40,  speed: 1.00, upkeep: 0.05, unlock: 0 },
@@ -2735,13 +2999,27 @@ const BUSES = [
   { id: "hydrogen", color: "#ff6b9d", cost: 1800000,   capacity: 440, speed: 1.10, upkeep: 1.20, unlock: 3000000 }
 ];
 
+const UPGRADE_BRANCHES = [
+  { id: "operations", icon: "⚙️", color: "#00f5ff" },
+  { id: "service",    icon: "🧑‍✈️", color: "#39ff88" },
+  { id: "commerce",   icon: "📈", color: "#ff2bd6" }
+];
+
 const UPGRADES = [
-  { id: "garage",      icon: "🏭", max: 20, base: 80,  growth: 1.65 },
-  { id: "maintenance", icon: "🔧", max: 15, base: 200, growth: 1.75 },
-  { id: "driver",      icon: "🎓", max: 25, base: 150, growth: 1.70 },
-  { id: "marketing",   icon: "📣", max: 30, base: 120, growth: 1.65 },
-  { id: "fare",        icon: "🎟️", max: 15, base: 400, growth: 1.90 },
-  { id: "digital",     icon: "💳", max: 20, base: 600, growth: 1.80 }
+  { id: "garage",      branch: "operations", tier: 1, icon: "🏭", max: 20, base: 80,    growth: 1.65 },
+  { id: "maintenance", branch: "operations", tier: 2, icon: "🔧", max: 15, base: 200,   growth: 1.75 },
+  { id: "dispatch",    branch: "operations", tier: 2, icon: "📡", max: 20, base: 1500,  growth: 1.68, requires: { id: "garage", level: 2 } },
+  { id: "automation",  branch: "operations", tier: 3, icon: "🤖", max: 15, base: 50000, growth: 1.80, requires: { id: "dispatch", level: 4 } },
+
+  { id: "driver",      branch: "service",    tier: 1, icon: "🎓", max: 25, base: 150,   growth: 1.70 },
+  { id: "customer",    branch: "service",    tier: 2, icon: "💬", max: 20, base: 1100,  growth: 1.68, requires: { id: "driver", level: 3 } },
+  { id: "safety",      branch: "service",    tier: 2, icon: "🛡️", max: 15, base: 2800,  growth: 1.72, requires: { id: "driver", level: 2 } },
+
+  { id: "marketing",   branch: "commerce",   tier: 1, icon: "📣", max: 30, base: 120,   growth: 1.65 },
+  { id: "fare",        branch: "commerce",   tier: 2, icon: "🎟️", max: 15, base: 400,   growth: 1.90 },
+  { id: "advertising", branch: "commerce",   tier: 2, icon: "📺", max: 20, base: 4500,  growth: 1.70, requires: { id: "marketing", level: 3 } },
+  { id: "digital",     branch: "commerce",   tier: 3, icon: "💳", max: 20, base: 600,   growth: 1.80 },
+  { id: "tunnel",      branch: "commerce",   tier: 3, icon: "🌉", max: 12, base: 60000, growth: 1.85, requires: { id: "digital", level: 2 } }
 ];
 
 const ROUTE_BY_ID = Object.fromEntries(ROUTES.map((r) => [r.id, r]));
@@ -2874,7 +3152,7 @@ function freshState() {
     allTimeEarned: 0,
     totalPassengers: 0,
     prestige: 0,
-    upgrades: { garage: 0, maintenance: 0, driver: 0, marketing: 0, fare: 0, digital: 0 },
+    upgrades: Object.fromEntries(UPGRADES.map((upgrade) => [upgrade.id, 0])),
     routes: Object.fromEntries(ROUTES.map((r) => [r.id, freshRoute(r.id)])),
     achievements: {},
     eventsResolved: 0,
@@ -2990,6 +3268,12 @@ function upgradeLevel(id) {
   return state.upgrades[id] || 0;
 }
 
+function upgradeRequirementMet(upgrade) {
+  if (!upgrade || !upgrade.requires) return true;
+  if (upgradeLevel(upgrade.id) > 0) return true;
+  return upgradeLevel(upgrade.requires.id) >= upgrade.requires.level;
+}
+
 function upgradeCost(id) {
   const u = UPGRADE_BY_ID[id];
   return Math.ceil(u.base * Math.pow(u.growth, upgradeLevel(id)));
@@ -3038,7 +3322,11 @@ function routeThroughput(routeId) {
   for (const bus of BUSES) {
     capacity += (fleet[bus.id] || 0) * bus.capacity * bus.speed;
   }
-  return (capacity / route.trip) * (1 + 0.10 * upgradeLevel("driver")) * activeBuff("throughput");
+  const operationsBonus =
+    (1 + 0.10 * upgradeLevel("driver")) *
+    (1 + 0.08 * upgradeLevel("dispatch")) *
+    (1 + 0.04 * upgradeLevel("automation"));
+  return (capacity / route.trip) * operationsBonus * activeBuff("throughput");
 }
 
 function routeDemand(routeId) {
@@ -3048,6 +3336,7 @@ function routeDemand(routeId) {
   return route.demand
     * (1 + 0.25 * upgradeLevel("marketing"))
     * (1 - 0.02 * upgradeLevel("fare"))
+    * (1 + 0.15 * upgradeLevel("customer"))
     * state.perm.demand
     * (1 + 0.08 * state.prestige)
     * activeBuff("demand")
@@ -3069,7 +3358,11 @@ function routeLoad(routeId) {
 
 function routeFare(routeId) {
   const route = ROUTE_BY_ID[routeId];
-  return route.fare * (1 + 0.10 * upgradeLevel("fare")) * state.perm.fare * activeBuff("fare");
+  let fare = route.fare * (1 + 0.10 * upgradeLevel("fare")) * state.perm.fare * activeBuff("fare");
+  if (route.regions.includes("crossHarbour")) {
+    fare *= 1 + 0.12 * upgradeLevel("tunnel");
+  }
+  return fare;
 }
 
 function routeIncome(routeId) {
@@ -3099,6 +3392,8 @@ function ratingMultiplier() {
 
 function globalIncomeMultiplier() {
   return (1 + 0.10 * upgradeLevel("digital"))
+    * (1 + 0.04 * upgradeLevel("automation"))
+    * (1 + 0.06 * upgradeLevel("advertising"))
     * (1 + 0.10 * state.prestige)
     * achievementMultiplier()
     * ratingMultiplier();
@@ -3120,6 +3415,7 @@ function totalUpkeep() {
   }
   return total
     * Math.max(0.2, 1 - 0.05 * upgradeLevel("maintenance"))
+    * Math.max(0.2, 1 - 0.04 * upgradeLevel("safety"))
     * state.perm.upkeep
     * activeBuff("upkeep");
 }
@@ -3455,10 +3751,16 @@ function upgradeEffectText(id) {
   switch (id) {
     case "garage": return t("effectGarage", { n: level * 2 });
     case "maintenance": return t("effectMaintenance", { n: level * 5 });
+    case "dispatch": return t("effectDispatch", { n: level * 8 });
+    case "automation": return t("effectAutomation", { a: level * 4, b: level * 4 });
     case "driver": return t("effectDriver", { n: level * 10 });
+    case "customer": return t("effectCustomer", { n: level * 15 });
+    case "safety": return t("effectSafety", { n: level * 4 });
     case "marketing": return t("effectMarketing", { n: level * 25 });
     case "fare": return t("effectFare", { a: level * 10, b: level * 2 });
+    case "advertising": return t("effectAdvertising", { n: level * 6 });
     case "digital": return t("effectDigital", { n: level * 10 });
+    case "tunnel": return t("effectTunnel", { n: level * 12 });
     default: return "";
   }
 }
@@ -3632,28 +3934,73 @@ function renderFleet() {
 
 function renderUpgrades() {
   const panel = $("#panel-upgrades");
-  const cards = UPGRADES.map((upgrade) => {
-    const level = upgradeLevel(upgrade.id);
-    const maxed = level >= upgrade.max;
-    const cost = upgradeCost(upgrade.id);
+  const visibleBranches = UPGRADE_BRANCHES.filter((branch) => upgradeBranch === "all" || branch.id === upgradeBranch);
+  const filterChips = [
+    { id: "all", icon: "✦", color: "#00f5ff" },
+    ...UPGRADE_BRANCHES
+  ].map((branch) => {
+    const levels = branch.id === "all"
+      ? totalUpgradeLevels()
+      : UPGRADES.filter((upgrade) => upgrade.branch === branch.id)
+          .reduce((sum, upgrade) => sum + upgradeLevel(upgrade.id), 0);
+    return `<button type="button" class="upg-tree-filter ${upgradeBranch === branch.id ? "active" : ""}" style="--branch:${branch.color}" data-upgrade-branch="${branch.id}" aria-pressed="${upgradeBranch === branch.id}">
+      <span aria-hidden="true">${branch.icon}</span>${t("branch." + branch.id)} <b>${levels}</b>
+    </button>`;
+  }).join("");
+
+  const trees = visibleBranches.map((branch) => {
+    const branchUpgrades = UPGRADES.filter((upgrade) => upgrade.branch === branch.id);
+    const levels = branchUpgrades.reduce((sum, upgrade) => sum + upgradeLevel(upgrade.id), 0);
+    const maxLevels = branchUpgrades.reduce((sum, upgrade) => sum + upgrade.max, 0);
+    const cards = branchUpgrades.map((upgrade) => {
+      const level = upgradeLevel(upgrade.id);
+      const maxed = level >= upgrade.max;
+      const lockedByRequirement = !upgradeRequirementMet(upgrade);
+      const cost = upgradeCost(upgrade.id);
+      const requirement = upgrade.requires
+        ? t("requiresUpgrade", {
+            name: t("upgrade." + upgrade.requires.id + ".name"),
+            n: upgrade.requires.level
+          })
+        : "";
+      return `
+        <div class="skill-node ${lockedByRequirement ? "locked" : ""}" data-skill-node="${upgrade.id}">
+          <article class="upg-card ${lockedByRequirement ? "locked" : ""}" data-upg-card="${upgrade.id}">
+            <div class="upg-head">
+              <div class="upg-icon">${upgrade.icon}</div>
+              <div class="upg-title">
+                <div class="upg-name">${t("upgrade." + upgrade.id + ".name")}</div>
+                <div class="upg-desc">${t("upgrade." + upgrade.id + ".desc")}</div>
+              </div>
+              <div class="upg-tags">
+                <span class="upg-tier">T${upgrade.tier}</span>
+                <span class="level-pill ${maxed ? "max" : ""}">${t("upgradeLevel", { n: level, max: upgrade.max })}</span>
+              </div>
+            </div>
+            <div class="upg-effect">${upgradeEffectText(upgrade.id)}</div>
+            ${lockedByRequirement ? `<div class="upg-req">🔒 ${requirement}</div>` : ""}
+            <div class="upg-foot">
+              <div class="price ${lockedByRequirement ? "locked" : ""}">${maxed ? t("maxed") : money(cost)}</div>
+              <button type="button" class="btn btn-small ${maxed || lockedByRequirement ? "" : "btn-primary"}" ${maxed || lockedByRequirement ? "disabled" : ""} ${lockedByRequirement ? `data-locked="1" title="${requirement}"` : ""} ${maxed ? "" : `data-upgrade="${upgrade.id}" data-price="${cost}"`}>
+                ${maxed ? t("maxLevel") : lockedByRequirement ? t("locked") : t("upgradeNow")}
+              </button>
+            </div>
+          </article>
+        </div>
+      `;
+    }).join("");
+
     return `
-      <article class="upg-card" data-upg-card="${upgrade.id}">
-        <div class="upg-head">
-          <div class="upg-icon">${upgrade.icon}</div>
-          <div class="upg-title">
-            <div class="upg-name">${t("upgrade." + upgrade.id + ".name")}</div>
-            <div class="upg-desc">${t("upgrade." + upgrade.id + ".desc")}</div>
+      <section class="skill-tree" style="--branch:${branch.color}" data-tree-branch="${branch.id}">
+        <header class="skill-tree-head">
+          <span class="skill-tree-icon" aria-hidden="true">${branch.icon}</span>
+          <div class="skill-tree-title">
+            <b>${t("branch." + branch.id)}</b>
+            <span>${t("upgradeLevel", { n: levels, max: maxLevels })}</span>
           </div>
-          <span class="level-pill ${maxed ? "max" : ""}">${t("upgradeLevel", { n: level, max: upgrade.max })}</span>
-        </div>
-        <div class="upg-effect">${upgradeEffectText(upgrade.id)}</div>
-        <div class="upg-foot">
-          <div class="price">${maxed ? t("maxed") : money(cost)}</div>
-          <button type="button" class="btn btn-small ${maxed ? "" : "btn-primary"}" ${maxed ? "disabled" : `data-upgrade="${upgrade.id}" data-price="${cost}"`}>
-            ${maxed ? t("maxLevel") : t("upgradeNow")}
-          </button>
-        </div>
-      </article>
+        </header>
+        <div class="skill-nodes">${cards}</div>
+      </section>
     `;
   }).join("");
 
@@ -3665,7 +4012,8 @@ function renderUpgrades() {
       </div>
       <div class="section-meta">${totalUpgradeLevels()} / ${UPGRADES.reduce((sum, u) => sum + u.max, 0)}</div>
     </div>
-    <div class="upg-grid">${cards}</div>
+    <div class="route-filters upg-tree-filters" role="group" aria-label="${t("branchFilterLabel")}">${filterChips}</div>
+    <div class="skill-trees ${upgradeBranch === "all" ? "" : "single"}">${trees}</div>
   `;
 }
 
@@ -4018,10 +4366,18 @@ function sellBus(routeId, modelId) {
   toast(t("toastSold") + " +" + money(refund), "good");
 }
 
-function buyUpgrade(id) {  const upgrade = UPGRADE_BY_ID[id];
+function buyUpgrade(id) {
+  const upgrade = UPGRADE_BY_ID[id];
   if (!upgrade) return;
   const level = upgradeLevel(id);
   if (level >= upgrade.max) return;
+  if (!upgradeRequirementMet(upgrade)) {
+    toast(t("toastPrereq", {
+      name: t("upgrade." + upgrade.requires.id + ".name"),
+      n: upgrade.requires.level
+    }), "bad");
+    return;
+  }
   const cost = upgradeCost(id);
   if (state.cash < cost) {
     toast(t("toastPoor"), "bad");
@@ -4035,9 +4391,11 @@ function buyUpgrade(id) {  const upgrade = UPGRADE_BY_ID[id];
   refreshLive();
   requestAnimationFrame(() => {
     const card = document.querySelector(`[data-upg-card="${id}"]`);
-    spawnBurst(card, "#00f5ff", 14);
+    const branch = UPGRADE_BRANCHES.find((item) => item.id === upgrade.branch);
+    const color = branch ? branch.color : "#00f5ff";
+    spawnBurst(card, color, 14);
     pulse(card);
-    spawnFloat(`Lv ${level + 1}`, card, "#00f5ff");
+    spawnFloat(`Lv ${level + 1}`, card, color);
   });
   toast(t("toastUpgrade"), "good");
 }
@@ -4109,7 +4467,7 @@ function doPrestige(gain) {
   state.stats.prestiges += 1;
   state.cash = 0;
   state.runEarned = 0;
-  state.upgrades = { garage: 0, maintenance: 0, driver: 0, marketing: 0, fare: 0, digital: 0 };
+  state.upgrades = Object.fromEntries(UPGRADES.map((upgrade) => [upgrade.id, 0]));
   state.routes = Object.fromEntries(ROUTES.map((route) => [route.id, freshRoute(route.id)]));
   state.perm = { fare: 1, demand: 1, upkeep: 1 };
   state.selRoute = "b3a";
@@ -4539,6 +4897,17 @@ document.addEventListener("click", (event) => {
   if (routeFilterButton) {
     routeFilter = routeFilterButton.dataset.routeFilter;
     renderRoutes(true);
+    return;
+  }
+
+  const upgradeBranchButton = find("data-upgrade-branch");
+  if (upgradeBranchButton) {
+    const nextBranch = upgradeBranchButton.dataset.upgradeBranch;
+    if (nextBranch === "all" || UPGRADE_BRANCHES.some((branch) => branch.id === nextBranch)) {
+      upgradeBranch = nextBranch;
+      renderUpgrades();
+      refreshAffordability();
+    }
     return;
   }
 
