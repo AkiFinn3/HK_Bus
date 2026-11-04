@@ -576,8 +576,109 @@
 
   /* ---------- Upgrade tree ---------- */
 
-  .tree {
+  .hangar-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    margin-bottom: 10px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: rgba(0, 245, 255, .035);
+  }
+
+  .hangar-tab {
+    flex: 1;
+    border: 0;
+    border-radius: 8px;
+    padding: 6px 4px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .16s, color .16s;
+  }
+
+  .hangar-tab:hover { color: var(--text); }
+  .hangar-tab.active { background: rgba(0, 245, 255, .16); color: var(--accent); }
+
+  .preview-box {
     display: grid;
+    place-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background:
+      radial-gradient(120px 90px at 50% 40%, rgba(0, 245, 255, .12), transparent 70%),
+      rgba(3, 7, 14, .7);
+  }
+
+  #preview {
+    width: 96px;
+    height: 128px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .weapon-list, .part-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .weapon-card, .part-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, .03);
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+
+  .weapon-card:hover, .part-card:hover { background: rgba(0, 245, 255, .1); }
+  .weapon-card.equipped, .part-card.equipped {
+    border-color: rgba(0, 245, 255, .5);
+    background: rgba(0, 245, 255, .13);
+  }
+  .weapon-card.locked, .part-card.locked { opacity: .45; cursor: not-allowed; }
+
+  .wc-name { flex: 1; min-width: 0; }
+  .wc-name b { display: block; font-size: 11px; font-weight: 800; }
+  .wc-name small { display: block; margin-top: 1px; font-size: 9px; color: var(--muted); line-height: 1.35; }
+  .wc-price {
+    flex-shrink: 0;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .wc-price.free { color: var(--green); }
+
+  .swatch {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, .28);
+  }
+
+  .part-group-title {
+    margin: 8px 0 4px;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+  }
+
+  .tree {    display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
     margin-bottom: 12px;
@@ -908,12 +1009,26 @@
       </section>
 
       <section class="screen" data-screen="upgrade">
-        <h3 class="screen-title" data-i18n="upTitle">機庫升級</h3>
+        <h3 class="screen-title" data-i18n="upTitle">機庫</h3>
         <p class="screen-sub" data-i18n="upSub">星幣永久保留，每局開始時自動套用。</p>
-        <div class="tree" id="tree"></div>
+        <div class="hangar-tabs" role="tablist">
+          <button type="button" class="hangar-tab active" data-hangar="tree" data-i18n="tabTree">技能樹</button>
+          <button type="button" class="hangar-tab" data-hangar="weapons" data-i18n="tabWeapons">武器</button>
+          <button type="button" class="hangar-tab" data-hangar="look" data-i18n="tabLook">外觀</button>
+        </div>
+        <div class="hangar-pane" data-pane="tree">
+          <div class="tree" id="tree"></div>
+        </div>
+        <div class="hangar-pane hidden" data-pane="weapons">
+          <div class="weapon-list" id="weaponList"></div>
+        </div>
+        <div class="hangar-pane hidden" data-pane="look">
+          <div class="preview-box"><canvas id="preview" width="96" height="128"></canvas></div>
+          <div id="partGroups"></div>
+        </div>
         <div class="tree-foot">
           <span><span data-i18n="coinsLabel">星幣</span> <b id="upCoins">0</b></span>
-          <button type="button" class="btn btn-small" data-act="resetTree" data-i18n="upReset">重置</button>
+          <button type="button" class="btn btn-small" data-act="resetTree" data-i18n="upReset">重置技能樹</button>
         </div>
         <div class="menu">
           <button type="button" class="btn btn-ghost btn-block" data-act="back" data-i18n="btnBack">返回</button>
@@ -1021,6 +1136,101 @@ const I18N = {
     navBoard: "看板",
     brand: "霓虹空巴",
     pageTitle: "霓虹空巴 · NEON BUS STRIKE",
+    achFirstBlood: "初次擊墜",
+    achBossHunter: "Boss 獵人",
+    achAllClear: "全關通關",
+    achScore50k: "五萬分",
+    achSharpshooter: "神射手",
+    achSurvivor: "老練司機",
+    tabTree: "技能樹",
+    tabWeapons: "武器",
+    tabLook: "外觀",
+    groupBody: "外觀機體",
+    groupTrail: "尾焰",
+    groupShot: "彈幕配色",
+    equip: "裝備",
+    locked: "未解鎖",
+    needNode: "需技能",
+    toastGate: "需要「{branch}」分支累計 {n} 級",
+    toastLocked: "尚未解鎖",
+    upFire: "主炮強化",
+    upRate: "射速提升",
+    upPierce: "貫穿彈",
+    upCrit: "暴擊核心",
+    upOverdrive: "超載",
+    upSide: "副炮",
+    upBomb: "炸彈艙",
+    upSpread: "解鎖散射炮",
+    upHoming: "解鎖追蹤導彈",
+    upLaser: "解鎖貫穿光束",
+    upPlasma: "解鎖電漿炮",
+    upBarrageCore: "彈幕核心",
+    upArmor: "裝甲板",
+    upShield: "護盾",
+    upMagnet: "磁吸線圈",
+    upCoin: "星幣收集器",
+    upSpeed: "推進器",
+    upGraze: "擦彈強化",
+    upGrazeUnlock: "擦彈感應",
+    upHullCore: "機體核心",
+    dFire: "每級主炮傷害 +15%",
+    dRate: "每級射速 +9%",
+    dPierce: "每級子彈額外貫穿 1 個目標",
+    dCrit: "每級暴擊率 +4%（暴擊 1.8 倍）",
+    dOverdrive: "傷害 +20%、暴擊 +8%、射速 +12%",
+    dSide: "每級左右各追加 1 門副炮",
+    dBomb: "每級開局炸彈 +1",
+    dSpread: "解鎖散射炮",
+    dHoming: "解鎖追蹤導彈",
+    dLaser: "解鎖高傷害貫穿光束",
+    dPlasma: "解鎖濺射電漿炮",
+    dBarrageCore: "射速 +12%，副炮火力更密",
+    dArmor: "每級開局生命 +1",
+    dShield: "每級受擊無敵 +0.4 秒",
+    dMagnet: "每級拾取範圍 +6",
+    dCoin: "每級星幣收入 +10%",
+    dSpeed: "每級移動速度 +7%",
+    dGraze: "每級擦彈得分 +12",
+    dGrazeUnlock: "解鎖擦彈強化",
+    dHullCore: "移速 +10%，生存力提升",
+    weaponPulse: "脈衝炮",
+    weaponSpread: "散射炮",
+    weaponHoming: "追蹤導彈",
+    weaponLaser: "貫穿光束",
+    weaponPlasma: "電漿炮",
+    wdescPulse: "均衡的直線速射炮",
+    wdescSpread: "廣角散射，清理雜兵",
+    wdescHoming: "自動鎖敵的追蹤導彈",
+    wdescLaser: "高傷害貫穿光束",
+    wdescPlasma: "爆裂電漿，命中濺射",
+    partClassic: "原廠雙層空巴",
+    partTaxi: "的士塗裝",
+    partMinibus: "綠Van",
+    partMidnight: "午夜紫",
+    partCrimson: "赤紅塗裝",
+    partAurora: "極光塗裝",
+    partEmber: "琥珀尾焰",
+    partCyan: "霓虹青尾焰",
+    partViolet: "紫電尾焰",
+    partGold: "黃金尾焰",
+    partIce: "冰藍彈幕",
+    partSunset: "落日彈幕",
+    partRose: "玫紅彈幕",
+    partMint: "薄荷彈幕",
+    pdescClassic: "原廠設定",
+    pdescTaxi: "星幣 +8%",
+    pdescMinibus: "移速 +12%",
+    pdescMidnight: "暴擊 +5%",
+    pdescCrimson: "傷害 +8%（成就）",
+    pdescAurora: "傷害 +5% 移速 +8%（成就）",
+    pdescEmber: "經典橙色尾焰",
+    pdescCyan: "霓虹青尾焰",
+    pdescViolet: "紫電尾焰",
+    pdescGold: "黃金尾焰（成就）",
+    pdescIce: "冰藍彈幕",
+    pdescSunset: "落日彈幕",
+    pdescRose: "玫紅彈幕",
+    pdescMint: "薄荷彈幕（成就）",
     settingsTitle: "設定",
     settingsSfx: "音效",
     settingsMusic: "音樂",
@@ -1157,6 +1367,101 @@ const I18N = {
     navBoard: "看板",
     brand: "霓虹空巴",
     pageTitle: "霓虹空巴 · NEON BUS STRIKE",
+    achFirstBlood: "初次击坠",
+    achBossHunter: "Boss 猎人",
+    achAllClear: "全关通关",
+    achScore50k: "五万分",
+    achSharpshooter: "神射手",
+    achSurvivor: "老练司机",
+    tabTree: "技能树",
+    tabWeapons: "武器",
+    tabLook: "外观",
+    groupBody: "外观機體",
+    groupTrail: "尾焰",
+    groupShot: "弹幕配色",
+    equip: "装备",
+    locked: "未解锁",
+    needNode: "需技能",
+    toastGate: "需要「{branch}」分支累计 {n} 級",
+    toastLocked: "尚未解锁",
+    upFire: "主炮强化",
+    upRate: "射速提升",
+    upPierce: "贯穿弹",
+    upCrit: "暴击核心",
+    upOverdrive: "超载",
+    upSide: "副炮",
+    upBomb: "炸弹舱",
+    upSpread: "解锁散射炮",
+    upHoming: "解锁追踪导弹",
+    upLaser: "解锁贯穿光束",
+    upPlasma: "解锁电浆炮",
+    upBarrageCore: "弹幕核心",
+    upArmor: "装甲板",
+    upShield: "护盾",
+    upMagnet: "磁吸线圈",
+    upCoin: "星币收集器",
+    upSpeed: "推进器",
+    upGraze: "擦弹强化",
+    upGrazeUnlock: "擦弹感应",
+    upHullCore: "机体核心",
+    dFire: "每级主炮伤害 +15%",
+    dRate: "每级射速 +9%",
+    dPierce: "每级子弹额外贯穿 1 個目標",
+    dCrit: "每级暴击率 +4%（暴击 1.8 倍）",
+    dOverdrive: "伤害 +20%、暴击 +8%、射速 +12%",
+    dSide: "每级左右各追加 1 門副炮",
+    dBomb: "每级开局炸弹 +1",
+    dSpread: "解锁散射炮",
+    dHoming: "解锁追踪导弹",
+    dLaser: "解鎖高伤害贯穿光束",
+    dPlasma: "解鎖濺射电浆炮",
+    dBarrageCore: "射速 +12%，副炮火力更密",
+    dArmor: "每级开局生命 +1",
+    dShield: "每级受击无敌 +0.4 秒",
+    dMagnet: "每级拾取范围 +6",
+    dCoin: "每级星币收入 +10%",
+    dSpeed: "每级移动速度 +7%",
+    dGraze: "每级擦弹得分 +12",
+    dGrazeUnlock: "解鎖擦弹强化",
+    dHullCore: "移速 +10%，生存力提升",
+    weaponPulse: "脉冲炮",
+    weaponSpread: "散射炮",
+    weaponHoming: "追踪导弹",
+    weaponLaser: "贯穿光束",
+    weaponPlasma: "电浆炮",
+    wdescPulse: "均衡的直线速射炮",
+    wdescSpread: "广角散射，清理杂兵",
+    wdescHoming: "自動鎖敵的追踪导弹",
+    wdescLaser: "高伤害贯穿光束",
+    wdescPlasma: "爆裂电浆，命中溅射",
+    partClassic: "原厂双层空巴",
+    partTaxi: "的士涂装",
+    partMinibus: "绿Van",
+    partMidnight: "午夜紫",
+    partCrimson: "赤红涂装",
+    partAurora: "极光涂装",
+    partEmber: "琥珀尾焰",
+    partCyan: "霓虹青尾焰",
+    partViolet: "紫电尾焰",
+    partGold: "黄金尾焰",
+    partIce: "冰蓝弹幕",
+    partSunset: "落日弹幕",
+    partRose: "玫红弹幕",
+    partMint: "薄荷弹幕",
+    pdescClassic: "原厂设定",
+    pdescTaxi: "星幣 +8%",
+    pdescMinibus: "移速 +12%",
+    pdescMidnight: "暴击 +5%",
+    pdescCrimson: "伤害 +8%（成就）",
+    pdescAurora: "伤害 +5% 移速 +8%（成就）",
+    pdescEmber: "经典橙色尾焰",
+    pdescCyan: "霓虹青尾焰",
+    pdescViolet: "紫电尾焰",
+    pdescGold: "黄金尾焰（成就）",
+    pdescIce: "冰蓝弹幕",
+    pdescSunset: "落日弹幕",
+    pdescRose: "玫红弹幕",
+    pdescMint: "薄荷弹幕（成就）",
     settingsTitle: "设定",
     settingsSfx: "音效",
     settingsMusic: "音乐",
@@ -1293,6 +1598,101 @@ const I18N = {
     navBoard: "Board",
     brand: "NEON BUS",
     pageTitle: "NEON BUS STRIKE · Pixel Arcade Shooter",
+    achFirstBlood: "First Blood",
+    achBossHunter: "Boss Hunter",
+    achAllClear: "All Clear",
+    achScore50k: "50K Club",
+    achSharpshooter: "Sharpshooter",
+    achSurvivor: "Veteran Driver",
+    tabTree: "SKILLS",
+    tabWeapons: "WEAPONS",
+    tabLook: "LOOK",
+    groupBody: "BODY",
+    groupTrail: "TRAIL",
+    groupShot: "SHOT TINT",
+    equip: "EQUIP",
+    locked: "LOCKED",
+    needNode: "NEEDS SKILL",
+    toastGate: "Requires {n} total levels in {branch}",
+    toastLocked: "Not unlocked yet",
+    upFire: "Main Gun",
+    upRate: "Fire Rate",
+    upPierce: "Piercing",
+    upCrit: "Crit Core",
+    upOverdrive: "Overdrive",
+    upSide: "Side Guns",
+    upBomb: "Bomb Bay",
+    upSpread: "Unlock Spread",
+    upHoming: "Unlock Homing",
+    upLaser: "Unlock Laser",
+    upPlasma: "Unlock Plasma",
+    upBarrageCore: "Barrage Core",
+    upArmor: "Armor",
+    upShield: "Shield",
+    upMagnet: "Magnet",
+    upCoin: "Coin Collector",
+    upSpeed: "Thrusters",
+    upGraze: "Graze Bonus",
+    upGrazeUnlock: "Graze Sense",
+    upHullCore: "Hull Core",
+    dFire: "+15% main gun damage per level",
+    dRate: "+9% fire rate per level",
+    dPierce: "Bullets pierce 1 more target per level",
+    dCrit: "+4% crit chance per level (1.8x damage)",
+    dOverdrive: "+20% damage, +8% crit, +12% fire rate",
+    dSide: "Add 1 side gun per side per level",
+    dBomb: "+1 starting bomb per level",
+    dSpread: "Unlock the spread cannon",
+    dHoming: "Unlock homing missiles",
+    dLaser: "Unlock a high-damage piercing beam",
+    dPlasma: "Unlock splash-damage plasma",
+    dBarrageCore: "+12% fire rate and denser side guns",
+    dArmor: "+1 starting life per level",
+    dShield: "+0.4s invulnerability per level",
+    dMagnet: "+6 pickup radius per level",
+    dCoin: "+10% coin income per level",
+    dSpeed: "+7% move speed per level",
+    dGraze: "+12 graze score per level",
+    dGrazeUnlock: "Unlock the graze bonus",
+    dHullCore: "+10% move speed, tougher hull",
+    weaponPulse: "PULSE CANNON",
+    weaponSpread: "SPREAD CANNON",
+    weaponHoming: "HOMING MISSILE",
+    weaponLaser: "PIERCING LASER",
+    weaponPlasma: "PLASMA CANNON",
+    wdescPulse: "Balanced straight rapid fire",
+    wdescSpread: "Wide fan that shreds small craft",
+    wdescHoming: "Missiles that seek their own targets",
+    wdescLaser: "High-damage piercing beam",
+    wdescPlasma: "Slow orbs that splash on impact",
+    partClassic: "Stock Double-Decker",
+    partTaxi: "Taxi Livery",
+    partMinibus: "Green Minibus",
+    partMidnight: "Midnight Violet",
+    partCrimson: "Crimson Livery",
+    partAurora: "Aurora Livery",
+    partEmber: "Amber Trail",
+    partCyan: "Neon Cyan Trail",
+    partViolet: "Violet Trail",
+    partGold: "Golden Trail",
+    partIce: "Ice Blue Shots",
+    partSunset: "Sunset Shots",
+    partRose: "Rose Shots",
+    partMint: "Mint Shots",
+    pdescClassic: "Factory spec",
+    pdescTaxi: "+8% coins",
+    pdescMinibus: "+12% move speed",
+    pdescMidnight: "+5% crit",
+    pdescCrimson: "+8% damage (achievement)",
+    pdescAurora: "+5% damage, +8% speed (achievement)",
+    pdescEmber: "Classic orange trail",
+    pdescCyan: "Neon cyan trail",
+    pdescViolet: "Violet electric trail",
+    pdescGold: "Golden trail (achievement)",
+    pdescIce: "Ice blue shots",
+    pdescSunset: "Sunset shots",
+    pdescRose: "Rose shots",
+    pdescMint: "Mint shots (achievement)",
     settingsTitle: "SETTINGS",
     settingsSfx: "SFX",
     settingsMusic: "MUSIC",
@@ -1430,36 +1830,147 @@ const I18N = {
    2. Upgrade tree data
    --------------------------------------------------------------------- */
 
-const UPGRADES = [
-  { id: "fire1", branch: "fire", cost: 150, req: null },
-  { id: "fire2", branch: "fire", cost: 400, req: "fire1" },
-  { id: "fire3", branch: "fire", cost: 1200, req: "fire2" },
-  { id: "rate1", branch: "fire", cost: 250, req: null },
-  { id: "rate2", branch: "fire", cost: 900, req: "rate1" },
-  { id: "pierce", branch: "fire", cost: 2000, req: "fire3" },
-  { id: "spread", branch: "barrage", cost: 600, req: null },
-  { id: "homing", branch: "barrage", cost: 1400, req: "fire2" },
-  { id: "side1", branch: "barrage", cost: 800, req: null },
-  { id: "side2", branch: "barrage", cost: 1800, req: "side1" },
-  { id: "bomb1", branch: "barrage", cost: 350, req: null },
-  { id: "bomb2", branch: "barrage", cost: 1000, req: "bomb1" },
-  { id: "armor1", branch: "hull", cost: 900, req: null },
-  { id: "armor2", branch: "hull", cost: 2600, req: "armor1" },
-  { id: "shield", branch: "hull", cost: 500, req: null },
-  { id: "magnet", branch: "hull", cost: 300, req: null },
-  { id: "coin1", branch: "hull", cost: 700, req: null },
-  { id: "coin2", branch: "hull", cost: 2200, req: "coin1" }
+/* ---- Skill tree: multi-level nodes with branch synergies ----
+   Each node has 1..3 levels; cost grows per level. "gate" nodes require a
+   prerequisite plus a minimum total level in their own branch, unlocking a
+   build-defining payoff. */
+const NODE_DEFS = [
+  // FIRE — damage, rate, piercing, crit
+  { id: "fire",    branch: "fire", cost: 180,  growth: 1.8, max: 3, req: null },
+  { id: "rate",    branch: "fire", cost: 260,  growth: 1.8, max: 3, req: null },
+  { id: "pierce",  branch: "fire", cost: 900,  growth: 2.0, max: 2, req: "fire", reqLv: 2 },
+  { id: "crit",    branch: "fire", cost: 700,  growth: 1.9, max: 3, req: "rate", reqLv: 2 },
+  { id: "overdrive", branch: "fire", cost: 2600, growth: 1, max: 1, req: "pierce", reqLv: 2, gateLv: 6 },
+  // BARRAGE — side guns, weapon unlocks, bombs, barrage density
+  { id: "side",    branch: "barrage", cost: 320,  growth: 1.7, max: 3, req: null },
+  { id: "bomb",    branch: "barrage", cost: 300,  growth: 1.8, max: 3, req: null },
+  { id: "spread",  branch: "barrage", cost: 620,  growth: 1,   max: 1, req: null },
+  { id: "homing",  branch: "barrage", cost: 1400, growth: 1,   max: 1, req: "fire", reqLv: 2 },
+  { id: "laser",   branch: "barrage", cost: 1900, growth: 1,   max: 1, req: "side", reqLv: 2 },
+  { id: "plasma",  branch: "barrage", cost: 2800, growth: 1,   max: 1, req: "homing", reqLv: 1, gateLv: 7 },
+  { id: "barrageCore", branch: "barrage", cost: 3200, growth: 1, max: 1, req: "laser", reqLv: 1, gateLv: 7 },
+  // HULL — lives, shields, magnet, economy, mobility
+  { id: "armor",   branch: "hull", cost: 420,  growth: 1.8, max: 3, req: null },
+  { id: "shield",  branch: "hull", cost: 480,  growth: 1.8, max: 3, req: null },
+  { id: "magnet",  branch: "hull", cost: 300,  growth: 1.8, max: 3, req: null },
+  { id: "coin",    branch: "hull", cost: 640,  growth: 1.8, max: 3, req: null },
+  { id: "speed",   branch: "hull", cost: 380,  growth: 1.8, max: 3, req: "magnet", reqLv: 1 },
+  { id: "graze",   branch: "hull", cost: 900,  growth: 1.9, max: 2, req: "grazeUnlock", reqLv: 1 },
+  { id: "grazeUnlock", branch: "hull", cost: 700, growth: 1, max: 1, req: "shield", reqLv: 2 },
+  { id: "hullCore", branch: "hull", cost: 3000, growth: 1, max: 1, req: "armor", reqLv: 3, gateLv: 7 }
 ];
 
-const UPGRADE_BY_ID = Object.fromEntries(UPGRADES.map((u) => [u.id, u]));
+const NODE_BY_ID = Object.fromEntries(NODE_DEFS.map((n) => [n.id, n]));
+
+function nodeCost(def, level) {
+  return Math.round(def.cost * Math.pow(def.growth, level));
+}
+
+function branchLevel(branch) {
+  let sum = 0;
+  for (const def of NODE_DEFS) {
+    if (def.branch === branch) sum += SAVE.data.tree[def.id] || 0;
+  }
+  return sum;
+}
 
 const BRANCHES = [
-  { id: "fire", color: "#ff3b5c" },
-  { id: "barrage", color: "#00f5ff" },
-  { id: "hull", color: "#39ff88" }
+  { id: "fire",    color: "#ff3b5c", icon: "✦" },
+  { id: "barrage", color: "#00f5ff", icon: "✧" },
+  { id: "hull",    color: "#39ff88", icon: "✚" }
 ];
 
+/* ---- Weapon library ---- */
+const WEAPONS = [
+  { id: "pulse",   cost: 0,    unlock: null,      desc: "均衡的直線速射炮" },
+  { id: "spread",  cost: 0,    unlock: "spread",  desc: "廣角散射，清理雜兵" },
+  { id: "homing",  cost: 0,    unlock: "homing",  desc: "自動鎖敵的追蹤導彈" },
+  { id: "laser",   cost: 0,    unlock: "laser",   desc: "高傷害貫穿光束" },
+  { id: "plasma",  cost: 0,    unlock: "plasma",  desc: "爆裂電漿，命中濺射" }
+];
+const WEAPON_BY_ID = Object.fromEntries(WEAPONS.map((w) => [w.id, w]));
+
+/* ---- Appearance / build parts ----
+   unlock: { coins: n } or { achievement: "id" }
+   mod: small stat deltas so a build is a real (but mild) choice */
+const BODIES = [
+  { id: "classic", color: "#dcebfa", accent: "#ff2bd6", unlock: { coins: 0 }, mod: {}, desc: "原廠雙層空巴" },
+  { id: "taxi",    color: "#ffd23f", accent: "#ff3b5c", unlock: { coins: 900 }, mod: { coin: 0.08 }, desc: "的士塗裝 · 星幣 +8%" },
+  { id: "minibus", color: "#39ff88", accent: "#0aa6b4", unlock: { coins: 1600 }, mod: { speed: 0.12 }, desc: "綠Van · 移速 +12%" },
+  { id: "midnight",color: "#4b3a7a", accent: "#b45cff", unlock: { coins: 2600 }, mod: { crit: 0.05 }, desc: "午夜紫 · 暴擊 +5%" },
+  { id: "crimson", color: "#ff3b5c", accent: "#ffb020", unlock: { achievement: "bossHunter" }, mod: { damage: 0.08 }, desc: "赤紅塗裝 · 傷害 +8%（成就解鎖）" },
+  { id: "aurora",  color: "#00f5ff", accent: "#39ff88", unlock: { achievement: "allClear" }, mod: { damage: 0.05, speed: 0.08 }, desc: "極光塗裝 · 傷害 +5% 移速 +8%（成就解鎖）" }
+];
+
+const TRAILS = [
+  { id: "ember",  color: "#ffb020", unlock: { coins: 0 }, desc: "琥珀尾焰" },
+  { id: "cyan",   color: "#00f5ff", unlock: { coins: 700 }, desc: "霓虹青尾焰" },
+  { id: "violet", color: "#b45cff", unlock: { coins: 1500 }, desc: "紫電尾焰" },
+  { id: "gold",   color: "#ffd23f", unlock: { achievement: "score50k" }, desc: "黃金尾焰（成就解鎖）" }
+];
+
+const SHOT_TINTS = [
+  { id: "ice",    color: "#00f5ff", unlock: { coins: 0 }, desc: "冰藍彈幕" },
+  { id: "sunset", color: "#ffb020", unlock: { coins: 800 }, desc: "落日彈幕" },
+  { id: "rose",   color: "#ff2bd6", unlock: { coins: 1800 }, desc: "玫紅彈幕" },
+  { id: "mint",   color: "#39ff88", unlock: { achievement: "sharpshooter" }, desc: "薄荷彈幕（成就解鎖）" }
+];
+
+const PART_GROUPS = [
+  { key: "body", list: BODIES, label: "外觀機體" },
+  { key: "trail", list: TRAILS, label: "尾焰" },
+  { key: "shot", list: SHOT_TINTS, label: "彈幕配色" }
+];
+const PART_BY_KEY = {
+  body: Object.fromEntries(BODIES.map((x) => [x.id, x])),
+  trail: Object.fromEntries(TRAILS.map((x) => [x.id, x])),
+  shot: Object.fromEntries(SHOT_TINTS.map((x) => [x.id, x]))
+};
+
+/* ---- Achievements ---- */
+const ACHIEVEMENTS = [
+  { id: "firstBlood", test: (d) => d.stats.kills >= 1 },
+  { id: "bossHunter", test: (d) => d.stats.bosses >= 10 },
+  { id: "allClear",   test: (d) => d.stats.clears >= 1 },
+  { id: "score50k",   test: (d) => d.best.score >= 50000 },
+  { id: "sharpshooter", test: (d) => d.stats.kills >= 300 },
+  { id: "survivor",   test: (d) => d.stats.runs >= 20 }
+];
+
+function announceAchievements() {
+  const newly = evaluateAchievements();
+  for (const id of newly) {
+    toast(t("ach" + cap(id)), "gold");
+    Sfx.play("buy");
+  }
+  return newly;
+}
+
+function evaluateAchievements() {
+  let newly = [];
+  for (const a of ACHIEVEMENTS) {
+    if (SAVE.data.achievements[a.id]) continue;
+    if (a.test(SAVE.data)) {
+      SAVE.data.achievements[a.id] = true;
+      newly.push(a.id);
+    }
+  }
+  if (newly.length) SAVE.save();
+  return newly;
+}
+
+function partUnlocked(part) {
+  if (part.unlock.achievement) return !!SAVE.data.achievements[part.unlock.achievement];
+  return true; // coin-gated parts are bought explicitly below
+}
+
+function appearanceBonus() {
+  const body = PART_BY_KEY.body[SAVE.data.build.body] || BODIES[0];
+  return body.mod || {};
+}
+
 /* ---------------------------------------------------------------------
+   3. Stage data/* ---------------------------------------------------------------------
    3. Stage data
    --------------------------------------------------------------------- */
 
@@ -1545,7 +2056,8 @@ function t(key, vars) {
    5. Save data
    --------------------------------------------------------------------- */
 
-const SAVE_KEY = "hkBusArcade.save.v1";
+const SAVE_KEY = "hkBusArcade.save.v2";
+const SAVE_KEY_V1 = "hkBusArcade.save.v1";
 
 const storage = (() => {
   try {
@@ -1559,15 +2071,27 @@ const storage = (() => {
 })();
 
 function freshTree() {
-  return Object.fromEntries(UPGRADES.map((u) => [u.id, 0]));
+  return Object.fromEntries(NODE_DEFS.map((n) => [n.id, 0]));
+}
+
+function freshBuild() {
+  return { body: "classic", trail: "ember", shot: "ice" };
+}
+
+function freshOwnedParts() {
+  return { body: ["classic"], trail: ["ember"], shot: ["ice"] };
 }
 
 function freshSave() {
   return {
-    v: 1,
+    v: 2,
     lang: null,
     coins: 0,
     tree: freshTree(),
+    build: freshBuild(),
+    ownedParts: freshOwnedParts(),
+    weapon: "pulse",
+    achievements: {},
     unlockedStage: 1,
     loop: 1,
     best: { score: 0, byStage: [0, 0, 0, 0, 0] },
@@ -1576,18 +2100,58 @@ function freshSave() {
   };
 }
 
+/* Map an old v1 boolean tree onto the new multi-level node ids. */
+function migrateV1(raw) {
+  const out = freshSave();
+  if (!raw || typeof raw !== "object") return out;
+  const t = raw.tree && typeof raw.tree === "object" ? raw.tree : {};
+  out.coins = clamp(Math.floor(safeNum(raw.coins, 0)), 0, 9e9);
+  out.unlockedStage = clamp(Math.floor(safeNum(raw.unlockedStage, 1)), 1, STAGES.length);
+  out.loop = clamp(Math.floor(safeNum(raw.loop, 1)), 1, 9);
+  out.lang = I18N[raw.lang] ? raw.lang : null;
+  if (raw.best && typeof raw.best === "object") {
+    out.best.score = clamp(Math.floor(safeNum(raw.best.score, 0)), 0, 9e12);
+    const byStage = Array.isArray(raw.best.byStage) ? raw.best.byStage : [];
+    out.best.byStage = STAGES.map((_, i) => clamp(Math.floor(safeNum(byStage[i], 0)), 0, 9e12));
+  }
+  if (raw.settings && typeof raw.settings === "object") {
+    out.settings.sfx = raw.settings.sfx !== false;
+    out.settings.music = raw.settings.music !== false;
+    out.settings.shake = raw.settings.shake !== false;
+  }
+  if (raw.stats && typeof raw.stats === "object") {
+    for (const k of ["runs", "kills", "bosses", "clears"]) out.stats[k] = Math.max(0, Math.floor(safeNum(raw.stats[k], 0)));
+    out.stats.playTime = Math.max(0, safeNum(raw.stats.playTime, 0));
+  }
+  // Legacy booleans -> equivalent new node levels (best-effort).
+  out.tree.fire = (t.fire1 ? 1 : 0) + (t.fire2 ? 1 : 0) + (t.fire3 ? 1 : 0);
+  out.tree.rate = (t.rate1 ? 1 : 0) + (t.rate2 ? 1 : 0);
+  out.tree.pierce = t.pierce ? 1 : 0;
+  out.tree.side = (t.side1 ? 1 : 0) + (t.side2 ? 1 : 0);
+  out.tree.bomb = (t.bomb1 ? 1 : 0) + (t.bomb2 ? 1 : 0);
+  out.tree.armor = (t.armor1 ? 1 : 0) + (t.armor2 ? 1 : 0);
+  out.tree.shield = t.shield ? 1 : 0;
+  out.tree.magnet = t.magnet ? 1 : 0;
+  out.tree.coin = (t.coin1 ? 1 : 0) + (t.coin2 ? 1 : 0);
+  out.tree.spread = t.spread ? 1 : 0;
+  out.tree.homing = t.homing ? 1 : 0;
+  out.weapon = t.spread ? "spread" : t.homing ? "homing" : "pulse";
+  return out;
+}
+
 const SAVE = {
   data: freshSave(),
 
   load() {
     let raw = null;
     try {
-      const encoded = storage && storage.getItem(SAVE_KEY);
+      const encoded = storage && (storage.getItem(SAVE_KEY) || storage.getItem(SAVE_KEY_V1));
       if (encoded) raw = JSON.parse(encoded);
     } catch (err) {
       console.warn("Arcade save unreadable:", err);
     }
-    this.data = this.hydrate(raw);
+    this.data = raw && raw.v === 2 ? this.hydrate(raw) : migrateV1(raw);
+    this.save();
     return this.data;
   },
 
@@ -1601,9 +2165,38 @@ const SAVE = {
     next.loop = clamp(Math.floor(safeNum(raw.loop, 1)), 1, 9);
 
     if (raw.tree && typeof raw.tree === "object") {
-      for (const node of UPGRADES) {
-        next.tree[node.id] = raw.tree[node.id] ? 1 : 0;
+      for (const def of NODE_DEFS) {
+        next.tree[def.id] = clamp(Math.floor(safeNum(raw.tree[def.id], 0)), 0, def.max);
       }
+    }
+
+    if (raw.build && typeof raw.build === "object") {
+      for (const group of PART_GROUPS) {
+        const id = raw.build[group.key];
+        if (PART_BY_KEY[group.key][id]) next.build[group.key] = id;
+      }
+    }
+    if (raw.ownedParts && typeof raw.ownedParts === "object") {
+      for (const group of PART_GROUPS) {
+        const list = Array.isArray(raw.ownedParts[group.key]) ? raw.ownedParts[group.key] : [];
+        next.ownedParts[group.key] = Array.from(new Set([
+          group.list[0].id,
+          ...list.filter((id) => PART_BY_KEY[group.key][id])
+        ]));
+      }
+    }
+    // Never allow an equipped part that isn't owned.
+    for (const group of PART_GROUPS) {
+      if (!next.ownedParts[group.key].includes(next.build[group.key])) {
+        next.build[group.key] = group.list[0].id;
+      }
+    }
+
+    if (WEAPON_BY_ID[raw.weapon]) next.weapon = raw.weapon;
+    if (!this.weaponUnlocked(next.weapon)) next.weapon = "pulse";
+
+    if (raw.achievements && typeof raw.achievements === "object") {
+      for (const a of ACHIEVEMENTS) if (raw.achievements[a.id]) next.achievements[a.id] = true;
     }
 
     if (raw.best && typeof raw.best === "object") {
@@ -1611,21 +2204,15 @@ const SAVE = {
       const byStage = Array.isArray(raw.best.byStage) ? raw.best.byStage : [];
       next.best.byStage = STAGES.map((_, i) => clamp(Math.floor(safeNum(byStage[i], 0)), 0, 9e12));
     }
-
     if (raw.settings && typeof raw.settings === "object") {
       next.settings.sfx = raw.settings.sfx !== false;
       next.settings.music = raw.settings.music !== false;
       next.settings.shake = raw.settings.shake !== false;
     }
-
     if (raw.stats && typeof raw.stats === "object") {
-      next.stats.runs = Math.max(0, Math.floor(safeNum(raw.stats.runs, 0)));
-      next.stats.kills = Math.max(0, Math.floor(safeNum(raw.stats.kills, 0)));
-      next.stats.bosses = Math.max(0, Math.floor(safeNum(raw.stats.bosses, 0)));
-      next.stats.clears = Math.max(0, Math.floor(safeNum(raw.stats.clears, 0)));
+      for (const k of ["runs", "kills", "bosses", "clears"]) next.stats[k] = Math.max(0, Math.floor(safeNum(raw.stats[k], 0)));
       next.stats.playTime = Math.max(0, safeNum(raw.stats.playTime, 0));
     }
-
     return next;
   },
 
@@ -1638,39 +2225,99 @@ const SAVE = {
     }
   },
 
-  has(id) {
-    return !!this.data.tree[id];
+  level(id) {
+    return this.data.tree[id] || 0;
   },
 
-  canBuy(node) {
-    if (this.data.tree[node.id]) return "owned";
-    if (node.req && !this.data.tree[node.req]) return "req";
-    if (this.data.coins < node.cost) return "poor";
+  has(id) {
+    return this.level(id) > 0;
+  },
+
+  weaponUnlocked(id) {
+    const w = WEAPON_BY_ID[id];
+    if (!w) return false;
+    if (!w.unlock) return true;
+    return this.has(w.unlock);
+  },
+
+  /* ---- Skill tree purchasing ---- */
+  nodeState(def) {
+    const lv = this.level(def.id);
+    if (lv >= def.max) return "maxed";
+    if (def.req && this.level(def.req) < (def.reqLv || 1)) return "req";
+    if (def.gateLv && branchLevel(def.branch) < def.gateLv) return "gate";
+    if (this.data.coins < nodeCost(def, lv)) return "poor";
     return "ok";
   },
 
-  buy(node) {
-    if (this.canBuy(node) !== "ok") return false;
-    this.data.coins -= node.cost;
-    this.data.tree[node.id] = 1;
+  canBuy(def) {
+    return this.nodeState(def);
+  },
+
+  buy(def) {
+    if (this.nodeState(def) !== "ok") return false;
+    const lv = this.level(def.id);
+    this.data.coins -= nodeCost(def, lv);
+    this.data.tree[def.id] = lv + 1;
     this.save();
     return true;
   },
 
   resetTree() {
     let spent = 0;
-    for (const node of UPGRADES) {
-      if (this.data.tree[node.id]) spent += node.cost;
+    for (const def of NODE_DEFS) {
+      const lv = this.level(def.id);
+      for (let i = 0; i < lv; i++) spent += nodeCost(def, i);
     }
     const refund = Math.floor(spent * 0.7);
     this.data.tree = freshTree();
     this.data.coins += refund;
+    if (!this.weaponUnlocked(this.data.weapon)) this.data.weapon = "pulse";
     this.save();
     return refund;
   },
 
+  /* ---- Appearance parts ---- */
+  partOwned(key, id) {
+    return (this.data.ownedParts[key] || []).includes(id);
+  },
+
+  partPrice(part) {
+    return part.unlock.coins || 0;
+  },
+
+  partState(group, part) {
+    if (this.partOwned(group.key, part.id)) return "owned";
+    if (part.unlock.achievement && !this.data.achievements[part.unlock.achievement]) return "locked";
+    if (this.data.coins < this.partPrice(part)) return "poor";
+    return "ok";
+  },
+
+  buyPart(group, part) {
+    if (this.partState(group, part) !== "ok") return false;
+    this.data.coins -= this.partPrice(part);
+    this.data.ownedParts[group.key].push(part.id);
+    this.save();
+    return true;
+  },
+
+  equipPart(key, id) {
+    if (!this.partOwned(key, id)) return false;
+    this.data.build[key] = id;
+    this.save();
+    if (key === "body" || key === "trail") buildPlayerSprites();
+    return true;
+  },
+
+  setWeapon(id) {
+    if (!this.weaponUnlocked(id)) return false;
+    this.data.weapon = id;
+    this.save();
+    return true;
+  },
+
   addCoins(n) {
-    const bonus = 1 + (this.data.tree.coin1 ? 0.1 : 0) + (this.data.tree.coin2 ? 0.15 : 0);
+    const bonus = 1 + this.level("coin") * 0.1 + (appearanceBonus().coin || 0);
     const gained = Math.max(0, Math.floor(n * bonus));
     this.data.coins += gained;
     this.save();
@@ -1679,6 +2326,7 @@ const SAVE = {
 };
 
 /* ---------------------------------------------------------------------
+   6. Audio (synthesised, no assets)/* ---------------------------------------------------------------------
    6. Audio (synthesised, no assets)
    --------------------------------------------------------------------- */
 
@@ -1868,58 +2516,75 @@ function whiteVersion(src) {
 const SPR = {};
 
 /* ---- Player: a neon "flying bus" ---- */
-function drawPlayerSprite(g, thrust) {
+function drawPlayerSprite(g, thrust, colors) {
+  const body = (colors && colors.color) || "#dcebfa";
+  const accent = (colors && colors.accent) || "#ff2bd6";
+
   // side pods
-  g.fillStyle = PAL.magentaDim;
+  g.fillStyle = accent;
+  g.globalAlpha = 0.55;
   g.fillRect(1, 9, 3, 11);
   g.fillRect(20, 9, 3, 11);
-  g.fillStyle = PAL.magenta;
+  g.globalAlpha = 1;
+  g.fillStyle = accent;
   g.fillRect(1, 9, 3, 2);
   g.fillRect(20, 9, 3, 2);
   g.fillRect(2, 16, 1, 3);
   g.fillRect(21, 16, 1, 3);
 
   // wings
-  g.fillStyle = PAL.steel;
+  g.fillStyle = body;
+  g.globalAlpha = 0.62;
   g.fillRect(4, 12, 16, 8);
-  g.fillStyle = PAL.steelHi;
+  g.globalAlpha = 1;
+  g.fillStyle = body;
   g.fillRect(5, 12, 14, 2);
 
   // hull
-  g.fillStyle = PAL.steelHi;
+  g.fillStyle = body;
   g.fillRect(7, 3, 10, 20);
-  g.fillStyle = PAL.white;
+  g.fillStyle = "#ffffff";
+  g.globalAlpha = 0.55;
   g.fillRect(8, 3, 8, 6);
-  g.fillStyle = PAL.steel;
+  g.globalAlpha = 1;
+  g.fillStyle = body;
   g.fillRect(7, 22, 10, 3);
 
   // windshield
-  g.fillStyle = PAL.cyan;
+  g.fillStyle = accent;
   g.fillRect(9, 6, 6, 4);
-  g.fillStyle = "#bffcff";
+  g.fillStyle = "#ffffff";
   g.fillRect(10, 7, 2, 1);
 
   // neon stripe
-  g.fillStyle = PAL.magenta;
+  g.fillStyle = accent;
   g.fillRect(8, 12, 8, 1);
-  g.fillStyle = PAL.cyanDim;
+  g.fillStyle = body;
   g.fillRect(8, 14, 8, 1);
 
   // headlight
-  g.fillStyle = PAL.gold;
+  g.fillStyle = "#ffd23f";
   g.fillRect(14, 20, 2, 2);
 
   // thrusters
   const flame = thrust === 0 ? 3 : thrust === 1 ? 5 : 7;
-  g.fillStyle = PAL.orange;
+  g.fillStyle = trailColor();
   g.fillRect(8, 25, 2, flame);
   g.fillRect(14, 25, 2, flame);
-  g.fillStyle = PAL.gold;
+  g.fillStyle = "#ffffff";
+  g.globalAlpha = 0.7;
   g.fillRect(8, 25, 2, Math.max(1, flame - 3));
   g.fillRect(14, 25, 2, Math.max(1, flame - 3));
+  g.globalAlpha = 1;
 }
 
-SPR.player = [0, 1, 2].map((f) => makeSprite(24, 32, (g) => drawPlayerSprite(g, f)));
+function buildPlayerSprites() {
+  const colors = bodyColors();
+  SPR.player = [0, 1, 2].map((f) => makeSprite(24, 32, (g) => drawPlayerSprite(g, f, colors)));
+  SPR.playerWhite = SPR.player.map(whiteVersion);
+}
+
+buildPlayerSprites();
 SPR.playerWhite = SPR.player.map(whiteVersion);
 SPR.playerShield = makeSprite(40, 40, (g) => {
   g.strokeStyle = "rgba(0,245,255,.75)";
@@ -2741,39 +3406,58 @@ const PLAYER = {
   thrust: 0
 };
 
-/* Player stat getters, driven by the upgrade tree */
+/* Player stat getters, driven by the multi-level tree + appearance build */
+function treeLevel(id) {
+  return SAVE.level(id);
+}
+
 function playerMaxLives() {
-  return 3 + (SAVE.has("armor1") ? 1 : 0) + (SAVE.has("armor2") ? 1 : 0);
+  return 3 + treeLevel("armor");
 }
 function playerMaxBombs() {
-  return 3 + (SAVE.has("bomb1") ? 1 : 0) + (SAVE.has("bomb2") ? 1 : 0);
+  return 3 + treeLevel("bomb");
 }
 function invulnTime() {
-  return SAVE.has("shield") ? 3.5 : 2.5;
+  return 2.5 + treeLevel("shield") * 0.4;
 }
 function pickupRadius() {
-  return SAVE.has("magnet") ? 26 : 16;
+  return 16 + treeLevel("magnet") * 6;
 }
 function damageMul() {
-  return 1
-    + (SAVE.has("fire1") ? 0.15 : 0)
-    + (SAVE.has("fire2") ? 0.20 : 0)
-    + (SAVE.has("fire3") ? 0.25 : 0);
+  return 1 + treeLevel("fire") * 0.15 + (appearanceBonus().damage || 0)
+    + (treeLevel("overdrive") ? 0.2 : 0);
 }
 function rateMul() {
-  return 1 + (SAVE.has("rate1") ? 0.08 : 0) + (SAVE.has("rate2") ? 0.10 : 0);
+  return 1 + treeLevel("rate") * 0.09 + (treeLevel("barrageCore") ? 0.12 : 0);
 }
 function pierceCount() {
-  return SAVE.has("pierce") ? 1 : 0;
+  return treeLevel("pierce");
 }
 function sideGunCount() {
-  return (SAVE.has("side1") ? 1 : 0) + (SAVE.has("side2") ? 1 : 0);
+  return treeLevel("side");
+}
+function critChance() {
+  return Math.min(0.5, treeLevel("crit") * 0.04 + (appearanceBonus().crit || 0)
+    + (treeLevel("overdrive") ? 0.08 : 0));
+}
+function moveSpeedMul() {
+  return 1 + treeLevel("speed") * 0.07 + (appearanceBonus().speed || 0)
+    + (treeLevel("hullCore") ? 0.1 : 0);
+}
+function grazeBonus() {
+  return treeLevel("graze") * 12;
 }
 function unlockedWeapons() {
-  const list = ["pulse"];
-  if (SAVE.has("spread")) list.push("spread");
-  if (SAVE.has("homing")) list.push("homing");
-  return list;
+  return WEAPONS.filter((w) => SAVE.weaponUnlocked(w.id)).map((w) => w.id);
+}
+function shotTint() {
+  return (PART_BY_KEY.shot[SAVE.data.build.shot] || SHOT_TINTS[0]).color;
+}
+function trailColor() {
+  return (PART_BY_KEY.trail[SAVE.data.build.trail] || TRAILS[0]).color;
+}
+function bodyColors() {
+  return PART_BY_KEY.body[SAVE.data.build.body] || BODIES[0];
 }
 
 function spawnParticle(x, y, opts) {
@@ -3095,7 +3779,7 @@ function resetPlayer() {
   PLAYER.invuln = 2;
   PLAYER.shield = 0;
   PLAYER.power = 1;
-  PLAYER.weapon = "pulse";
+  PLAYER.weapon = SAVE.weaponUnlocked(SAVE.data.weapon) ? SAVE.data.weapon : "pulse";
   PLAYER.fireCd = 0;
   PLAYER.alive = true;
   PLAYER.respawnTimer = 0;
@@ -3129,8 +3813,8 @@ function updatePlayer(dt) {
 
   if (mx || my) {
     const len = Math.hypot(mx, my) || 1;
-    PLAYER.x += (mx / len) * PLAYER.speed;
-    PLAYER.y += (my / len) * PLAYER.speed;
+    PLAYER.x += (mx / len) * PLAYER.speed * moveSpeedMul();
+    PLAYER.y += (my / len) * PLAYER.speed * moveSpeedMul();
   }
 
   if (pointer.active && (pointer.dx || pointer.dy)) {
@@ -3155,16 +3839,22 @@ function updatePlayer(dt) {
   }
 }
 
-function pushPlayerBullet(x, y, vx, vy, dmg, kind) {
+function pushPlayerBullet(x, y, vx, vy, dmg, kind, opts) {
   if (ENT.bullets.length >= LIMITS.bullets) return;
+  opts = opts || {};
+  const crit = Math.random() < critChance();
   ENT.bullets.push({
-    x, y, vx, vy, dmg,
+    x, y, vx, vy,
+    dmg: dmg * (crit ? 1.8 : 1),
+    crit,
     kind: kind || "pulse",
-    pierce: pierceCount(),
-    life: 2.4,
-    w: kind === "missile" ? 5 : 4,
-    h: kind === "missile" ? 12 : 10,
-    target: null
+    splash: opts.splash || 0,
+    pierce: (opts.pierce == null ? pierceCount() : opts.pierce),
+    life: opts.life || 2.4,
+    w: opts.w || (kind === "missile" ? 5 : kind === "laser" ? 3 : 4),
+    h: opts.h || (kind === "missile" ? 12 : kind === "laser" ? 20 : 10),
+    target: null,
+    hitIds: null
   });
 }
 
@@ -3172,18 +3862,30 @@ function firePlayerWeapon() {
   const y = PLAYER.y - 14;
   const dmg = 6 * damageMul();
   const p = PLAYER.power;
+  const w = PLAYER.weapon;
 
-  if (PLAYER.weapon === "spread") {
-    const n = Math.min(7, 2 + p);
+  if (w === "spread") {
+    const n = Math.min(9, 2 + p);
     for (let i = 0; i < n; i++) {
-      const a = -Math.PI / 2 + (i - (n - 1) / 2) * 0.14;
-      pushPlayerBullet(PLAYER.x, y, Math.cos(a) * 7.6, Math.sin(a) * 7.6, dmg * 0.62, "spread");
+      const a = -Math.PI / 2 + (i - (n - 1) / 2) * 0.13;
+      pushPlayerBullet(PLAYER.x, y, Math.cos(a) * 7.6, Math.sin(a) * 7.6, dmg * 0.6, "spread");
     }
-  } else if (PLAYER.weapon === "homing") {
-    const n = Math.min(3, 1 + Math.floor(p / 2));
+  } else if (w === "homing") {
+    const n = Math.min(4, 1 + Math.floor(p / 2));
     for (let i = 0; i < n; i++) {
       const off = (i - (n - 1) / 2) * 9;
       pushPlayerBullet(PLAYER.x + off, y, 0, -6.4, dmg * 0.9, "missile");
+    }
+  } else if (w === "laser") {
+    // A piercing vertical beam: narrow, long, high damage.
+    pushPlayerBullet(PLAYER.x - 5, y - 4, 0, -13, dmg * 1.35, "laser", { pierce: 3 + pierceCount(), life: 1.8 });
+    pushPlayerBullet(PLAYER.x + 5, y - 4, 0, -13, dmg * 1.35, "laser", { pierce: 3 + pierceCount(), life: 1.8 });
+  } else if (w === "plasma") {
+    // Slow orbs that splash on impact.
+    const n = Math.min(3, 1 + Math.floor(p / 2));
+    for (let i = 0; i < n; i++) {
+      const off = (i - (n - 1) / 2) * 10;
+      pushPlayerBullet(PLAYER.x + off, y, 0, -7.2, dmg * 1.5, "plasma", { splash: 22, w: 7, h: 7 });
     }
   } else {
     if (p >= 3) {
@@ -3199,13 +3901,11 @@ function firePlayerWeapon() {
   }
 
   const sides = sideGunCount();
-  if (sides > 0) {
-    pushPlayerBullet(PLAYER.x - 11, PLAYER.y - 6, -1.1, -8, dmg * 0.34, "side");
-    pushPlayerBullet(PLAYER.x + 11, PLAYER.y - 6, 1.1, -8, dmg * 0.34, "side");
-  }
-  if (sides > 1) {
-    pushPlayerBullet(PLAYER.x - 13, PLAYER.y + 2, -2.2, -7, dmg * 0.3, "side");
-    pushPlayerBullet(PLAYER.x + 13, PLAYER.y + 2, 2.2, -7, dmg * 0.3, "side");
+  for (let g = 0; g < sides; g++) {
+    const off = 11 + g * 3;
+    const spread = 1.1 + g * 1.1;
+    pushPlayerBullet(PLAYER.x - off, PLAYER.y - 6 + g * 4, -spread, -8, dmg * 0.34, "side");
+    pushPlayerBullet(PLAYER.x + off, PLAYER.y - 6 + g * 4, spread, -8, dmg * 0.34, "side");
   }
 
   if (G.frame % 3 === 0) Sfx.play("shoot");
@@ -3270,6 +3970,7 @@ function addPower() {
   if (options.length > 1) {
     const at = options.indexOf(PLAYER.weapon);
     PLAYER.weapon = options[(at + 1) % options.length];
+    SAVE.setWeapon(PLAYER.weapon);
     toast(t("toastWeapon", { name: t("weapon" + cap(PLAYER.weapon)) }), "gold");
     return;
   }
@@ -3342,8 +4043,9 @@ function updateBullets(dt) {
       const e = ENT.enemies[j];
       if (!e.alive) continue;
       if (circleHit(b.x, b.y, b.w * 0.5, e.x, e.y, e.r)) {
-        damageEnemy(e, b.dmg);
-        burst(b.x, b.y, 2, { color: PAL.cyan, life: 0.22, max: 1.6 });
+        damageEnemy(e, b.dmg, b.crit);
+        burst(b.x, b.y, 2, { color: b.crit ? PAL.gold : PAL.cyan, life: 0.22, max: 1.6 });
+        if (b.splash) splashDamage(e.x, e.y, b.splash, b.dmg * 0.5, e);
         if (b.pierce > 0) {
           b.pierce--;
         } else {
@@ -3357,7 +4059,7 @@ function updateBullets(dt) {
       const boss = ENT.boss;
       if (bossHitTest(boss, b.x, b.y, b.w * 0.5)) {
         damageBoss(boss, b.dmg);
-        burst(b.x, b.y, 2, { color: PAL.gold, life: 0.22, max: 1.6 });
+        burst(b.x, b.y, 2, { color: b.crit ? PAL.gold : PAL.cyan, life: 0.22, max: 1.6 });
         if (b.pierce > 0) b.pierce--;
         else consumed = true;
       }
@@ -3385,13 +4087,54 @@ function nearestTarget(x, y) {
   return best;
 }
 
+/* Plasma orbs damage everything near the impact point. */
+function splashDamage(x, y, radius, dmg, exclude) {
+  for (const e of ENT.enemies) {
+    if (!e.alive || e === exclude) continue;
+    if (circleHit(x, y, radius, e.x, e.y, e.r)) damageEnemy(e, dmg);
+  }
+  if (ENT.boss && !ENT.boss.dead && !ENT.boss.entering) {
+    if (bossHitTest(ENT.boss, x, y, radius)) damageBoss(ENT.boss, dmg * 0.6);
+  }
+}
+
 function drawBullets(ctx) {
+  const tint = shotTint();
   for (const b of ENT.bullets) {
+    const x = Math.round(b.x);
+    const y = Math.round(b.y);
+    if (b.kind === "laser") {
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = tint;
+      ctx.fillRect(x - 1, y - b.h / 2, 3, b.h);
+      ctx.globalAlpha = 0.55;
+      ctx.fillRect(x - 3, y - b.h / 2, 7, b.h);
+      ctx.globalAlpha = 1;
+      continue;
+    }
+    if (b.kind === "plasma") {
+      ctx.globalCompositeOperation = "lighter";
+      ctx.globalAlpha = 0.55;
+      ctx.drawImage(SPR.glow, x - 12, y - 12, 24, 24);
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = tint;
+      ctx.fillRect(x - 3, y - 3, 6, 6);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x - 1, y - 1, 2, 2);
+      continue;
+    }
     let img = SPR.bulletPlayer;
     if (b.kind === "missile") img = SPR.bulletMissile;
-    else if (b.kind === "side") img = SPR.bulletSide;
-    else if (b.kind === "spread") img = SPR.bulletSide;
-    ctx.drawImage(img, Math.round(b.x - img.width / 2), Math.round(b.y - img.height / 2));
+    else if (b.kind === "side" || b.kind === "spread") img = SPR.bulletSide;
+    if (b.crit) {
+      ctx.globalCompositeOperation = "lighter";
+      ctx.globalAlpha = 0.5;
+      ctx.drawImage(SPR.glow, x - 8, y - 8, 16, 16);
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = "source-over";
+    }
+    ctx.drawImage(img, x - img.width / 2, y - img.height / 2);
   }
 }
 
@@ -3602,10 +4345,13 @@ function updateEnemies(dt) {
   }
 }
 
-function damageEnemy(e, amount) {
+function damageEnemy(e, amount, crit) {
   if (!e.alive) return;
   e.hp -= amount;
   e.flash = 0.08;
+  if (crit) {
+    burst(e.x, e.y - 4, 3, { color: PAL.gold, min: 0.6, max: 2.2, life: 0.3, size: 3 });
+  }
   if (e.hp <= 0) {
     e.alive = false;
     G.kills++;
@@ -3731,7 +4477,7 @@ function updateEBullets(dt) {
       }
       if (!b.grazed && d2 < 144) {
         b.grazed = true;
-        addScore(10);
+        addScore(10 + grazeBonus());
         spawnParticle(b.x, b.y, { vx: rand(-1, 1), vy: rand(-1, 1), life: 0.3, size: 2, color: PAL.cyan });
       }
     }
@@ -4131,6 +4877,7 @@ function killBoss(boss) {
   G.bossKills++;
   SAVE.data.stats.bosses++;
   SAVE.data.stats.kills++;
+  announceAchievements();
   setCombo(true);
 
   const bonus = boss.isMid ? 3000 : 9000;
@@ -4401,6 +5148,7 @@ function drawParticles(ctx) {
 
 const UI = {
   current: "title",
+  hangarTab: "tree",
   els: {},
   bossShown: false,
 
@@ -4420,6 +5168,8 @@ const UI = {
       titleBest: document.getElementById("titleBest"),
       stageList: document.getElementById("stageList"),
       tree: document.getElementById("tree"),
+      weaponList: document.getElementById("weaponList"),
+      partGroups: document.getElementById("partGroups"),
       upCoins: document.getElementById("upCoins"),
       clearTitle: document.getElementById("clearTitle"),
       clearScore: document.getElementById("clearScore"),
@@ -4446,7 +5196,7 @@ const UI = {
     this.els.overlay.classList.toggle("show", visible);
     if (name === "title") this.renderTitle();
     if (name === "stages") this.renderStages();
-    if (name === "upgrade") this.renderTree();
+    if (name === "upgrade") this.renderHangar(this.hangarTab);
     if (name === "pause") syncToggles();
   },
 
@@ -4477,24 +5227,107 @@ const UI = {
     }).join("");
   },
 
-  renderTree() {
+  renderHangar(tab) {
+    this.hangarTab = tab || this.hangarTab || "tree";
+    for (const btn of document.querySelectorAll("[data-hangar]")) {
+      btn.classList.toggle("active", btn.dataset.hangar === this.hangarTab);
+    }
+    for (const pane of document.querySelectorAll("[data-pane]")) {
+      pane.classList.toggle("hidden", pane.dataset.pane !== this.hangarTab);
+    }
     this.els.upCoins.textContent = String(SAVE.data.coins);
+    if (this.hangarTab === "tree") this.renderTree();
+    else if (this.hangarTab === "weapons") this.renderWeapons();
+    else this.renderLook();
+  },
+
+  renderTree() {
     this.els.tree.innerHTML = BRANCHES.map((branch) => {
-      const nodes = UPGRADES.filter((u) => u.branch === branch.id);
+      const nodes = NODE_DEFS.filter((n) => n.branch === branch.id);
+      const lvl = branchLevel(branch.id);
       const items = nodes.map((node) => {
-        const state = SAVE.canBuy(node);
-        const cls = state === "owned" ? "owned" : state === "poor" ? "available poor" : state === "req" ? "locked" : "available";
-        const price = state === "owned" ? "✓" : node.cost;
+        const lv = SAVE.level(node.id);
+        const state = SAVE.nodeState(node);
+        const cls = lv >= node.max ? "owned" : state === "ok" ? "available"
+          : state === "poor" ? "available poor" : "locked";
+        const price = lv >= node.max ? "MAX" : nodeCost(node, lv);
+        const pips = "●".repeat(lv) + "○".repeat(Math.max(0, node.max - lv));
+        const tip = t("d" + cap(node.id));
         return `
-          <button type="button" class="node ${cls}" data-node="${node.id}" title="${esc(t("d" + cap(node.id)))}">
+          <button type="button" class="node ${cls}" data-node="${node.id}" title="${esc(tip)}">
             <b>${esc(t("up" + cap(node.id)))}</b>
-            <small>${price}</small>
+            <small>${pips} ${price}</small>
           </button>`;
       }).join("");
       return `<div class="tree-branch" style="--branch:${branch.color}">
-        <h4>${esc(t("branch" + cap(branch.id)))}</h4>${items}
+        <h4>${esc(t("branch" + cap(branch.id)))} · ${lvl}</h4>${items}
       </div>`;
     }).join("");
+  },
+
+  renderWeapons() {
+    const list = this.els.weaponList || document.getElementById("weaponList");
+    if (!list) return;
+    list.innerHTML = WEAPONS.map((w) => {
+      const unlocked = SAVE.weaponUnlocked(w.id);
+      const equipped = SAVE.data.weapon === w.id;
+      const cls = equipped ? "equipped" : unlocked ? "" : "locked";
+      const price = unlocked ? (equipped ? "✓" : "") : t("needNode");
+      return `
+        <button type="button" class="weapon-card ${cls}" data-weapon="${w.id}">
+          <span class="wc-name">
+            <b>${esc(t("weapon" + cap(w.id)))}</b>
+            <small>${esc(t("wdesc" + cap(w.id)))}</small>
+          </span>
+          <span class="wc-price ${unlocked ? "free" : ""}">${esc(price)}</span>
+        </button>`;
+    }).join("");
+  },
+
+  renderLook() {
+    const host = document.getElementById("partGroups");
+    if (!host) return;
+    host.innerHTML = PART_GROUPS.map((group) => {
+      const items = group.list.map((part) => {
+        const owned = SAVE.partOwned(group.key, part.id);
+        const equipped = SAVE.data.build[group.key] === part.id;
+        const state = SAVE.partState(group, part);
+        const cls = equipped ? "equipped" : state === "owned" ? "" : state === "ok" ? "" : "locked";
+        let price;
+        if (owned) price = equipped ? "✓" : t("equip");
+        else if (part.unlock.achievement && !SAVE.data.achievements[part.unlock.achievement]) price = t("locked");
+        else price = SAVE.partPrice(part);
+        const swatch = part.color || part.accent || "#8fa9c2";
+        return `
+          <button type="button" class="part-card ${cls}" data-part="${group.key}:${part.id}">
+            <span class="swatch" style="background:${swatch}"></span>
+            <span class="wc-name">
+              <b>${esc(t("part" + cap(part.id)))}</b>
+              <small>${esc(t("pdesc" + cap(part.id)))}</small>
+            </span>
+            <span class="wc-price ${owned ? "free" : ""}">${esc(price)}</span>
+          </button>`;
+      }).join("");
+      return `<div class="part-group-title">${esc(t("group" + cap(group.key)))}</div>
+        <div class="part-list">${items}</div>`;
+    }).join("");
+    this.renderPreview();
+  },
+
+  renderPreview() {
+    const canvas = document.getElementById("preview");
+    if (!canvas) return;
+    const g = canvas.getContext("2d");
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, canvas.width, canvas.height);
+    const colors = bodyColors();
+    const sprite = makeSprite(24, 32, (ctx) => drawPlayerSprite(ctx, 1, colors));
+    g.drawImage(sprite, Math.round((canvas.width - 24) / 2), 22);
+    g.fillStyle = trailColor();
+    g.globalAlpha = 0.55;
+    g.fillRect(Math.round(canvas.width / 2) - 8, 60, 3, 10);
+    g.fillRect(Math.round(canvas.width / 2) + 5, 60, 3, 10);
+    g.globalAlpha = 1;
   },
 
   setBoss(show, name, phase) {
@@ -4626,6 +5459,7 @@ function showStageClear() {
   if (cleared) {
     SAVE.data.stats.clears++;
     SAVE.data.loop = clamp(G.loop + 1, 1, 9);
+    announceAchievements();
   }
   SAVE.save();
 
@@ -4670,6 +5504,7 @@ function endRun() {
   const isRecord = G.score > SAVE.data.best.score;
   if (isRecord) SAVE.data.best.score = G.score;
   SAVE.save();
+  announceAchievements();
 
   UI.els.overScore.textContent = String(G.score);
   UI.els.overCoins.textContent = "+" + coins;
@@ -4750,7 +5585,7 @@ function applyLang() {
   }
   if (UI.current === "title") UI.renderTitle();
   if (UI.current === "stages") UI.renderStages();
-  if (UI.current === "upgrade") UI.renderTree();
+  if (UI.current === "upgrade") UI.renderHangar(this.hangarTab);
   syncToggles();
   syncHud();
 }
@@ -4777,27 +5612,83 @@ function bindUi() {
       return;
     }
 
-    const node = raw.closest("[data-node]");
-    if (node) {
-      const upgrade = UPGRADE_BY_ID[node.dataset.node];
-      if (!upgrade) return;
-      const state = SAVE.canBuy(upgrade);
-      if (state === "owned") {
-        toast(t("toastOwned"));
+    const hangarTab = raw.closest("[data-hangar]");
+    if (hangarTab) {
+      Sfx.play("menu");
+      UI.renderHangar(hangarTab.dataset.hangar);
+      return;
+    }
+
+    const weaponCard = raw.closest("[data-weapon]");
+    if (weaponCard) {
+      const id = weaponCard.dataset.weapon;
+      if (!SAVE.weaponUnlocked(id)) {
+        const w = WEAPON_BY_ID[id];
+        toast(t("toastNeed", { name: t("up" + cap(w.unlock)) }), "bad");
         return;
       }
-      if (state === "req") {
-        toast(t("toastNeed", { name: t("up" + cap(upgrade.req)) }), "bad");
+      if (SAVE.setWeapon(id)) {
+        Sfx.play("buy");
+        PLAYER.weapon = id;
+        UI.renderWeapons();
+      }
+      return;
+    }
+
+    const partCard = raw.closest("[data-part]");
+    if (partCard) {
+      const [key, id] = partCard.dataset.part.split(":");
+      const group = PART_GROUPS.find((g) => g.key === key);
+      const part = group && PART_BY_KEY[key][id];
+      if (!part) return;
+      if (SAVE.partOwned(key, id)) {
+        SAVE.equipPart(key, id);
+        Sfx.play("buy");
+        UI.renderLook();
+        return;
+      }
+      const state = SAVE.partState(group, part);
+      if (state === "locked") {
+        toast(t("toastLocked"), "bad");
         return;
       }
       if (state === "poor") {
         toast(t("toastNotEnough"), "bad");
         return;
       }
-      if (SAVE.buy(upgrade)) {
+      if (SAVE.buyPart(group, part)) {
+        SAVE.equipPart(key, id);
         Sfx.play("buy");
-        toast(t("toastUnlock", { name: t("up" + cap(upgrade.id)) }), "gold");
-        UI.renderTree();
+        toast(t("toastUnlock", { name: t("part" + cap(id)) }), "gold");
+        UI.renderLook();
+      }
+      return;
+    }
+
+    const node = raw.closest("[data-node]");
+    if (node) {
+      const def = NODE_BY_ID[node.dataset.node];
+      if (!def) return;
+      const state = SAVE.nodeState(def);
+      if (state === "maxed") {
+        toast(t("toastOwned"));
+        return;
+      }
+      if (state === "req") {
+        toast(t("toastNeed", { name: t("up" + cap(def.req)) }), "bad");
+        return;
+      }
+      if (state === "gate") {
+        toast(t("toastGate", { n: def.gateLv, branch: t("branch" + cap(def.branch)) }), "bad");
+        return;
+      }
+      if (state === "poor") {
+        toast(t("toastNotEnough"), "bad");
+        return;
+      }
+      if (SAVE.buy(def)) {
+        Sfx.play("buy");
+        UI.renderHangar(UI.hangarTab);
       }
       return;
     }
@@ -4828,7 +5719,7 @@ function bindUi() {
           if (!window.confirm(t("upResetConfirm"))) return;
           const refund = SAVE.resetTree();
           toast(t("toastReset", { n: refund }), "gold");
-          UI.renderTree();
+          UI.renderHangar(UI.hangarTab);
           break;
         }
         default: break;
@@ -4881,6 +5772,7 @@ function boot() {
   bindPointer();
   bindUi();
 
+  buildPlayerSprites();
   resetPlayer();
   UI.show("title");
   syncHud();
@@ -4944,9 +5836,32 @@ if (/[?&]debug=1\b/.test(location.search)) {
     killBoss: () => { if (ENT.boss) { ENT.boss.entering = false; damageBoss(ENT.boss, 1e9); } },
     clearStage: () => { showStageClear(); },
     save: () => SAVE.save(),
-    setCoins: (n) => { SAVE.data.coins = Math.max(0, Math.floor(n)); SAVE.save(); UI.renderTree(); },
+    setCoins: (n) => { SAVE.data.coins = Math.max(0, Math.floor(n)); SAVE.save(); UI.renderHangar(UI.hangarTab); },
     setSetting: (key, on) => { SAVE.data.settings[key] = on !== false; SAVE.save(); applySettings(); syncToggles(); },
     bomb: () => useBomb(),
+    equipWeapon: (id) => {
+      if (!WEAPON_BY_ID[id]) return false;
+      SAVE.data.weapon = id;
+      PLAYER.weapon = id;
+      return true;
+    },
+    unlockAll: () => {
+      for (const def of NODE_DEFS) SAVE.data.tree[def.id] = def.max;
+      SAVE.save();
+    },
+    stats: () => ({
+      damage: +damageMul().toFixed(3),
+      rate: +rateMul().toFixed(3),
+      crit: +critChance().toFixed(3),
+      pierce: pierceCount(),
+      sides: sideGunCount(),
+      speed: +moveSpeedMul().toFixed(3),
+      lives: playerMaxLives(),
+      bombs: playerMaxBombs(),
+      invuln: +invulnTime().toFixed(2),
+      magnet: pickupRadius(),
+      graze: grazeBonus()
+    }),
     hurt: () => { PLAYER.invuln = 0; PLAYER.shield = 0; damagePlayer(); },
     data: () => JSON.parse(JSON.stringify(SAVE.data)),
     dump: () => ({
