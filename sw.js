@@ -1,7 +1,7 @@
 /* Bus Tycoon HK + Neon Bus Strike — service worker
    Handles the game pages' own assets. Other pages on the site are untouched. */
 
-const CACHE = "bus-tycoon-v8";
+const CACHE = "bus-tycoon-v9";
 const CORE = [
   "./game.html",
   "./arcade.html",

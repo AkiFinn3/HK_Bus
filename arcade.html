@@ -4,33 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#05070f">
-<meta name="description" content="霓虹空巴：一款赛博香港像素街机射击游戏。驾驶改装空巴飞越霓虹天际线，击落失控无人机。">
-<title>霓虹空巴 · NEON BUS STRIKE</title>
+<meta name="description" content="新世纪巴士战士：一款 EVA 风格像素街机射击游戏。驾驶改装空巴迎击来袭使徒。">
+<title>新世纪巴士战士 · NEON BUS EVANGELION</title>
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="霓虹空巴">
+<meta name="apple-mobile-web-app-title" content="新世纪巴士战士">
 <style>
   :root {
-    --bg: #05070f;
-    --panel: rgba(7, 18, 32, 0.72);
-    --panel-2: rgba(9, 24, 42, 0.9);
-    --line: rgba(0, 245, 255, 0.16);
-    --text: #eafcff;
-    --muted: #7f9bb3;
-    --accent: #00f5ff;
-    --accent-soft: rgba(0, 245, 255, 0.14);
-    --accent-2: #ff2bd6;
-    --green: #39ff88;
-    --blue: #3aa0ff;
-    --red: #ff3b5c;
-    --orange: #ffb020;
+    /* ---- NERV console (default theme) ---- */
+    --bg: #0a0a0c;
+    --bg-deep: #050507;
+    --panel: rgba(26, 15, 34, 0.82);
+    --panel-2: rgba(34, 20, 44, 0.92);
+    --line: rgba(var(--accent-rgb), 0.22);
+    --text: #e8f6ea;
+    --muted: #8b9a8e;
+    --accent: #9d4edd;
+    --accent-rgb: 157, 78, 221;
+    --accent-soft: rgba(var(--accent-rgb), 0.16);
+    --accent-2: #4aff9e;
+    --accent-2-rgb: 74, 255, 158;
+    --ok: #4aff9e;
+    --ok-rgb: 74, 255, 158;
+    --danger: #ff6b00;
+    --danger-rgb: 255, 107, 0;
+    --warn: #ffb020;
+    --warn-rgb: 255, 176, 32;
     --gold: #ffd23f;
-    --violet: #b45cff;
-    --radius: 18px;
+    --gold-rgb: 255, 210, 63;
+    --violet: #6b2fa0;
+    --violet-rgb: 107, 47, 160;
+    --blue: #4a7aff;
+    --blue-rgb: 74, 122, 255;
+    --green: #4aff9e;
+    --red: #ff6b00;
+    --orange: #ff6b00;
+    --hazard: #ffb020;
+    --radius: 2px;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --font-ui: "Helvetica Neue", Arial, "Noto Sans TC", "PingFang HK", sans-serif;
   }
 
   * { box-sizing: border-box; }
@@ -42,9 +57,9 @@
     margin: 0;
     padding: clamp(10px, 2.4vw, 22px) clamp(10px, 2.4vw, 22px) calc(clamp(10px, 2.4vw, 22px) + env(safe-area-inset-bottom));
     background:
-      radial-gradient(900px 560px at 7% -12%, rgba(0, 245, 255, .16), transparent 62%),
-      radial-gradient(820px 520px at 106% 4%, rgba(255, 43, 214, .14), transparent 60%),
-      radial-gradient(760px 540px at 50% 118%, rgba(57, 255, 136, .08), transparent 64%),
+      radial-gradient(900px 560px at 7% -12%, rgba(var(--accent-rgb), .16), transparent 62%),
+      radial-gradient(820px 520px at 106% 4%, rgba(var(--accent-2-rgb), .14), transparent 60%),
+      radial-gradient(760px 540px at 50% 118%, rgba(var(--ok-rgb), .08), transparent 64%),
       var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
@@ -62,8 +77,8 @@
     z-index: 0;
     pointer-events: none;
     background-image:
-      linear-gradient(rgba(0, 245, 255, .045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 43, 214, .035) 1px, transparent 1px);
+      linear-gradient(rgba(var(--accent-rgb), .045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(var(--accent-2-rgb), .035) 1px, transparent 1px);
     background-size: 44px 44px;
     -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 78%, transparent);
     mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 78%, transparent);
@@ -114,7 +129,7 @@
     padding: 6px 10px;
     border: 1px solid var(--line);
     border-radius: 999px;
-    background: rgba(0, 245, 255, .05);
+    background: rgba(var(--accent-rgb), .05);
     color: var(--accent);
     font-size: 11px;
     font-weight: 800;
@@ -123,7 +138,7 @@
     transition: background .18s, border-color .18s;
   }
 
-  .navlink:hover { background: rgba(0, 245, 255, .12); border-color: rgba(0, 245, 255, .34); }
+  .navlink:hover { background: rgba(var(--accent-rgb), .12); border-color: rgba(var(--accent-rgb), .34); }
 
   .brand-mini {
     display: flex;
@@ -138,7 +153,7 @@
     font-weight: 850;
     letter-spacing: -0.01em;
     color: #f2feff;
-    text-shadow: 0 0 14px rgba(0, 245, 255, .3), 2px 0 rgba(255, 43, 214, .22);
+    text-shadow: 0 0 14px rgba(var(--accent-rgb), .3), 2px 0 rgba(var(--accent-2-rgb), .22);
   }
 
   .brand-mini span {
@@ -159,14 +174,14 @@
     place-items: center;
     border: 1px solid var(--line);
     border-radius: 9px;
-    background: rgba(0, 245, 255, .05);
+    background: rgba(var(--accent-rgb), .05);
     color: var(--accent);
     font-size: 13px;
     cursor: pointer;
     transition: background .16s, border-color .16s;
   }
 
-  .icon-btn:hover { background: rgba(0, 245, 255, .13); }
+  .icon-btn:hover { background: rgba(var(--accent-rgb), .13); }
   .icon-btn.off { color: var(--muted); opacity: .6; }
 
   .lang-switch {
@@ -175,7 +190,7 @@
     padding: 2px;
     border: 1px solid var(--line);
     border-radius: 999px;
-    background: rgba(0, 245, 255, .04);
+    background: rgba(var(--accent-rgb), .04);
   }
 
   .lang-switch button {
@@ -208,8 +223,8 @@
     padding: 6px 9px;
     border: 1px solid var(--line);
     border-radius: 11px;
-    background: linear-gradient(160deg, rgba(0, 245, 255, .07), rgba(255, 43, 214, .025));
-    box-shadow: inset 0 0 18px rgba(0, 245, 255, .03);
+    background: linear-gradient(160deg, rgba(var(--accent-rgb), .07), rgba(var(--accent-2-rgb), .025));
+    box-shadow: inset 0 0 18px rgba(var(--accent-rgb), .03);
   }
 
   .hud-cell span {
@@ -248,13 +263,13 @@
     width: min(100%, 420px, calc((100dvh - 250px) * 2 / 3));
     aspect-ratio: 2 / 3;
     margin: 0 auto;
-    border: 1px solid rgba(0, 245, 255, .3);
+    border: 1px solid rgba(var(--accent-rgb), .3);
     border-radius: 16px;
     background: #03060d;
     box-shadow:
-      0 0 0 1px rgba(0, 245, 255, .08),
+      0 0 0 1px rgba(var(--accent-rgb), .08),
       0 22px 60px rgba(0, 0, 0, .62),
-      0 0 42px rgba(0, 245, 255, .1),
+      0 0 42px rgba(var(--accent-rgb), .1),
       inset 0 0 34px rgba(0, 0, 0, .8);
     overflow: hidden;
     touch-action: none;
@@ -305,6 +320,17 @@
 
   .boss-bar.show { opacity: 1; transform: none; }
 
+  .boss-bar-code {
+    margin-bottom: 1px;
+    font-family: var(--mono);
+    font-size: 6.5px;
+    font-weight: 800;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    opacity: .85;
+  }
+
   .boss-bar-label {
     display: flex;
     align-items: baseline;
@@ -317,7 +343,7 @@
     letter-spacing: .14em;
     text-transform: uppercase;
     color: var(--red);
-    text-shadow: 0 0 10px rgba(255, 59, 92, .6);
+    text-shadow: 0 0 10px rgba(var(--danger-rgb), .6);
   }
 
   .boss-bar-label i { font-style: normal; color: var(--muted); letter-spacing: .06em; }
@@ -336,7 +362,7 @@
     width: 100%;
     border-radius: 999px;
     background: linear-gradient(90deg, var(--red), var(--orange), var(--gold));
-    box-shadow: 0 0 10px rgba(255, 59, 92, .55);
+    box-shadow: 0 0 10px rgba(var(--danger-rgb), .55);
     transform-origin: left center;
     transition: transform .12s linear;
   }
@@ -352,7 +378,7 @@
     justify-content: center;
     padding: 14px;
     background:
-      radial-gradient(120% 80% at 50% 0%, rgba(0, 245, 255, .09), transparent 60%),
+      radial-gradient(120% 80% at 50% 0%, rgba(var(--accent-rgb), .09), transparent 60%),
       rgba(3, 7, 14, .9);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
@@ -385,15 +411,15 @@
     letter-spacing: -0.03em;
     color: #f2feff;
     text-shadow:
-      0 0 20px rgba(0, 245, 255, .55),
-      3px 0 rgba(255, 43, 214, .55),
-      -3px 0 rgba(0, 245, 255, .4);
+      0 0 20px rgba(var(--accent-rgb), .55),
+      3px 0 rgba(var(--accent-2-rgb), .55),
+      -3px 0 rgba(var(--accent-rgb), .4);
     animation: logoPulse 4.5s ease-in-out infinite;
   }
 
   @keyframes logoPulse {
-    0%, 100% { text-shadow: 0 0 18px rgba(0, 245, 255, .45), 3px 0 rgba(255, 43, 214, .5), -3px 0 rgba(0, 245, 255, .35); }
-    50% { text-shadow: 0 0 30px rgba(0, 245, 255, .75), 4px 0 rgba(255, 43, 214, .7), -4px 0 rgba(0, 245, 255, .55); }
+    0%, 100% { text-shadow: 0 0 18px rgba(var(--accent-rgb), .45), 3px 0 rgba(var(--accent-2-rgb), .5), -3px 0 rgba(var(--accent-rgb), .35); }
+    50% { text-shadow: 0 0 30px rgba(var(--accent-rgb), .75), 4px 0 rgba(var(--accent-2-rgb), .7), -4px 0 rgba(var(--accent-rgb), .55); }
   }
 
   .logo em {
@@ -403,8 +429,21 @@
     letter-spacing: .38em;
     color: var(--accent-2);
     margin-top: 6px;
-    text-shadow: 0 0 12px rgba(255, 43, 214, .6);
+    text-shadow: 0 0 12px rgba(var(--accent-2-rgb), .6);
   }
+
+  .designation {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    opacity: .8;
+  }
+
+  html[data-theme="terminal"] .designation { color: var(--accent); opacity: 1; }
 
   .screen .lead {
     margin: 12px auto 0;
@@ -437,9 +476,9 @@
     gap: 10px;
     width: 100%;
     padding: 8px 12px;
-    border: 1px solid rgba(0, 245, 255, .2);
+    border: 1px solid rgba(var(--accent-rgb), .2);
     border-radius: 9px;
-    background: rgba(0, 245, 255, .04);
+    background: rgba(var(--accent-rgb), .04);
     color: var(--text);
     font-size: 11.5px;
     font-weight: 750;
@@ -447,7 +486,7 @@
     transition: background .16s, border-color .16s;
   }
 
-  .toggle:hover { background: rgba(0, 245, 255, .11); }
+  .toggle:hover { background: rgba(var(--accent-rgb), .11); }
 
   .toggle b {
     font-family: var(--mono);
@@ -457,7 +496,7 @@
   }
 
   .toggle.on b { color: var(--green); }
-  .toggle.on { border-color: rgba(57, 255, 136, .32); }
+  .toggle.on { border-color: rgba(var(--ok-rgb), .32); }
 
   .meta-line {
     margin-top: 14px;
@@ -481,8 +520,8 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    border: 1px solid rgba(0, 245, 255, .24);
-    background: rgba(0, 245, 255, .06);
+    border: 1px solid rgba(var(--accent-rgb), .24);
+    background: rgba(var(--accent-rgb), .06);
     color: var(--text);
     border-radius: 10px;
     padding: 9px 13px;
@@ -494,7 +533,7 @@
     transition: background .16s, border-color .16s, transform .12s, opacity .16s;
   }
 
-  .btn:hover:not(:disabled) { background: rgba(0, 245, 255, .14); border-color: rgba(0, 245, 255, .42); }
+  .btn:hover:not(:disabled) { background: rgba(var(--accent-rgb), .14); border-color: rgba(var(--accent-rgb), .42); }
   .btn:active:not(:disabled) { transform: translateY(1px); }
   .btn:disabled { opacity: .38; cursor: not-allowed; }
 
@@ -502,7 +541,7 @@
     background: linear-gradient(135deg, var(--accent), #9dfcff);
     border-color: transparent;
     color: #031018;
-    box-shadow: 0 8px 22px rgba(0, 245, 255, .2);
+    box-shadow: 0 8px 22px rgba(var(--accent-rgb), .2);
   }
 
   .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #6ff9ff, #d6ffff); }
@@ -542,14 +581,14 @@
     padding: 9px 11px;
     border: 1px solid var(--line);
     border-radius: 11px;
-    background: rgba(0, 245, 255, .04);
+    background: rgba(var(--accent-rgb), .04);
     color: var(--text);
     text-align: left;
     cursor: pointer;
     transition: background .16s, border-color .16s, transform .12s;
   }
 
-  .stage-card:hover:not(:disabled) { background: rgba(0, 245, 255, .11); border-color: rgba(0, 245, 255, .34); }
+  .stage-card:hover:not(:disabled) { background: rgba(var(--accent-rgb), .11); border-color: rgba(var(--accent-rgb), .34); }
   .stage-card:active:not(:disabled) { transform: translateY(1px); }
   .stage-card:disabled { opacity: .42; cursor: not-allowed; }
 
@@ -560,7 +599,7 @@
     display: grid;
     place-items: center;
     border-radius: 9px;
-    background: rgba(0, 245, 255, .12);
+    background: rgba(var(--accent-rgb), .12);
     color: var(--accent);
     font-family: var(--mono);
     font-size: 13px;
@@ -583,7 +622,7 @@
     margin-bottom: 10px;
     border: 1px solid var(--line);
     border-radius: 11px;
-    background: rgba(0, 245, 255, .035);
+    background: rgba(var(--accent-rgb), .035);
   }
 
   .hangar-tab {
@@ -600,7 +639,7 @@
   }
 
   .hangar-tab:hover { color: var(--text); }
-  .hangar-tab.active { background: rgba(0, 245, 255, .16); color: var(--accent); }
+  .hangar-tab.active { background: rgba(var(--accent-rgb), .16); color: var(--accent); }
 
   .preview-box {
     display: grid;
@@ -610,7 +649,7 @@
     border: 1px solid var(--line);
     border-radius: 12px;
     background:
-      radial-gradient(120px 90px at 50% 40%, rgba(0, 245, 255, .12), transparent 70%),
+      radial-gradient(120px 90px at 50% 40%, rgba(var(--accent-rgb), .12), transparent 70%),
       rgba(3, 7, 14, .7);
   }
 
@@ -642,10 +681,10 @@
     transition: background .15s, border-color .15s;
   }
 
-  .weapon-card:hover, .part-card:hover { background: rgba(0, 245, 255, .1); }
+  .weapon-card:hover, .part-card:hover { background: rgba(var(--accent-rgb), .1); }
   .weapon-card.equipped, .part-card.equipped {
-    border-color: rgba(0, 245, 255, .5);
-    background: rgba(0, 245, 255, .13);
+    border-color: rgba(var(--accent-rgb), .5);
+    background: rgba(var(--accent-rgb), .13);
   }
   .weapon-card.locked, .part-card.locked { opacity: .45; cursor: not-allowed; }
 
@@ -689,7 +728,7 @@
     padding: 7px 6px;
     border: 1px solid var(--line);
     border-radius: 11px;
-    background: rgba(0, 245, 255, .035);
+    background: rgba(var(--accent-rgb), .035);
   }
 
   .tree-branch h4 {
@@ -731,12 +770,12 @@
   .node.owned small { color: var(--branch, var(--accent)); }
 
   .node.available {
-    border-color: rgba(0, 245, 255, .3);
+    border-color: rgba(var(--accent-rgb), .3);
     color: var(--text);
-    background: rgba(0, 245, 255, .07);
+    background: rgba(var(--accent-rgb), .07);
   }
 
-  .node.available:hover { background: rgba(0, 245, 255, .16); }
+  .node.available:hover { background: rgba(var(--accent-rgb), .16); }
 
   .node.locked { opacity: .48; cursor: not-allowed; }
 
@@ -785,7 +824,7 @@
     font-weight: 900;
     letter-spacing: -.02em;
     color: var(--gold);
-    text-shadow: 0 0 22px rgba(255, 210, 63, .45);
+    text-shadow: 0 0 22px rgba(var(--gold-rgb), .45);
     line-height: 1.1;
   }
 
@@ -802,8 +841,8 @@
     margin-top: 6px;
     padding: 2px 8px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 210, 63, .45);
-    background: rgba(255, 210, 63, .12);
+    border: 1px solid rgba(var(--gold-rgb), .45);
+    background: rgba(var(--gold-rgb), .12);
     color: var(--gold);
     font-size: 9px;
     font-weight: 800;
@@ -827,9 +866,9 @@
     justify-content: center;
     gap: 6px;
     min-height: 42px;
-    border: 1px solid rgba(0, 245, 255, .22);
+    border: 1px solid rgba(var(--accent-rgb), .22);
     border-radius: 12px;
-    background: rgba(0, 245, 255, .055);
+    background: rgba(var(--accent-rgb), .055);
     color: var(--text);
     font-size: 12px;
     font-weight: 800;
@@ -839,10 +878,10 @@
     touch-action: manipulation;
   }
 
-  .tool-btn:hover { background: rgba(0, 245, 255, .12); }
-  .tool-btn:active { transform: translateY(1px); background: rgba(0, 245, 255, .2); }
-  .tool-btn.bomb { color: var(--orange); border-color: rgba(255, 176, 32, .3); background: rgba(255, 176, 32, .08); }
-  .tool-btn.bomb:active { background: rgba(255, 176, 32, .2); }
+  .tool-btn:hover { background: rgba(var(--accent-rgb), .12); }
+  .tool-btn:active { transform: translateY(1px); background: rgba(var(--accent-rgb), .2); }
+  .tool-btn.bomb { color: var(--orange); border-color: rgba(var(--warn-rgb), .3); background: rgba(var(--warn-rgb), .08); }
+  .tool-btn.bomb:active { background: rgba(var(--warn-rgb), .2); }
   .tool-btn.small { flex: 0 0 52px; }
 
   .tool-btn kbd {
@@ -884,7 +923,7 @@
   .toast {
     padding: 5px 11px;
     border-radius: 999px;
-    border: 1px solid rgba(0, 245, 255, .3);
+    border: 1px solid rgba(var(--accent-rgb), .3);
     background: rgba(4, 12, 22, .88);
     color: var(--accent);
     font-size: 10.5px;
@@ -893,8 +932,8 @@
     animation: toastIn .2s ease both;
   }
 
-  .toast.gold { color: var(--gold); border-color: rgba(255, 210, 63, .38); }
-  .toast.bad { color: var(--red); border-color: rgba(255, 59, 92, .38); }
+  .toast.gold { color: var(--gold); border-color: rgba(var(--gold-rgb), .38); }
+  .toast.bad { color: var(--red); border-color: rgba(var(--danger-rgb), .38); }
 
   @keyframes toastIn {
     from { opacity: 0; transform: translateY(6px); }
@@ -926,6 +965,314 @@
     .screen-wrap { width: min(100%, 420px, calc((100dvh - 210px) * 2 / 3)); }
   }
 
+  /* =====================================================================
+     EVA themes
+     ===================================================================== */
+
+  /* ---- Shared EVA chrome ---- */
+  .topbar, .hud-cell, .screen-wrap, .toolbar, .arcade-foot { position: relative; }
+
+  .hud-cell::after,
+  .screen-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 1px solid rgba(var(--accent-rgb), .3);
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+
+  .hud-cell { border-radius: 0 !important; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%); }
+
+  .screen-wrap { border-radius: 0 !important; }
+
+  .hud-cell span { letter-spacing: .2em; }
+
+  .hud-cell b { letter-spacing: .04em; }
+
+  .btn, .toggle, .stage-card, .node, .weapon-card, .part-card, .hangar-tabs, .hangar-tab, .chip {
+    border-radius: 1px !important;
+  }
+
+  .theme-pick {
+    max-width: 250px;
+    margin: 14px auto 0;
+  }
+
+  .theme-pick-label {
+    display: block;
+    margin-bottom: 5px;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    font-weight: 800;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .theme-pick-row { display: flex; gap: 4px; }
+
+  .theme-chip {
+    flex: 1;
+    padding: 6px 2px;
+    border: 1px solid var(--line);
+    border-radius: 1px;
+    background: rgba(var(--accent-rgb), .05);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    cursor: pointer;
+    transition: background .16s, color .16s, border-color .16s;
+  }
+
+  .theme-chip:hover { background: rgba(var(--accent-rgb), .16); color: var(--text); }
+  .theme-chip.active { background: var(--accent); border-color: transparent; color: #05070a; }
+
+  /* ---- NERV console (default) ---- */
+  html[data-theme="nerv"] body {
+    background:
+      radial-gradient(900px 560px at 8% -10%, rgba(157, 78, 221, .22), transparent 62%),
+      radial-gradient(760px 520px at 104% 6%, rgba(74, 255, 158, .10), transparent 58%),
+      linear-gradient(180deg, #0a0a0c, #050507 70%);
+  }
+
+  html[data-theme="nerv"] body::before {
+    background-image:
+      linear-gradient(rgba(157, 78, 221, .10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(157, 78, 221, .10) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  html[data-theme="nerv"] h1,
+  html[data-theme="nerv"] .brand-mini b,
+  html[data-theme="nerv"] .logo {
+    color: #f2eaff;
+    text-shadow: 0 0 18px rgba(157, 78, 221, .6), 2px 0 rgba(74, 255, 158, .35);
+  }
+
+  html[data-theme="nerv"] .logo em { color: #4aff9e; text-shadow: 0 0 14px rgba(74, 255, 158, .6); }
+
+  /* orange hazard band under the top bar */
+  html[data-theme="nerv"] .topbar::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 2px;
+    height: 3px;
+    background: repeating-linear-gradient(45deg, var(--hazard) 0 6px, #0a0a0c 6px 12px);
+    opacity: .75;
+  }
+
+  html[data-theme="nerv"] .btn-primary {
+    background: var(--accent);
+    color: #08060c;
+    box-shadow: 0 0 18px rgba(157, 78, 221, .45);
+  }
+
+  html[data-theme="nerv"] .screen-wrap {
+    box-shadow:
+      0 0 0 1px rgba(157, 78, 221, .5),
+      0 0 0 5px #0a0a0c,
+      0 0 0 6px rgba(74, 255, 158, .22),
+      0 22px 60px rgba(0, 0, 0, .8);
+  }
+
+  /* ---- Alert / danger ---- */
+  html[data-theme="alert"] {
+    --bg: #050505;
+    --bg-deep: #000;
+    --panel: rgba(20, 8, 6, .9);
+    --panel-2: rgba(28, 10, 8, .95);
+    --line: rgba(var(--danger-rgb), .34);
+    --text: #ffe9d6;
+    --muted: #a8816b;
+    --accent: #ff6b00;
+    --accent-rgb: 255, 107, 0;
+    --accent-soft: rgba(var(--accent-rgb), .18);
+    --accent-2: #ff1f3d;
+    --accent-2-rgb: 255, 31, 61;
+    --ok: #ffd23f;
+    --ok-rgb: 255, 210, 63;
+    --danger: #ff1f3d;
+    --danger-rgb: 255, 31, 61;
+    --hazard: #ff1f3d;
+  }
+
+  html[data-theme="alert"] body {
+    background:
+      radial-gradient(900px 520px at 50% -12%, rgba(255, 107, 0, .26), transparent 64%),
+      radial-gradient(700px 420px at 50% 118%, rgba(255, 31, 61, .18), transparent 62%),
+      #050505;
+  }
+
+  html[data-theme="alert"] body::before {
+    background-image:
+      linear-gradient(rgba(255, 31, 61, .09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 31, 61, .09) 1px, transparent 1px);
+    background-size: 28px 28px;
+    animation: alertPulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes alertPulse {
+    0%, 100% { opacity: .55; }
+    50% { opacity: 1; }
+  }
+
+  html[data-theme="alert"] h1,
+  html[data-theme="alert"] .brand-mini b,
+  html[data-theme="alert"] .logo {
+    color: #fff3e6;
+    text-shadow: 0 0 22px rgba(255, 107, 0, .8), 0 0 44px rgba(255, 31, 61, .5);
+  }
+
+  html[data-theme="alert"] .logo em { color: #ff1f3d; }
+
+  html[data-theme="alert"] .topbar::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 2px;
+    height: 4px;
+    background: repeating-linear-gradient(45deg, #ff1f3d 0 7px, #050505 7px 14px);
+    animation: alertPulse 1.2s steps(2, end) infinite;
+  }
+
+  html[data-theme="alert"] .screen-wrap {
+    box-shadow:
+      0 0 0 1px rgba(255, 31, 61, .6),
+      0 0 0 5px #050505,
+      0 0 0 6px rgba(255, 107, 0, .4),
+      0 0 46px rgba(255, 31, 61, .28);
+  }
+
+  html[data-theme="alert"] .btn-primary {
+    background: linear-gradient(135deg, #ff6b00, #ff1f3d);
+    color: #140000;
+    box-shadow: 0 0 22px rgba(255, 31, 61, .55);
+  }
+
+  html[data-theme="alert"] .screen-title,
+  html[data-theme="alert"] .result-kicker {
+    color: #ff1f3d;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+
+  /* ---- Minimal terminal ---- */
+  html[data-theme="terminal"] {
+    --bg: #e8e8e2;
+    --bg-deep: #dcdcd4;
+    --panel: rgba(255, 255, 255, .72);
+    --panel-2: rgba(250, 250, 246, .9);
+    --line: rgba(17, 17, 17, .3);
+    --text: #14140f;
+    --muted: #6b6b60;
+    --accent: #d94f00;
+    --accent-rgb: 217, 79, 0;
+    --accent-soft: rgba(var(--accent-rgb), .12);
+    --accent-2: #14140f;
+    --accent-2-rgb: 20, 20, 15;
+    --ok: #1f7a3d;
+    --ok-rgb: 31, 122, 61;
+    --danger: #b3122a;
+    --danger-rgb: 179, 18, 42;
+    --gold: #8a6a00;
+    --gold-rgb: 138, 106, 0;
+    --warn: #8a6a00;
+    --warn-rgb: 138, 106, 0;
+    --hazard: #14140f;
+    --radius: 0;
+  }
+
+  html[data-theme="terminal"] body {
+    background:
+      linear-gradient(180deg, #efefe9, #dcdcd4);
+    color: var(--text);
+  }
+
+  html[data-theme="terminal"] body::before {
+    background-image:
+      linear-gradient(rgba(20, 20, 15, .07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20, 20, 15, .07) 1px, transparent 1px);
+    background-size: 24px 24px;
+    animation: none;
+  }
+
+  html[data-theme="terminal"] body::after { opacity: .04; }
+
+  html[data-theme="terminal"] h1,
+  html[data-theme="terminal"] .brand-mini b,
+  html[data-theme="terminal"] .logo {
+    color: #14140f;
+    text-shadow: none;
+    animation: none;
+  }
+
+  html[data-theme="terminal"] .logo em { color: var(--accent); text-shadow: none; }
+
+  html[data-theme="terminal"] .topbar::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 2px;
+    height: 2px;
+    background: #14140f;
+  }
+
+  html[data-theme="terminal"] .navlink,
+  html[data-theme="terminal"] .icon-btn,
+  html[data-theme="terminal"] .lang-switch,
+  html[data-theme="terminal"] .theme-chip,
+  html[data-theme="terminal"] .btn,
+  html[data-theme="terminal"] .toggle {
+    background: #fbfbf7;
+    color: #14140f;
+    border-color: rgba(20, 20, 15, .45);
+  }
+
+  html[data-theme="terminal"] .btn-primary {
+    background: #14140f;
+    color: #f5f5ef;
+    box-shadow: none;
+  }
+
+  html[data-theme="terminal"] .lang-switch button.active,
+  html[data-theme="terminal"] .theme-chip.active {
+    background: #14140f;
+    color: #f5f5ef;
+  }
+
+  /* keep the playfield dark: light canvas would wreck pixel readability */
+  html[data-theme="terminal"] .screen-wrap {
+    background: #0b0b0e;
+    box-shadow:
+      0 0 0 2px #14140f,
+      0 0 0 6px #fbfbf7,
+      0 0 0 7px rgba(20, 20, 15, .5),
+      0 18px 40px rgba(0, 0, 0, .28);
+  }
+
+  html[data-theme="terminal"] .hud-cell {
+    background: #fbfbf7;
+    border-color: rgba(20, 20, 15, .45);
+    box-shadow: none;
+  }
+
+  html[data-theme="terminal"] .hud-cell b { color: #14140f; }
+  html[data-theme="terminal"] .hud-cell.accent b { color: var(--accent); }
+
+  html[data-theme="terminal"] .overlay {
+    background: rgba(240, 240, 234, .95);
+  }
+
+  html[data-theme="terminal"] .toast {
+    background: #fbfbf7;
+    color: #14140f;
+    border-color: rgba(20, 20, 15, .45);
+  }
+
+  html[data-theme="terminal"] .arcade-foot { color: #6b6b60; }
+  html[data-theme="terminal"] .arcade-foot a { color: #14140f; border-bottom-color: rgba(20, 20, 15, .4); }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: .001ms !important;
@@ -941,8 +1288,8 @@
   <header class="topbar">
     <a class="navlink" href="index.html">← <span data-i18n="navBoard">看板</span></a>
     <div class="brand-mini">
-      <b data-i18n="brand">霓虹空巴</b>
-      <span>Neon Bus Strike</span>
+      <b data-i18n="brand">新世纪巴士战士</b>
+      <span>Neon Bus Evangelion</span>
     </div>
     <div class="top-actions">
       <button type="button" class="icon-btn" id="soundBtn" title="SFX" aria-label="Sound">🔊</button>
@@ -979,13 +1326,15 @@
     <div class="vignette" aria-hidden="true"></div>
 
     <div class="boss-bar" id="bossBar" aria-hidden="true">
+      <div class="boss-bar-code" id="bossCode">TARGET // ANGEL</div>
       <div class="boss-bar-label"><span id="bossName">BOSS</span><i id="bossPhase">PHASE 1</i></div>
       <div class="boss-bar-track"><i id="bossFill"></i></div>
     </div>
 
     <div class="overlay" id="overlay">
       <section class="screen active" data-screen="title">
-        <div class="logo">NEON BUS<em>STRIKE</em></div>
+        <div class="logo">NEON BUS<em>EVANGELION</em></div>
+        <div class="designation" aria-hidden="true">EVA-01 // PATTERN:BLUE // BUS-STRIKE</div>
         <p class="lead" data-i18n="titleLead">駕駛改裝空巴，飛越霓虹下的香港天際線，擊落失控無人機。</p>
         <div class="menu">
           <button type="button" class="btn btn-primary btn-block" data-act="play" data-i18n="btnPlay">開始任務</button>
@@ -1048,6 +1397,14 @@
           <button type="button" class="toggle" data-toggle="shake">
             <span data-i18n="settingsShake">畫面震動</span><b>ON</b>
           </button>
+        </div>
+        <div class="theme-pick" id="themePick" role="group" aria-labelledby="themePickLabel">
+          <span class="theme-pick-label" id="themePickLabel" data-i18n="settingsTheme">介面主題</span>
+          <div class="theme-pick-row">
+            <button type="button" class="theme-chip" data-theme-pick="nerv" data-i18n="themeNerv">NERV</button>
+            <button type="button" class="theme-chip" data-theme-pick="alert" data-i18n="themeAlert">警報</button>
+            <button type="button" class="theme-chip" data-theme-pick="terminal" data-i18n="themeTerminal">終端</button>
+          </div>
         </div>
         <div class="menu">
           <button type="button" class="btn btn-primary btn-block" data-act="resume" data-i18n="btnResume">繼續</button>
@@ -1123,7 +1480,7 @@
 'use strict';
 
 /* =====================================================================
-   霓虹空巴 · NEON BUS STRIKE
+   新世纪巴士战士 · NEON BUS EVANGELION
    A single-file vertical arcade shooter. No dependencies, no assets.
    ===================================================================== */
 
@@ -1134,8 +1491,8 @@
 const I18N = {
   zhHant: {
     navBoard: "看板",
-    brand: "霓虹空巴",
-    pageTitle: "霓虹空巴 · NEON BUS STRIKE",
+    brand: "新世纪巴士战士",
+    pageTitle: "新世纪巴士战士 · NEON BUS EVANGELION",
     achFirstBlood: "初次擊墜",
     achBossHunter: "Boss 獵人",
     achAllClear: "全關通關",
@@ -1234,6 +1591,26 @@ const I18N = {
     settingsTitle: "設定",
     settingsSfx: "音效",
     settingsMusic: "音樂",
+    settingsTheme: "介面主題",
+    themeNerv: "NERV",
+    themeAlert: "警報",
+    themeTerminal: "終端",
+    angelSachiel: "第4使徒 薩基爾",
+    angelShamshel: "第5使徒 沙姆謝爾",
+    angelRamiel: "第6使徒 拉米爾",
+    angelGaghiel: "第7使徒 加基爾",
+    angelIsrafel: "第9使徒 伊斯拉斐爾",
+    angelSandalphon: "第11使徒 桑德楓",
+    angelMatarael: "第12使徒 馬塔瑞爾",
+    angelSahaquiel: "第14使徒 薩哈奎爾",
+    angelCode1: "ANGEL-04",
+    angelCode2: "ANGEL-05",
+    angelCode3: "ANGEL-06",
+    angelCode4: "ANGEL-07",
+    angelCode5: "ANGEL-09",
+    angelCode6: "ANGEL-11",
+    angelCode7: "ANGEL-12",
+    angelCode8: "ANGEL-14",
     settingsShake: "畫面震動",
     settingsReduced: "減少動態",
     settingsOn: "開",
@@ -1365,8 +1742,8 @@ const I18N = {
 
   zhHans: {
     navBoard: "看板",
-    brand: "霓虹空巴",
-    pageTitle: "霓虹空巴 · NEON BUS STRIKE",
+    brand: "新世纪巴士战士",
+    pageTitle: "新世纪巴士战士 · NEON BUS EVANGELION",
     achFirstBlood: "初次击坠",
     achBossHunter: "Boss 猎人",
     achAllClear: "全关通关",
@@ -1465,6 +1842,26 @@ const I18N = {
     settingsTitle: "设定",
     settingsSfx: "音效",
     settingsMusic: "音乐",
+    settingsTheme: "界面主题",
+    themeNerv: "NERV",
+    themeAlert: "警报",
+    themeTerminal: "终端",
+    angelSachiel: "第4使徒 萨基尔",
+    angelShamshel: "第5使徒 沙姆谢尔",
+    angelRamiel: "第6使徒 拉米尔",
+    angelGaghiel: "第7使徒 加基尔",
+    angelIsrafel: "第9使徒 伊斯拉斐尔",
+    angelSandalphon: "第11使徒 桑德枫",
+    angelMatarael: "第12使徒 马塔瑞尔",
+    angelSahaquiel: "第14使徒 萨哈奎尔",
+    angelCode1: "ANGEL-04",
+    angelCode2: "ANGEL-05",
+    angelCode3: "ANGEL-06",
+    angelCode4: "ANGEL-07",
+    angelCode5: "ANGEL-09",
+    angelCode6: "ANGEL-11",
+    angelCode7: "ANGEL-12",
+    angelCode8: "ANGEL-14",
     settingsShake: "画面震动",
     settingsReduced: "减少动态",
     settingsOn: "开",
@@ -1597,7 +1994,7 @@ const I18N = {
   en: {
     navBoard: "Board",
     brand: "NEON BUS",
-    pageTitle: "NEON BUS STRIKE · Pixel Arcade Shooter",
+    pageTitle: "NEON BUS EVANGELION · Pixel Arcade Shooter",
     achFirstBlood: "First Blood",
     achBossHunter: "Boss Hunter",
     achAllClear: "All Clear",
@@ -1696,6 +2093,26 @@ const I18N = {
     settingsTitle: "SETTINGS",
     settingsSfx: "SFX",
     settingsMusic: "MUSIC",
+    settingsTheme: "UI THEME",
+    themeNerv: "NERV",
+    themeAlert: "ALERT",
+    themeTerminal: "TERMINAL",
+    angelSachiel: "4th Angel Sachiel",
+    angelShamshel: "5th Angel Shamshel",
+    angelRamiel: "6th Angel Ramiel",
+    angelGaghiel: "7th Angel Gaghiel",
+    angelIsrafel: "9th Angel Israfel",
+    angelSandalphon: "11th Angel Sandalphon",
+    angelMatarael: "12th Angel Matarael",
+    angelSahaquiel: "14th Angel Sahaquiel",
+    angelCode1: "ANGEL-04",
+    angelCode2: "ANGEL-05",
+    angelCode3: "ANGEL-06",
+    angelCode4: "ANGEL-07",
+    angelCode5: "ANGEL-09",
+    angelCode6: "ANGEL-11",
+    angelCode7: "ANGEL-12",
+    angelCode8: "ANGEL-14",
     settingsShake: "SCREEN SHAKE",
     settingsReduced: "REDUCED MOTION",
     settingsOn: "ON",
@@ -2056,6 +2473,28 @@ function t(key, vars) {
    5. Save data
    --------------------------------------------------------------------- */
 
+const THEME_IDS = ["nerv", "alert", "terminal"];
+
+function currentTheme() {
+  const t = SAVE.data && SAVE.data.settings && SAVE.data.settings.theme;
+  return THEME_IDS.includes(t) ? t : "nerv";
+}
+
+function applyTheme(id, persist) {
+  const theme = THEME_IDS.includes(id) ? id : "nerv";
+  document.documentElement.setAttribute("data-theme", theme);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", theme === "terminal" ? "#e8e8e2" : theme === "alert" ? "#050505" : "#0a0a0c");
+  for (const btn of document.querySelectorAll("[data-theme-pick]")) {
+    btn.classList.toggle("active", btn.dataset.themePick === theme);
+  }
+  if (persist && SAVE.data) {
+    SAVE.data.settings.theme = theme;
+    SAVE.save();
+  }
+  if (typeof PAL !== "undefined" && typeof rebuildArt === "function") rebuildArt();
+}
+
 const SAVE_KEY = "hkBusArcade.save.v2";
 const SAVE_KEY_V1 = "hkBusArcade.save.v1";
 
@@ -2095,7 +2534,7 @@ function freshSave() {
     unlockedStage: 1,
     loop: 1,
     best: { score: 0, byStage: [0, 0, 0, 0, 0] },
-    settings: { sfx: true, music: true, shake: true },
+    settings: { sfx: true, music: true, shake: true, theme: "nerv" },
     stats: { runs: 0, kills: 0, bosses: 0, clears: 0, playTime: 0 }
   };
 }
@@ -2208,6 +2647,7 @@ const SAVE = {
       next.settings.sfx = raw.settings.sfx !== false;
       next.settings.music = raw.settings.music !== false;
       next.settings.shake = raw.settings.shake !== false;
+      if (THEME_IDS.includes(raw.settings.theme)) next.settings.theme = raw.settings.theme;
     }
     if (raw.stats && typeof raw.stats === "object") {
       for (const k of ["runs", "kills", "bosses", "clears"]) next.stats[k] = Math.max(0, Math.floor(safeNum(raw.stats[k], 0)));
@@ -2473,23 +2913,34 @@ const Music = {
    7. Sprites (procedural pixel art, generated once)
    --------------------------------------------------------------------- */
 
-const PAL = {
-  ink: "#050a12",
-  dark: "#0d1826",
-  steel: "#8fa9c2",
-  steelHi: "#dcebfa",
-  white: "#f4fbff",
-  cyan: "#00f5ff",
-  cyanDim: "#0aa6b4",
-  magenta: "#ff2bd6",
-  magentaDim: "#8d1176",
-  gold: "#ffd23f",
-  orange: "#ffb020",
-  red: "#ff3b5c",
-  green: "#39ff88",
-  violet: "#b45cff",
-  blue: "#3aa0ff"
+/* Palette is derived from the active UI theme so the playfield follows the
+   chrome. Rebuilt by rebuildArt() whenever the theme changes. */
+const PAL_THEMES = {
+  nerv: {
+    ink: "#08060c", dark: "#1a0f22", steel: "#9d8fb5", steelHi: "#e8dcff",
+    white: "#f4fbff", cyan: "#9d4edd", cyanDim: "#5a2a8a", magenta: "#4aff9e",
+    magentaDim: "#1f7a4a", gold: "#ffb020", orange: "#ff6b00", red: "#ff3b5c",
+    green: "#4aff9e", violet: "#6b2fa0", blue: "#4a7aff"
+  },
+  alert: {
+    ink: "#0a0300", dark: "#1c0a06", steel: "#b58a6a", steelHi: "#ffe0c2",
+    white: "#fff6ec", cyan: "#ff6b00", cyanDim: "#a83f00", magenta: "#ff1f3d",
+    magentaDim: "#8a1024", gold: "#ffd23f", orange: "#ff6b00", red: "#ff1f3d",
+    green: "#ffd23f", violet: "#c2410c", blue: "#ff9f43"
+  },
+  terminal: {
+    ink: "#0b0b0e", dark: "#1d1d22", steel: "#9a9a92", steelHi: "#e4e4dc",
+    white: "#f7f7f2", cyan: "#d94f00", cyanDim: "#8a3300", magenta: "#14140f",
+    magentaDim: "#3a3a33", gold: "#8a6a00", orange: "#d94f00", red: "#b3122a",
+    green: "#1f7a3d", violet: "#4a4a42", blue: "#2f5d8a"
+  }
 };
+
+let PAL = Object.assign({}, PAL_THEMES.nerv);
+
+function applyPalette(theme) {
+  PAL = Object.assign({}, PAL_THEMES[theme] || PAL_THEMES.nerv);
+}
 
 function makeSprite(w, h, draw) {
   const canvas = document.createElement("canvas");
@@ -2514,8 +2965,6 @@ function whiteVersion(src) {
 }
 
 const SPR = {};
-
-/* ---- Player: a neon "flying bus" ---- */
 function drawPlayerSprite(g, thrust, colors) {
   const body = (colors && colors.color) || "#dcebfa";
   const accent = (colors && colors.accent) || "#ff2bd6";
@@ -2584,493 +3033,536 @@ function buildPlayerSprites() {
   SPR.playerWhite = SPR.player.map(whiteVersion);
 }
 
-buildPlayerSprites();
-SPR.playerWhite = SPR.player.map(whiteVersion);
-SPR.playerShield = makeSprite(40, 40, (g) => {
-  g.strokeStyle = "rgba(0,245,255,.75)";
-  g.lineWidth = 1.5;
-  g.beginPath();
-  g.arc(20, 20, 17, 0, TAU);
-  g.stroke();
-  g.strokeStyle = "rgba(0,245,255,.25)";
-  g.lineWidth = 3;
-  g.beginPath();
-  g.arc(20, 20, 15, 0, TAU);
-  g.stroke();
-});
+function buildAllArt() {
+  applyPalette(currentTheme());
+  for (const key of Object.keys(SPR)) delete SPR[key];
+  buildPlayerSprites();
 
-/* ---- Bullets ---- */
-SPR.bulletPlayer = makeSprite(4, 10, (g) => {
-  g.fillStyle = PAL.cyan;
-  g.fillRect(1, 0, 2, 8);
-  g.fillStyle = PAL.white;
-  g.fillRect(1, 0, 1, 4);
-});
-SPR.bulletSide = makeSprite(3, 7, (g) => {
-  g.fillStyle = PAL.green;
-  g.fillRect(1, 0, 1, 6);
-  g.fillStyle = PAL.white;
-  g.fillRect(1, 0, 1, 2);
-});
-SPR.bulletMissile = makeSprite(5, 12, (g) => {
-  g.fillStyle = PAL.gold;
-  g.fillRect(2, 0, 1, 8);
-  g.fillStyle = PAL.orange;
-  g.fillRect(1, 6, 3, 3);
-  g.fillStyle = PAL.white;
-  g.fillRect(2, 1, 1, 2);
-});
-SPR.bulletEnemy = makeSprite(6, 6, (g) => {
-  g.fillStyle = PAL.magenta;
-  g.fillRect(1, 1, 4, 4);
-  g.fillStyle = "#ffd0f4";
-  g.fillRect(2, 2, 2, 2);
-});
-SPR.bulletEnemyBig = makeSprite(10, 10, (g) => {
-  g.fillStyle = PAL.magentaDim;
-  g.fillRect(1, 1, 8, 8);
-  g.fillStyle = PAL.magenta;
-  g.fillRect(2, 2, 6, 6);
-  g.fillStyle = PAL.white;
-  g.fillRect(4, 4, 2, 2);
-});
-SPR.bulletEnemyGold = makeSprite(6, 6, (g) => {
-  g.fillStyle = PAL.orange;
-  g.fillRect(1, 1, 4, 4);
-  g.fillStyle = PAL.gold;
-  g.fillRect(2, 2, 2, 2);
-});
-SPR.bulletLaser = makeSprite(4, 24, (g) => {
-  g.fillStyle = "rgba(255,59,92,.9)";
-  g.fillRect(0, 0, 4, 24);
-  g.fillStyle = "rgba(255,255,255,.85)";
-  g.fillRect(1, 0, 2, 24);
-});
+  /* ---- Player: a neon "flying bus" ---- */
 
-/* ---- Enemies ---- */
-SPR.drone = makeSprite(18, 16, (g) => {
-  g.fillStyle = PAL.dark;
-  g.fillRect(3, 3, 12, 10);
-  g.fillStyle = PAL.red;
-  g.fillRect(4, 4, 10, 3);
-  g.fillStyle = PAL.steel;
-  g.fillRect(1, 6, 2, 5);
-  g.fillRect(15, 6, 2, 5);
-  g.fillStyle = PAL.magenta;
-  g.fillRect(7, 8, 4, 4);
-  g.fillStyle = PAL.white;
-  g.fillRect(8, 9, 2, 2);
-});
 
-SPR.weaver = makeSprite(20, 14, (g) => {
-  g.fillStyle = PAL.violet;
-  g.fillRect(2, 4, 16, 6);
-  g.fillStyle = "#e3d2ff";
-  g.fillRect(4, 5, 12, 2);
-  g.fillStyle = PAL.dark;
-  g.fillRect(8, 7, 4, 4);
-  g.fillStyle = PAL.cyan;
-  g.fillRect(9, 8, 2, 2);
-  g.fillStyle = PAL.violet;
-  g.fillRect(0, 6, 2, 2);
-  g.fillRect(18, 6, 2, 2);
-});
 
-SPR.diver = makeSprite(16, 20, (g) => {
-  g.fillStyle = PAL.orange;
-  g.fillRect(6, 0, 4, 6);
-  g.fillStyle = PAL.steel;
-  g.fillRect(3, 5, 10, 9);
-  g.fillStyle = PAL.dark;
-  g.fillRect(5, 7, 6, 5);
-  g.fillStyle = PAL.red;
-  g.fillRect(6, 8, 4, 3);
-  g.fillStyle = PAL.steelHi;
-  g.fillRect(4, 14, 2, 5);
-  g.fillRect(10, 14, 2, 5);
-});
 
-SPR.turret = makeSprite(22, 22, (g) => {
-  g.fillStyle = PAL.dark;
-  g.fillRect(2, 6, 18, 12);
-  g.fillStyle = PAL.steel;
-  g.fillRect(3, 7, 16, 3);
-  g.fillStyle = PAL.magentaDim;
-  g.fillRect(6, 11, 10, 6);
-  g.fillStyle = PAL.magenta;
-  g.fillRect(9, 12, 4, 4);
-  g.fillStyle = PAL.red;
-  g.fillRect(3, 17, 16, 2);
-});
+  buildPlayerSprites();
+  SPR.playerWhite = SPR.player.map(whiteVersion);
+  SPR.playerShield = makeSprite(40, 40, (g) => {
+    g.strokeStyle = "rgba(0,245,255,.75)";
+    g.lineWidth = 1.5;
+    g.beginPath();
+    g.arc(20, 20, 17, 0, TAU);
+    g.stroke();
+    g.strokeStyle = "rgba(0,245,255,.25)";
+    g.lineWidth = 3;
+    g.beginPath();
+    g.arc(20, 20, 15, 0, TAU);
+    g.stroke();
+  });
 
-SPR.carrier = makeSprite(30, 22, (g) => {
-  g.fillStyle = PAL.dark;
-  g.fillRect(0, 4, 30, 14);
-  g.fillStyle = PAL.steel;
-  g.fillRect(2, 6, 26, 4);
-  g.fillStyle = PAL.blue;
-  g.fillRect(6, 11, 18, 5);
-  g.fillStyle = PAL.cyan;
-  g.fillRect(12, 12, 6, 3);
-  g.fillStyle = PAL.red;
-  g.fillRect(2, 16, 4, 3);
-  g.fillRect(24, 16, 4, 3);
-});
-
-SPR.shielder = makeSprite(24, 24, (g) => {
-  g.fillStyle = PAL.green;
-  g.fillRect(4, 4, 16, 16);
-  g.fillStyle = "#0b3d24";
-  g.fillRect(6, 6, 12, 12);
-  g.fillStyle = PAL.white;
-  g.fillRect(9, 9, 6, 6);
-  g.strokeStyle = "rgba(57,255,136,.85)";
-  g.lineWidth = 2;
-  g.beginPath();
-  g.arc(12, 12, 11, 0, TAU);
-  g.stroke();
-});
-
-SPR.mine = makeSprite(14, 14, (g) => {
-  g.fillStyle = PAL.red;
-  g.fillRect(4, 4, 6, 6);
-  g.fillStyle = PAL.gold;
-  g.fillRect(6, 6, 2, 2);
-  g.fillStyle = PAL.red;
-  g.fillRect(6, 0, 2, 4);
-  g.fillRect(6, 10, 2, 4);
-  g.fillRect(0, 6, 4, 2);
-  g.fillRect(10, 6, 4, 2);
-});
-
-SPR.sniper = makeSprite(18, 18, (g) => {
-  g.fillStyle = PAL.steel;
-  g.fillRect(3, 3, 12, 12);
-  g.fillStyle = PAL.dark;
-  g.fillRect(5, 5, 8, 8);
-  g.fillStyle = PAL.violet;
-  g.fillRect(7, 7, 4, 4);
-  g.fillStyle = PAL.white;
-  g.fillRect(8, 8, 2, 2);
-  g.fillStyle = PAL.violet;
-  g.fillRect(8, 0, 2, 3);
-  g.fillRect(8, 15, 2, 3);
-});
-
-/* ---- Bosses (pre-rendered, large) ---- */
-const BOSS_ART = {
-  boat: [88, 52, (g) => {
-    g.fillStyle = PAL.dark;
-    g.fillRect(6, 14, 76, 24);
-    g.fillStyle = PAL.steel;
-    g.fillRect(8, 16, 72, 6);
-    g.fillStyle = PAL.magentaDim;
-    g.fillRect(14, 22, 60, 10);
-    g.fillStyle = PAL.magenta;
-    g.fillRect(18, 24, 52, 3);
+  /* ---- Bullets ---- */
+  SPR.bulletPlayer = makeSprite(4, 10, (g) => {
     g.fillStyle = PAL.cyan;
-    g.fillRect(24, 30, 8, 4);
-    g.fillRect(56, 30, 8, 4);
-    g.fillStyle = PAL.red;
-    g.fillRect(10, 38, 12, 6);
-    g.fillRect(66, 38, 12, 6);
-    g.fillStyle = PAL.gold;
-    g.fillRect(40, 12, 8, 4);
-    g.fillStyle = PAL.steelHi;
-    g.fillRect(38, 8, 12, 5);
-  }],
-
-  whale: [128, 84, (g) => {
-    g.fillStyle = PAL.magentaDim;
-    g.fillRect(10, 22, 108, 42);
-    g.fillStyle = PAL.magenta;
-    g.fillRect(14, 18, 100, 12);
-    g.fillStyle = "#ff8ee9";
-    g.fillRect(22, 20, 84, 4);
-    g.fillStyle = PAL.dark;
-    g.fillRect(26, 36, 76, 22);
-    g.fillStyle = PAL.cyan;
-    g.fillRect(34, 40, 12, 8);
-    g.fillRect(82, 40, 12, 8);
+    g.fillRect(1, 0, 2, 8);
     g.fillStyle = PAL.white;
-    g.fillRect(36, 42, 4, 3);
-    g.fillRect(84, 42, 4, 3);
+    g.fillRect(1, 0, 1, 4);
+  });
+  SPR.bulletSide = makeSprite(3, 7, (g) => {
+    g.fillStyle = PAL.green;
+    g.fillRect(1, 0, 1, 6);
+    g.fillStyle = PAL.white;
+    g.fillRect(1, 0, 1, 2);
+  });
+  SPR.bulletMissile = makeSprite(5, 12, (g) => {
     g.fillStyle = PAL.gold;
-    g.fillRect(58, 44, 12, 6);
-    g.fillStyle = PAL.steel;
-    g.fillRect(4, 30, 12, 20);
-    g.fillRect(112, 30, 12, 20);
-    g.fillStyle = PAL.red;
-    g.fillRect(0, 36, 6, 8);
-    g.fillRect(122, 36, 6, 8);
-    g.fillStyle = PAL.violet;
-    g.fillRect(30, 62, 16, 10);
-    g.fillRect(82, 62, 16, 10);
-  }],
-
-  turret: [84, 72, (g) => {
-    g.fillStyle = PAL.dark;
-    g.fillRect(10, 16, 64, 46);
-    g.fillStyle = PAL.steel;
-    g.fillRect(12, 18, 60, 8);
+    g.fillRect(2, 0, 1, 8);
     g.fillStyle = PAL.orange;
-    g.fillRect(18, 28, 48, 12);
-    g.fillStyle = PAL.gold;
-    g.fillRect(24, 30, 36, 3);
-    g.fillStyle = PAL.dark;
-    g.fillRect(24, 44, 36, 14);
-    g.fillStyle = PAL.red;
-    g.fillRect(28, 48, 8, 6);
-    g.fillRect(48, 48, 8, 6);
-    g.fillStyle = PAL.steelHi;
-    g.fillRect(30, 8, 24, 10);
-    g.fillStyle = PAL.orange;
-    g.fillRect(34, 4, 16, 6);
-    g.fillStyle = PAL.magentaDim;
-    g.fillRect(0, 26, 12, 16);
-    g.fillRect(72, 26, 12, 16);
-  }],
-
-  crane: [104, 108, (g) => {
-    g.fillStyle = PAL.steel;
-    g.fillRect(46, 6, 12, 96);
-    g.fillStyle = PAL.steelHi;
-    g.fillRect(48, 8, 4, 90);
-    g.fillStyle = PAL.orange;
-    g.fillRect(8, 14, 88, 8);
-    g.fillStyle = PAL.gold;
-    g.fillRect(12, 16, 80, 3);
-    g.fillStyle = PAL.dark;
-    g.fillRect(16, 22, 14, 22);
-    g.fillStyle = PAL.red;
-    g.fillRect(20, 26, 6, 6);
-    g.fillStyle = PAL.magentaDim;
-    g.fillRect(72, 22, 20, 34);
+    g.fillRect(1, 6, 3, 3);
+    g.fillStyle = PAL.white;
+    g.fillRect(2, 1, 1, 2);
+  });
+  SPR.bulletEnemy = makeSprite(6, 6, (g) => {
     g.fillStyle = PAL.magenta;
-    g.fillRect(76, 26, 12, 4);
-    g.fillStyle = PAL.steel;
-    g.fillRect(38, 70, 28, 18);
-    g.fillStyle = PAL.cyan;
-    g.fillRect(42, 74, 20, 5);
-    g.fillStyle = PAL.dark;
-    g.fillRect(30, 96, 44, 10);
-  }],
+    g.fillRect(1, 1, 4, 4);
+    g.fillStyle = "#ffd0f4";
+    g.fillRect(2, 2, 2, 2);
+  });
+  SPR.bulletEnemyBig = makeSprite(10, 10, (g) => {
+    g.fillStyle = PAL.magentaDim;
+    g.fillRect(1, 1, 8, 8);
+    g.fillStyle = PAL.magenta;
+    g.fillRect(2, 2, 6, 6);
+    g.fillStyle = PAL.white;
+    g.fillRect(4, 4, 2, 2);
+  });
+  SPR.bulletEnemyGold = makeSprite(6, 6, (g) => {
+    g.fillStyle = PAL.orange;
+    g.fillRect(1, 1, 4, 4);
+    g.fillStyle = PAL.gold;
+    g.fillRect(2, 2, 2, 2);
+  });
+  SPR.bulletLaser = makeSprite(4, 24, (g) => {
+    g.fillStyle = "rgba(255,59,92,.9)";
+    g.fillRect(0, 0, 4, 24);
+    g.fillStyle = "rgba(255,255,255,.85)";
+    g.fillRect(1, 0, 2, 24);
+  });
 
-  satellite: [92, 68, (g) => {
+  /* ---- Enemies ---- */
+  SPR.drone = makeSprite(18, 16, (g) => {
+    g.fillStyle = PAL.dark;
+    g.fillRect(3, 3, 12, 10);
+    g.fillStyle = PAL.red;
+    g.fillRect(4, 4, 10, 3);
+    g.fillStyle = PAL.steel;
+    g.fillRect(1, 6, 2, 5);
+    g.fillRect(15, 6, 2, 5);
+    g.fillStyle = PAL.magenta;
+    g.fillRect(7, 8, 4, 4);
+    g.fillStyle = PAL.white;
+    g.fillRect(8, 9, 2, 2);
+  });
+
+  SPR.weaver = makeSprite(20, 14, (g) => {
+    g.fillStyle = PAL.violet;
+    g.fillRect(2, 4, 16, 6);
+    g.fillStyle = "#e3d2ff";
+    g.fillRect(4, 5, 12, 2);
+    g.fillStyle = PAL.dark;
+    g.fillRect(8, 7, 4, 4);
+    g.fillStyle = PAL.cyan;
+    g.fillRect(9, 8, 2, 2);
+    g.fillStyle = PAL.violet;
+    g.fillRect(0, 6, 2, 2);
+    g.fillRect(18, 6, 2, 2);
+  });
+
+  SPR.diver = makeSprite(16, 20, (g) => {
+    g.fillStyle = PAL.orange;
+    g.fillRect(6, 0, 4, 6);
+    g.fillStyle = PAL.steel;
+    g.fillRect(3, 5, 10, 9);
+    g.fillStyle = PAL.dark;
+    g.fillRect(5, 7, 6, 5);
+    g.fillStyle = PAL.red;
+    g.fillRect(6, 8, 4, 3);
+    g.fillStyle = PAL.steelHi;
+    g.fillRect(4, 14, 2, 5);
+    g.fillRect(10, 14, 2, 5);
+  });
+
+  SPR.turret = makeSprite(22, 22, (g) => {
+    g.fillStyle = PAL.dark;
+    g.fillRect(2, 6, 18, 12);
+    g.fillStyle = PAL.steel;
+    g.fillRect(3, 7, 16, 3);
+    g.fillStyle = PAL.magentaDim;
+    g.fillRect(6, 11, 10, 6);
+    g.fillStyle = PAL.magenta;
+    g.fillRect(9, 12, 4, 4);
+    g.fillStyle = PAL.red;
+    g.fillRect(3, 17, 16, 2);
+  });
+
+  SPR.carrier = makeSprite(30, 22, (g) => {
+    g.fillStyle = PAL.dark;
+    g.fillRect(0, 4, 30, 14);
+    g.fillStyle = PAL.steel;
+    g.fillRect(2, 6, 26, 4);
     g.fillStyle = PAL.blue;
-    g.fillRect(30, 22, 32, 24);
-    g.fillStyle = "#0b2d4d";
-    g.fillRect(34, 26, 24, 16);
+    g.fillRect(6, 11, 18, 5);
     g.fillStyle = PAL.cyan;
-    g.fillRect(38, 30, 16, 8);
-    g.fillStyle = PAL.white;
-    g.fillRect(42, 32, 8, 4);
-    g.fillStyle = PAL.steel;
-    g.fillRect(0, 26, 28, 16);
-    g.fillRect(64, 26, 28, 16);
-    g.fillStyle = "#124b73";
-    g.fillRect(4, 30, 20, 8);
-    g.fillRect(68, 30, 20, 8);
-    g.fillStyle = PAL.violet;
-    g.fillRect(44, 46, 4, 14);
-    g.fillStyle = PAL.magenta;
-    g.fillRect(40, 58, 12, 6);
-  }],
-
-  queen: [96, 96, (g) => {
-    g.fillStyle = PAL.violet;
-    g.fillRect(20, 26, 56, 50);
-    g.fillStyle = "#e3d2ff";
-    g.fillRect(24, 30, 48, 6);
-    g.fillStyle = PAL.dark;
-    g.fillRect(30, 40, 36, 28);
-    g.fillStyle = PAL.cyan;
-    g.fillRect(34, 44, 10, 10);
-    g.fillRect(52, 44, 10, 10);
-    g.fillStyle = PAL.white;
-    g.fillRect(36, 46, 4, 4);
-    g.fillRect(54, 46, 4, 4);
-    g.fillStyle = PAL.magenta;
-    g.fillRect(40, 58, 16, 5);
-    g.fillStyle = PAL.steel;
-    g.fillRect(44, 4, 8, 22);
-    g.fillStyle = PAL.gold;
-    g.fillRect(40, 0, 16, 5);
-    g.fillRect(36, 10, 24, 4);
-    g.fillStyle = PAL.violet;
-    g.fillRect(6, 34, 14, 34);
-    g.fillRect(76, 34, 14, 34);
-    g.fillStyle = PAL.magenta;
-    g.fillRect(8, 36, 10, 4);
-    g.fillRect(78, 36, 10, 4);
-    g.fillStyle = PAL.steelHi;
-    g.fillRect(30, 76, 12, 14);
-    g.fillRect(54, 76, 12, 14);
-  }],
-
-  wing: [96, 56, (g) => {
-    g.fillStyle = PAL.violet;
-    g.fillRect(4, 18, 88, 20);
-    g.fillStyle = "#e3d2ff";
-    g.fillRect(10, 20, 76, 4);
-    g.fillStyle = PAL.dark;
-    g.fillRect(34, 12, 28, 26);
-    g.fillStyle = PAL.cyan;
-    g.fillRect(40, 16, 16, 6);
-    g.fillStyle = PAL.magenta;
-    g.fillRect(18, 28, 20, 6);
-    g.fillRect(58, 28, 20, 6);
+    g.fillRect(12, 12, 6, 3);
     g.fillStyle = PAL.red;
-    g.fillRect(0, 22, 6, 10);
-    g.fillRect(90, 22, 6, 10);
-    g.fillStyle = PAL.steel;
-    g.fillRect(24, 38, 10, 14);
-    g.fillRect(62, 38, 10, 14);
-  }],
+    g.fillRect(2, 16, 4, 3);
+    g.fillRect(24, 16, 4, 3);
+  });
 
-  twins: [136, 64, (g) => {
-    for (const ox of [0, 76]) {
-      g.fillStyle = PAL.violet;
-      g.fillRect(ox + 4, 16, 52, 26);
+  SPR.shielder = makeSprite(24, 24, (g) => {
+    g.fillStyle = PAL.green;
+    g.fillRect(4, 4, 16, 16);
+    g.fillStyle = "#0b3d24";
+    g.fillRect(6, 6, 12, 12);
+    g.fillStyle = PAL.white;
+    g.fillRect(9, 9, 6, 6);
+    g.strokeStyle = "rgba(57,255,136,.85)";
+    g.lineWidth = 2;
+    g.beginPath();
+    g.arc(12, 12, 11, 0, TAU);
+    g.stroke();
+  });
+
+  SPR.mine = makeSprite(14, 14, (g) => {
+    g.fillStyle = PAL.red;
+    g.fillRect(4, 4, 6, 6);
+    g.fillStyle = PAL.gold;
+    g.fillRect(6, 6, 2, 2);
+    g.fillStyle = PAL.red;
+    g.fillRect(6, 0, 2, 4);
+    g.fillRect(6, 10, 2, 4);
+    g.fillRect(0, 6, 4, 2);
+    g.fillRect(10, 6, 4, 2);
+  });
+
+  SPR.sniper = makeSprite(18, 18, (g) => {
+    g.fillStyle = PAL.steel;
+    g.fillRect(3, 3, 12, 12);
+    g.fillStyle = PAL.dark;
+    g.fillRect(5, 5, 8, 8);
+    g.fillStyle = PAL.violet;
+    g.fillRect(7, 7, 4, 4);
+    g.fillStyle = PAL.white;
+    g.fillRect(8, 8, 2, 2);
+    g.fillStyle = PAL.violet;
+    g.fillRect(8, 0, 2, 3);
+    g.fillRect(8, 15, 2, 3);
+  });
+
+  /* ---- Bosses (pre-rendered, large) ---- */
+  const BOSS_ART = {
+    boat: [88, 52, (g) => {
       g.fillStyle = PAL.dark;
-      g.fillRect(ox + 10, 22, 40, 16);
-      g.fillStyle = PAL.cyan;
-      g.fillRect(ox + 16, 26, 10, 8);
-      g.fillRect(ox + 34, 26, 10, 8);
-      g.fillStyle = PAL.white;
-      g.fillRect(ox + 18, 28, 4, 3);
-      g.fillRect(ox + 36, 28, 4, 3);
-      g.fillStyle = PAL.magenta;
-      g.fillRect(ox + 20, 40, 20, 4);
+      g.fillRect(6, 14, 76, 24);
       g.fillStyle = PAL.steel;
-      g.fillRect(ox + 10, 46, 12, 14);
-      g.fillRect(ox + 38, 46, 12, 14);
+      g.fillRect(8, 16, 72, 6);
+      g.fillStyle = PAL.magentaDim;
+      g.fillRect(14, 22, 60, 10);
+      g.fillStyle = PAL.magenta;
+      g.fillRect(18, 24, 52, 3);
+      g.fillStyle = PAL.cyan;
+      g.fillRect(24, 30, 8, 4);
+      g.fillRect(56, 30, 8, 4);
       g.fillStyle = PAL.red;
-      g.fillRect(ox, 24, 6, 10);
-      g.fillRect(ox + 54, 24, 6, 10);
-    }
-    g.fillStyle = "rgba(180,92,255,.5)";
-    g.fillRect(62, 28, 12, 4);
-  }],
+      g.fillRect(10, 38, 12, 6);
+      g.fillRect(66, 38, 12, 6);
+      g.fillStyle = PAL.gold;
+      g.fillRect(40, 12, 8, 4);
+      g.fillStyle = PAL.steelHi;
+      g.fillRect(38, 8, 12, 5);
+    }],
 
-  sentinel: [92, 88, (g) => {
-    g.fillStyle = PAL.steel;
-    g.fillRect(28, 20, 36, 44);
-    g.fillStyle = PAL.dark;
-    g.fillRect(32, 24, 28, 22);
-    g.fillStyle = PAL.gold;
-    g.fillRect(38, 28, 16, 12);
-    g.fillStyle = PAL.white;
-    g.fillRect(42, 31, 8, 6);
-    g.fillStyle = PAL.orange;
-    g.fillRect(12, 26, 16, 30);
-    g.fillRect(64, 26, 16, 30);
-    g.fillStyle = PAL.red;
-    g.fillRect(16, 30, 8, 4);
-    g.fillRect(68, 30, 8, 4);
-    g.fillStyle = PAL.dark;
-    g.fillRect(34, 64, 24, 12);
-    g.fillStyle = PAL.magenta;
-    g.fillRect(38, 68, 16, 3);
-    g.fillStyle = PAL.steelHi;
-    g.fillRect(44, 4, 4, 18);
-    g.fillStyle = PAL.gold;
-    g.fillRect(40, 0, 12, 5);
-  }],
+    whale: [128, 84, (g) => {
+      g.fillStyle = PAL.magentaDim;
+      g.fillRect(10, 22, 108, 42);
+      g.fillStyle = PAL.magenta;
+      g.fillRect(14, 18, 100, 12);
+      g.fillStyle = "#ff8ee9";
+      g.fillRect(22, 20, 84, 4);
+      g.fillStyle = PAL.dark;
+      g.fillRect(26, 36, 76, 22);
+      g.fillStyle = PAL.cyan;
+      g.fillRect(34, 40, 12, 8);
+      g.fillRect(82, 40, 12, 8);
+      g.fillStyle = PAL.white;
+      g.fillRect(36, 42, 4, 3);
+      g.fillRect(84, 42, 4, 3);
+      g.fillStyle = PAL.gold;
+      g.fillRect(58, 44, 12, 6);
+      g.fillStyle = PAL.steel;
+      g.fillRect(4, 30, 12, 20);
+      g.fillRect(112, 30, 12, 20);
+      g.fillStyle = PAL.red;
+      g.fillRect(0, 36, 6, 8);
+      g.fillRect(122, 36, 6, 8);
+      g.fillStyle = PAL.violet;
+      g.fillRect(30, 62, 16, 10);
+      g.fillRect(82, 62, 16, 10);
+    }],
 
-  carrier: [132, 104, (g) => {
-    g.fillStyle = PAL.dark;
-    g.fillRect(8, 26, 116, 54);
-    g.fillStyle = PAL.steel;
-    g.fillRect(12, 30, 108, 8);
-    g.fillStyle = PAL.magentaDim;
-    g.fillRect(20, 40, 92, 30);
-    g.fillStyle = PAL.magenta;
-    g.fillRect(24, 44, 84, 4);
+    turret: [84, 72, (g) => {
+      g.fillStyle = PAL.dark;
+      g.fillRect(10, 16, 64, 46);
+      g.fillStyle = PAL.steel;
+      g.fillRect(12, 18, 60, 8);
+      g.fillStyle = PAL.orange;
+      g.fillRect(18, 28, 48, 12);
+      g.fillStyle = PAL.gold;
+      g.fillRect(24, 30, 36, 3);
+      g.fillStyle = PAL.dark;
+      g.fillRect(24, 44, 36, 14);
+      g.fillStyle = PAL.red;
+      g.fillRect(28, 48, 8, 6);
+      g.fillRect(48, 48, 8, 6);
+      g.fillStyle = PAL.steelHi;
+      g.fillRect(30, 8, 24, 10);
+      g.fillStyle = PAL.orange;
+      g.fillRect(34, 4, 16, 6);
+      g.fillStyle = PAL.magentaDim;
+      g.fillRect(0, 26, 12, 16);
+      g.fillRect(72, 26, 12, 16);
+    }],
+
+    crane: [104, 108, (g) => {
+      g.fillStyle = PAL.steel;
+      g.fillRect(46, 6, 12, 96);
+      g.fillStyle = PAL.steelHi;
+      g.fillRect(48, 8, 4, 90);
+      g.fillStyle = PAL.orange;
+      g.fillRect(8, 14, 88, 8);
+      g.fillStyle = PAL.gold;
+      g.fillRect(12, 16, 80, 3);
+      g.fillStyle = PAL.dark;
+      g.fillRect(16, 22, 14, 22);
+      g.fillStyle = PAL.red;
+      g.fillRect(20, 26, 6, 6);
+      g.fillStyle = PAL.magentaDim;
+      g.fillRect(72, 22, 20, 34);
+      g.fillStyle = PAL.magenta;
+      g.fillRect(76, 26, 12, 4);
+      g.fillStyle = PAL.steel;
+      g.fillRect(38, 70, 28, 18);
+      g.fillStyle = PAL.cyan;
+      g.fillRect(42, 74, 20, 5);
+      g.fillStyle = PAL.dark;
+      g.fillRect(30, 96, 44, 10);
+    }],
+
+    satellite: [92, 68, (g) => {
+      g.fillStyle = PAL.blue;
+      g.fillRect(30, 22, 32, 24);
+      g.fillStyle = "#0b2d4d";
+      g.fillRect(34, 26, 24, 16);
+      g.fillStyle = PAL.cyan;
+      g.fillRect(38, 30, 16, 8);
+      g.fillStyle = PAL.white;
+      g.fillRect(42, 32, 8, 4);
+      g.fillStyle = PAL.steel;
+      g.fillRect(0, 26, 28, 16);
+      g.fillRect(64, 26, 28, 16);
+      g.fillStyle = "#124b73";
+      g.fillRect(4, 30, 20, 8);
+      g.fillRect(68, 30, 20, 8);
+      g.fillStyle = PAL.violet;
+      g.fillRect(44, 46, 4, 14);
+      g.fillStyle = PAL.magenta;
+      g.fillRect(40, 58, 12, 6);
+    }],
+
+    queen: [96, 96, (g) => {
+      g.fillStyle = PAL.violet;
+      g.fillRect(20, 26, 56, 50);
+      g.fillStyle = "#e3d2ff";
+      g.fillRect(24, 30, 48, 6);
+      g.fillStyle = PAL.dark;
+      g.fillRect(30, 40, 36, 28);
+      g.fillStyle = PAL.cyan;
+      g.fillRect(34, 44, 10, 10);
+      g.fillRect(52, 44, 10, 10);
+      g.fillStyle = PAL.white;
+      g.fillRect(36, 46, 4, 4);
+      g.fillRect(54, 46, 4, 4);
+      g.fillStyle = PAL.magenta;
+      g.fillRect(40, 58, 16, 5);
+      g.fillStyle = PAL.steel;
+      g.fillRect(44, 4, 8, 22);
+      g.fillStyle = PAL.gold;
+      g.fillRect(40, 0, 16, 5);
+      g.fillRect(36, 10, 24, 4);
+      g.fillStyle = PAL.violet;
+      g.fillRect(6, 34, 14, 34);
+      g.fillRect(76, 34, 14, 34);
+      g.fillStyle = PAL.magenta;
+      g.fillRect(8, 36, 10, 4);
+      g.fillRect(78, 36, 10, 4);
+      g.fillStyle = PAL.steelHi;
+      g.fillRect(30, 76, 12, 14);
+      g.fillRect(54, 76, 12, 14);
+    }],
+
+    wing: [96, 56, (g) => {
+      g.fillStyle = PAL.violet;
+      g.fillRect(4, 18, 88, 20);
+      g.fillStyle = "#e3d2ff";
+      g.fillRect(10, 20, 76, 4);
+      g.fillStyle = PAL.dark;
+      g.fillRect(34, 12, 28, 26);
+      g.fillStyle = PAL.cyan;
+      g.fillRect(40, 16, 16, 6);
+      g.fillStyle = PAL.magenta;
+      g.fillRect(18, 28, 20, 6);
+      g.fillRect(58, 28, 20, 6);
+      g.fillStyle = PAL.red;
+      g.fillRect(0, 22, 6, 10);
+      g.fillRect(90, 22, 6, 10);
+      g.fillStyle = PAL.steel;
+      g.fillRect(24, 38, 10, 14);
+      g.fillRect(62, 38, 10, 14);
+    }],
+
+    twins: [136, 64, (g) => {
+      for (const ox of [0, 76]) {
+        g.fillStyle = PAL.violet;
+        g.fillRect(ox + 4, 16, 52, 26);
+        g.fillStyle = PAL.dark;
+        g.fillRect(ox + 10, 22, 40, 16);
+        g.fillStyle = PAL.cyan;
+        g.fillRect(ox + 16, 26, 10, 8);
+        g.fillRect(ox + 34, 26, 10, 8);
+        g.fillStyle = PAL.white;
+        g.fillRect(ox + 18, 28, 4, 3);
+        g.fillRect(ox + 36, 28, 4, 3);
+        g.fillStyle = PAL.magenta;
+        g.fillRect(ox + 20, 40, 20, 4);
+        g.fillStyle = PAL.steel;
+        g.fillRect(ox + 10, 46, 12, 14);
+        g.fillRect(ox + 38, 46, 12, 14);
+        g.fillStyle = PAL.red;
+        g.fillRect(ox, 24, 6, 10);
+        g.fillRect(ox + 54, 24, 6, 10);
+      }
+      g.fillStyle = alphaHex(PAL.violet, 0.5);
+      g.fillRect(62, 28, 12, 4);
+    }],
+
+    sentinel: [92, 88, (g) => {
+      g.fillStyle = PAL.steel;
+      g.fillRect(28, 20, 36, 44);
+      g.fillStyle = PAL.dark;
+      g.fillRect(32, 24, 28, 22);
+      g.fillStyle = PAL.gold;
+      g.fillRect(38, 28, 16, 12);
+      g.fillStyle = PAL.white;
+      g.fillRect(42, 31, 8, 6);
+      g.fillStyle = PAL.orange;
+      g.fillRect(12, 26, 16, 30);
+      g.fillRect(64, 26, 16, 30);
+      g.fillStyle = PAL.red;
+      g.fillRect(16, 30, 8, 4);
+      g.fillRect(68, 30, 8, 4);
+      g.fillStyle = PAL.dark;
+      g.fillRect(34, 64, 24, 12);
+      g.fillStyle = PAL.magenta;
+      g.fillRect(38, 68, 16, 3);
+      g.fillStyle = PAL.steelHi;
+      g.fillRect(44, 4, 4, 18);
+      g.fillStyle = PAL.gold;
+      g.fillRect(40, 0, 12, 5);
+    }],
+
+    carrier: [132, 104, (g) => {
+      g.fillStyle = PAL.dark;
+      g.fillRect(8, 26, 116, 54);
+      g.fillStyle = PAL.steel;
+      g.fillRect(12, 30, 108, 8);
+      g.fillStyle = PAL.magentaDim;
+      g.fillRect(20, 40, 92, 30);
+      g.fillStyle = PAL.magenta;
+      g.fillRect(24, 44, 84, 4);
+      g.fillStyle = PAL.cyan;
+      g.fillRect(30, 52, 16, 10);
+      g.fillRect(86, 52, 16, 10);
+      g.fillStyle = PAL.white;
+      g.fillRect(34, 55, 6, 4);
+      g.fillRect(90, 55, 6, 4);
+      g.fillStyle = PAL.gold;
+      g.fillRect(56, 54, 20, 12);
+      g.fillStyle = PAL.white;
+      g.fillRect(60, 58, 12, 4);
+      g.fillStyle = PAL.red;
+      g.fillRect(2, 34, 8, 26);
+      g.fillRect(122, 34, 8, 26);
+      g.fillStyle = PAL.violet;
+      g.fillRect(18, 80, 24, 16);
+      g.fillRect(90, 80, 24, 16);
+      g.fillStyle = PAL.steelHi;
+      g.fillRect(58, 8, 16, 18);
+      g.fillStyle = PAL.gold;
+      g.fillRect(54, 4, 24, 6);
+    }]
+  };
+
+  for (const [key, spec] of Object.entries(BOSS_ART)) {
+    const [w, h, draw] = spec;
+    SPR["boss_" + key] = makeSprite(w, h, draw);
+    SPR["boss_" + key + "_white"] = whiteVersion(SPR["boss_" + key]);
+  }
+
+  /* ---- Pickups ---- */
+  function makePickup(letter, color, glow) {
+    return makeSprite(14, 14, (g) => {
+      g.fillStyle = "rgba(4,10,18,.9)";
+      g.fillRect(1, 1, 12, 12);
+      g.fillStyle = color;
+      g.fillRect(1, 1, 12, 2);
+      g.fillRect(1, 11, 12, 2);
+      g.fillRect(1, 1, 2, 12);
+      g.fillRect(11, 1, 2, 12);
+      g.fillStyle = glow;
+      g.fillRect(3, 3, 8, 8);
+      g.fillStyle = "#04101a";
+      g.font = "bold 8px ui-monospace, monospace";
+      g.textAlign = "center";
+      g.textBaseline = "middle";
+      g.fillText(letter, 7, 7.5);
+    });
+  }
+
+  SPR.pickPower = makePickup("P", PAL.cyan, "rgba(0,245,255,.28)");
+  SPR.pickBomb = makePickup("B", PAL.orange, "rgba(255,176,32,.28)");
+  SPR.pickShield = makePickup("S", PAL.green, "rgba(57,255,136,.28)");
+  SPR.pickCoin = makePickup("C", PAL.gold, "rgba(255,210,63,.28)");
+  SPR.pickLife = makePickup("1", PAL.red, "rgba(255,59,92,.3)");
+
+  /* ---- Particles ---- */
+  SPR.spark = makeSprite(3, 3, (g) => {
+    g.fillStyle = PAL.gold;
+    g.fillRect(0, 0, 3, 3);
+  });
+  SPR.sparkCyan = makeSprite(3, 3, (g) => {
     g.fillStyle = PAL.cyan;
-    g.fillRect(30, 52, 16, 10);
-    g.fillRect(86, 52, 16, 10);
-    g.fillStyle = PAL.white;
-    g.fillRect(34, 55, 6, 4);
-    g.fillRect(90, 55, 6, 4);
-    g.fillStyle = PAL.gold;
-    g.fillRect(56, 54, 20, 12);
-    g.fillStyle = PAL.white;
-    g.fillRect(60, 58, 12, 4);
-    g.fillStyle = PAL.red;
-    g.fillRect(2, 34, 8, 26);
-    g.fillRect(122, 34, 8, 26);
-    g.fillStyle = PAL.violet;
-    g.fillRect(18, 80, 24, 16);
-    g.fillRect(90, 80, 24, 16);
-    g.fillStyle = PAL.steelHi;
-    g.fillRect(58, 8, 16, 18);
-    g.fillStyle = PAL.gold;
-    g.fillRect(54, 4, 24, 6);
-  }]
-};
+    g.fillRect(0, 0, 3, 3);
+  });
+  SPR.debris = makeSprite(4, 4, (g) => {
+    g.fillStyle = PAL.steel;
+    g.fillRect(0, 0, 4, 4);
+    g.fillStyle = PAL.dark;
+    g.fillRect(1, 1, 2, 2);
+  });
 
-for (const [key, spec] of Object.entries(BOSS_ART)) {
-  const [w, h, draw] = spec;
-  SPR["boss_" + key] = makeSprite(w, h, draw);
-  SPR["boss_" + key + "_white"] = whiteVersion(SPR["boss_" + key]);
-}
-
-/* ---- Pickups ---- */
-function makePickup(letter, color, glow) {
-  return makeSprite(14, 14, (g) => {
-    g.fillStyle = "rgba(4,10,18,.9)";
-    g.fillRect(1, 1, 12, 12);
-    g.fillStyle = color;
-    g.fillRect(1, 1, 12, 2);
-    g.fillRect(1, 11, 12, 2);
-    g.fillRect(1, 1, 2, 12);
-    g.fillRect(11, 1, 2, 12);
-    g.fillStyle = glow;
-    g.fillRect(3, 3, 8, 8);
-    g.fillStyle = "#04101a";
-    g.font = "bold 8px ui-monospace, monospace";
-    g.textAlign = "center";
-    g.textBaseline = "middle";
-    g.fillText(letter, 7, 7.5);
+  /* ---- Glow halo for additive effects ---- */
+  SPR.glow = makeSprite(32, 32, (g) => {
+    const grad = g.createRadialGradient(16, 16, 0, 16, 16, 16);
+    grad.addColorStop(0, "rgba(255,255,255,.9)");
+    grad.addColorStop(0.4, "rgba(0,245,255,.45)");
+    grad.addColorStop(1, "rgba(0,245,255,0)");
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 32, 32);
   });
 }
 
-SPR.pickPower = makePickup("P", PAL.cyan, "rgba(0,245,255,.28)");
-SPR.pickBomb = makePickup("B", PAL.orange, "rgba(255,176,32,.28)");
-SPR.pickShield = makePickup("S", PAL.green, "rgba(57,255,136,.28)");
-SPR.pickCoin = makePickup("C", PAL.gold, "rgba(255,210,63,.28)");
-SPR.pickLife = makePickup("1", PAL.red, "rgba(255,59,92,.3)");
+function rebuildArt() {
+  buildAllArt();
+  BG_CACHE_RESET();
+}
 
-/* ---- Particles ---- */
-SPR.spark = makeSprite(3, 3, (g) => {
-  g.fillStyle = PAL.gold;
-  g.fillRect(0, 0, 3, 3);
-});
-SPR.sparkCyan = makeSprite(3, 3, (g) => {
-  g.fillStyle = PAL.cyan;
-  g.fillRect(0, 0, 3, 3);
-});
-SPR.debris = makeSprite(4, 4, (g) => {
-  g.fillStyle = PAL.steel;
-  g.fillRect(0, 0, 4, 4);
-  g.fillStyle = PAL.dark;
-  g.fillRect(1, 1, 2, 2);
-});
-
-/* ---- Glow halo for additive effects ---- */
-SPR.glow = makeSprite(32, 32, (g) => {
-  const grad = g.createRadialGradient(16, 16, 0, 16, 16, 16);
-  grad.addColorStop(0, "rgba(255,255,255,.9)");
-  grad.addColorStop(0.4, "rgba(0,245,255,.45)");
-  grad.addColorStop(1, "rgba(0,245,255,0)");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 32, 32);
-});
+buildAllArt();
 
 /* ---------------------------------------------------------------------
    8. Parallax backgrounds (one tile set per stage)
    --------------------------------------------------------------------- */
+
+/* Theme-aware colour helpers for the procedural backdrops. */
+function hexToRgb(hex) {
+  const h = hex.replace("#", "");
+  const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function mixHex(a, b, t) {
+  const A = hexToRgb(a);
+  const B = hexToRgb(b);
+  const r = Math.round(A[0] + (B[0] - A[0]) * t);
+  const g = Math.round(A[1] + (B[1] - A[1]) * t);
+  const bl = Math.round(A[2] + (B[2] - A[2]) * t);
+  return "rgb(" + r + "," + g + "," + bl + ")";
+}
+
+function alphaHex(hex, alpha) {
+  const c = hexToRgb(hex);
+  return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + alpha + ")";
+}
+
+function bgInk(level) {
+  return mixHex(PAL.ink, PAL.dark, level);
+}
 
 function neonRect(g, x, y, w, h, fill, glow) {
   g.fillStyle = fill;
@@ -3085,40 +3577,40 @@ function buildMarketLayer(kind) {
   const h = H;
   return makeSprite(W, h, (g) => {
     if (kind === "far") {
-      g.fillStyle = "#120a24";
+      g.fillStyle = bgInk(0.35);
       for (let x = -10; x < W + 20; x += 34) {
         const bh = 90 + ((x * 37) % 90);
         g.fillRect(x, h - bh, 26, bh);
-        g.fillStyle = "rgba(255,43,214,.25)";
+        g.fillStyle = alphaHex(PAL.magenta, 0.25);
         for (let y = h - bh + 8; y < h - 12; y += 12) {
           g.fillRect(x + 4, y, 3, 3);
           g.fillRect(x + 14, y, 3, 3);
         }
-        g.fillStyle = "#120a24";
+        g.fillStyle = bgInk(0.35);
       }
     } else if (kind === "mid") {
       for (let x = 4; x < W + 30; x += 58) {
         const bh = 120 + ((x * 53) % 70);
-        g.fillStyle = "#1b0f33";
+        g.fillStyle = bgInk(0.55);
         g.fillRect(x, h - bh, 44, bh);
-        neonRect(g, x + 5, h - bh + 12, 34, 10, "#ff2bd6", "rgba(255,120,230,.85)");
-        neonRect(g, x + 5, h - bh + 30, 22, 8, "#00f5ff", "rgba(150,250,255,.8)");
-        g.fillStyle = "rgba(255,210,63,.75)";
+        neonRect(g, x + 5, h - bh + 12, 34, 10, PAL.magenta, alphaHex(PAL.magenta, 0.85));
+        neonRect(g, x + 5, h - bh + 30, 22, 8, PAL.cyan, alphaHex(PAL.cyan, 0.8));
+        g.fillStyle = alphaHex(PAL.gold, 0.75);
         g.fillRect(x + 5, h - bh + 46, 14, 3);
-        g.fillStyle = "rgba(0,245,255,.16)";
+        g.fillStyle = alphaHex(PAL.cyan, 0.16);
         for (let y = h - bh + 60; y < h - 8; y += 14) {
           g.fillRect(x + 8, y, 28, 4);
         }
       }
     } else {
-      g.fillStyle = "rgba(6,4,14,.92)";
+      g.fillStyle = alphaHex(PAL.ink, 0.92);
       g.fillRect(0, h - 34, W, 34);
-      g.fillStyle = "rgba(0,245,255,.1)";
+      g.fillStyle = alphaHex(PAL.cyan, 0.1);
       for (let x = 0; x < W; x += 26) g.fillRect(x, h - 34, 12, 2);
       for (let x = 10; x < W; x += 40) {
-        g.fillStyle = "#0a0718";
+        g.fillStyle = bgInk(0.2);
         g.fillRect(x, h - 26, 3, 26);
-        g.fillStyle = "rgba(255,210,63,.5)";
+        g.fillStyle = alphaHex(PAL.gold, 0.5);
         g.fillRect(x, h - 28, 3, 3);
       }
     }
@@ -3128,37 +3620,37 @@ function buildMarketLayer(kind) {
 function buildPortLayer(kind) {
   return makeSprite(W, H, (g) => {
     if (kind === "far") {
-      g.fillStyle = "#071726";
+      g.fillStyle = bgInk(0.4);
       for (let x = -8; x < W + 20; x += 42) {
         const bh = 70 + ((x * 29) % 80);
         g.fillRect(x, H - bh, 30, bh);
         g.fillStyle = "rgba(255,176,32,.22)";
         g.fillRect(x + 4, H - bh + 6, 4, 4);
         g.fillRect(x + 16, H - bh + 6, 4, 4);
-        g.fillStyle = "#071726";
+        g.fillStyle = bgInk(0.4);
       }
     } else if (kind === "mid") {
       for (let x = 0; x < W + 40; x += 74) {
-        g.fillStyle = "#0c2536";
+        g.fillStyle = bgInk(0.5);
         g.fillRect(x + 6, 120, 6, H - 120);
         g.fillRect(x + 40, 120, 6, H - 120);
         g.fillRect(x + 6, 118, 40, 5);
-        g.fillStyle = "rgba(255,176,32,.55)";
+        g.fillStyle = alphaHex(PAL.orange, 0.55);
         g.fillRect(x + 22, 118, 6, 5);
-        g.fillStyle = "#123a52";
+        g.fillStyle = bgInk(0.65);
         for (let y = H - 120; y < H - 30; y += 26) {
           g.fillRect(x + 12, y, 28, 18);
-          g.fillStyle = "rgba(0,245,255,.14)";
+          g.fillStyle = alphaHex(PAL.cyan, 0.14);
           g.fillRect(x + 14, y + 2, 24, 2);
-          g.fillStyle = "#123a52";
+          g.fillStyle = bgInk(0.65);
         }
       }
     } else {
       g.fillStyle = "rgba(4,12,20,.94)";
       g.fillRect(0, H - 40, W, 40);
-      g.fillStyle = "rgba(255,176,32,.14)";
+      g.fillStyle = alphaHex(PAL.orange, 0.14);
       for (let x = 0; x < W; x += 20) g.fillRect(x, H - 40, 10, 2);
-      g.fillStyle = "rgba(0,245,255,.2)";
+      g.fillStyle = alphaHex(PAL.cyan, 0.2);
       g.fillRect(0, H - 12, W, 2);
     }
   });
@@ -3169,25 +3661,25 @@ function buildGlassLayer(kind) {
     if (kind === "far") {
       for (let x = -6; x < W + 24; x += 30) {
         const bh = 110 + ((x * 41) % 120);
-        g.fillStyle = "#0a1c33";
+        g.fillStyle = bgInk(0.45);
         g.fillRect(x, H - bh, 22, bh);
-        g.fillStyle = "rgba(58,160,255,.2)";
+        g.fillStyle = alphaHex(PAL.blue, 0.2);
         for (let y = H - bh + 6; y < H - 10; y += 10) g.fillRect(x + 3, y, 16, 2);
       }
     } else if (kind === "mid") {
       for (let x = 0; x < W + 40; x += 52) {
         const bh = 150 + ((x * 61) % 90);
-        g.fillStyle = "rgba(16,46,74,.92)";
+        g.fillStyle = bgInk(0.6);
         g.fillRect(x, H - bh, 38, bh);
-        g.fillStyle = "rgba(0,245,255,.12)";
+        g.fillStyle = alphaHex(PAL.cyan, 0.12);
         for (let y = H - bh + 8; y < H - 8; y += 9) g.fillRect(x + 3, y, 32, 3);
-        g.fillStyle = "rgba(255,43,214,.3)";
+        g.fillStyle = alphaHex(PAL.magenta, 0.3);
         g.fillRect(x + 6, H - bh + 20, 26, 2);
       }
     } else {
-      g.fillStyle = "rgba(6,16,28,.9)";
+      g.fillStyle = alphaHex(PAL.ink, 0.9);
       g.fillRect(0, H - 46, W, 46);
-      g.fillStyle = "rgba(58,160,255,.22)";
+      g.fillStyle = alphaHex(PAL.blue, 0.22);
       for (let x = 0; x < W; x += 30) g.fillRect(x, H - 46, 16, 2);
     }
   });
@@ -3196,13 +3688,13 @@ function buildGlassLayer(kind) {
 function buildBridgeLayer(kind) {
   return makeSprite(W, H, (g) => {
     if (kind === "far") {
-      g.fillStyle = "#0c0c20";
+      g.fillStyle = bgInk(0.38);
       for (let x = -20; x < W + 30; x += 46) {
         const bh = 80 + ((x * 33) % 100);
         g.fillRect(x, H - bh, 32, bh);
-        g.fillStyle = "rgba(180,92,255,.18)";
+        g.fillStyle = alphaHex(PAL.violet, 0.18);
         g.fillRect(x + 5, H - bh + 8, 4, 4);
-        g.fillStyle = "#0c0c20";
+        g.fillStyle = bgInk(0.38);
       }
     } else if (kind === "mid") {
       g.strokeStyle = "rgba(180,92,255,.5)";
@@ -3211,7 +3703,7 @@ function buildBridgeLayer(kind) {
       g.moveTo(-10, 150);
       g.quadraticCurveTo(W / 2, 40, W + 10, 150);
       g.stroke();
-      g.strokeStyle = "rgba(0,245,255,.22)";
+      g.strokeStyle = alphaHex(PAL.cyan, 0.22);
       g.lineWidth = 1;
       for (let i = 0; i < 14; i++) {
         const t0 = i / 14;
@@ -3228,9 +3720,9 @@ function buildBridgeLayer(kind) {
         g.stroke();
       }
     } else {
-      g.fillStyle = "rgba(6,8,20,.94)";
+      g.fillStyle = alphaHex(PAL.ink, 0.94);
       g.fillRect(0, H - 54, W, 54);
-      g.fillStyle = "rgba(180,92,255,.2)";
+      g.fillStyle = alphaHex(PAL.violet, 0.2);
       g.fillRect(0, H - 54, W, 2);
       g.fillStyle = "rgba(255,255,255,.12)";
       for (let x = 0; x < W; x += 46) g.fillRect(x, H - 54, 3, 54);
@@ -3241,7 +3733,7 @@ function buildBridgeLayer(kind) {
 function buildPeakLayer(kind) {
   return makeSprite(W, H, (g) => {
     if (kind === "far") {
-      g.fillStyle = "#1a0d24";
+      g.fillStyle = bgInk(0.45);
       g.beginPath();
       g.moveTo(0, 250);
       for (let x = 0; x <= W; x += 20) {
@@ -3250,21 +3742,21 @@ function buildPeakLayer(kind) {
       g.lineTo(W, H);
       g.lineTo(0, H);
       g.fill();
-      g.fillStyle = "rgba(255,210,63,.14)";
+      g.fillStyle = alphaHex(PAL.gold, 0.14);
       for (let x = 12; x < W; x += 34) g.fillRect(x, 260, 2, 2);
     } else if (kind === "mid") {
-      g.fillStyle = "rgba(42,16,48,.9)";
+      g.fillStyle = bgInk(0.6);
       for (let x = 0; x < W + 60; x += 64) {
         g.fillRect(x, 320, 30, H - 320);
-        g.fillStyle = "rgba(255,43,214,.22)";
+        g.fillStyle = alphaHex(PAL.magenta, 0.22);
         g.fillRect(x + 6, 330, 4, 4);
         g.fillRect(x + 16, 330, 4, 4);
-        g.fillStyle = "rgba(42,16,48,.9)";
+        g.fillStyle = bgInk(0.6);
       }
     } else {
-      g.fillStyle = "rgba(8,5,14,.9)";
+      g.fillStyle = alphaHex(PAL.ink, 0.9);
       g.fillRect(0, H - 40, W, 40);
-      g.fillStyle = "rgba(255,210,63,.16)";
+      g.fillStyle = alphaHex(PAL.gold, 0.16);
       for (let x = 0; x < W; x += 18) g.fillRect(x, H - 40, 8, 2);
     }
   });
@@ -3279,6 +3771,10 @@ const BG_BUILDERS = {
 };
 
 const BG_CACHE = {};
+
+function BG_CACHE_RESET() {
+  for (const key of Object.keys(BG_CACHE)) delete BG_CACHE[key];
+}
 
 function getBackgrounds(name) {
   if (!BG_CACHE[name]) {
@@ -4168,15 +4664,17 @@ function playerHitTest(x, y) {
    13. Enemy types & AI
    --------------------------------------------------------------------- */
 
+/* Angels (使徒). Internal ids are kept for sprites and wave scripts;
+   nameKey / codeKey drive the on-screen designations. */
 const ENEMY_TYPES = {
-  drone:   { hp: 12, r: 10, score: 60,  sprite: "drone",   drops: 0.16 },
-  weaver:  { hp: 18, r: 11, score: 90,  sprite: "weaver",  drops: 0.2 },
-  diver:   { hp: 22, r: 10, score: 130, sprite: "diver",   drops: 0.24 },
-  turret:  { hp: 36, r: 12, score: 180, sprite: "turret",  drops: 0.3 },
-  carrier: { hp: 70, r: 16, score: 320, sprite: "carrier", drops: 0.5 },
-  shielder:{ hp: 55, r: 13, score: 260, sprite: "shielder",drops: 0.34 },
-  mine:    { hp: 8,  r: 8,  score: 40,  sprite: "mine",    drops: 0.1 },
-  sniper:  { hp: 32, r: 10, score: 200, sprite: "sniper",  drops: 0.28 }
+  drone:   { hp: 12, r: 10, score: 60,  sprite: "drone",   drops: 0.16, nameKey: "angelSachiel",  codeKey: "angelCode1" },
+  weaver:  { hp: 18, r: 11, score: 90,  sprite: "weaver",  drops: 0.2,  nameKey: "angelShamshel", codeKey: "angelCode2" },
+  diver:   { hp: 22, r: 10, score: 130, sprite: "diver",   drops: 0.24, nameKey: "angelRamiel",   codeKey: "angelCode3" },
+  turret:  { hp: 36, r: 12, score: 180, sprite: "turret",  drops: 0.3,  nameKey: "angelGaghiel",  codeKey: "angelCode4" },
+  carrier: { hp: 70, r: 16, score: 320, sprite: "carrier", drops: 0.5,  nameKey: "angelIsrafel",  codeKey: "angelCode5" },
+  shielder:{ hp: 55, r: 13, score: 260, sprite: "shielder",drops: 0.34, nameKey: "angelSandalphon", codeKey: "angelCode6" },
+  mine:    { hp: 8,  r: 8,  score: 40,  sprite: "mine",    drops: 0.1,  nameKey: "angelMatarael", codeKey: "angelCode7" },
+  sniper:  { hp: 32, r: 10, score: 200, sprite: "sniper",  drops: 0.28, nameKey: "angelSahaquiel",codeKey: "angelCode8" }
 };
 
 function enemyScale() {
@@ -4203,6 +4701,8 @@ function spawnEnemy(type, x, y, opts) {
     score: spec.score,
     sprite: spec.sprite,
     drops: spec.drops,
+    angelName: spec.nameKey || null,
+    angelCode: spec.codeKey || null,
     t: 0,
     alive: true,
     fireCd: opts.fireCd || rand(0.8, 2),
@@ -4634,6 +5134,8 @@ function spawnBoss(spec, isMid) {
   ENT.boss = boss;
   G.bossActive = true;
   G.bossName = t(spec.key);
+  const codeEl = document.getElementById("bossCode");
+  if (codeEl) codeEl.textContent = isMid ? "MID-CLASS TARGET" : "TARGET // ANGEL";
   G.bossPhase = 1;
   G.bossHpPct = 1;
   G.stagePhase = "boss";
@@ -5197,7 +5699,7 @@ const UI = {
     if (name === "title") this.renderTitle();
     if (name === "stages") this.renderStages();
     if (name === "upgrade") this.renderHangar(this.hangarTab);
-    if (name === "pause") syncToggles();
+    if (name === "pause") { syncToggles(); syncThemeChips(); }
   },
 
   hide() {
@@ -5546,6 +6048,13 @@ function applySettings() {
   if (!Music.enabled) Music.stop();
 }
 
+function syncThemeChips() {
+  const theme = currentTheme();
+  for (const btn of document.querySelectorAll("[data-theme-pick]")) {
+    btn.classList.toggle("active", btn.dataset.themePick === theme);
+  }
+}
+
 function syncToggles() {
   for (const btn of document.querySelectorAll("[data-toggle]")) {
     const key = btn.dataset.toggle;
@@ -5602,6 +6111,14 @@ function bindUi() {
     const langBtn = raw.closest("[data-lang]");
     if (langBtn) {
       setLang(langBtn.dataset.lang);
+      return;
+    }
+
+    const themeChip = raw.closest("[data-theme-pick]");
+    if (themeChip) {
+      Sfx.play("menu");
+      applyTheme(themeChip.dataset.themePick, true);
+      toast(t("theme" + cap(themeChip.dataset.themePick)));
       return;
     }
 
@@ -5762,6 +6279,7 @@ function boot() {
 
   SAVE.load();
   applySettings();
+  applyTheme(currentTheme(), false);
   G.loop = SAVE.data.loop;
 
   UI.init();
@@ -5772,7 +6290,7 @@ function boot() {
   bindPointer();
   bindUi();
 
-  buildPlayerSprites();
+  rebuildArt();
   resetPlayer();
   UI.show("title");
   syncHud();
