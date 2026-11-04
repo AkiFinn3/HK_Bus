@@ -2274,6 +2274,9 @@ const I18N = {
     settingsLanguage: "語言",
     settingsData: "存檔",
     settingsStats: "統計",
+    arcadeTitle: "街機模式",
+    arcadeHint: "另一款街機射擊：駕駛霓虹空巴飛越香港天際線。存檔獨立，互不影響。",
+    arcadeOpen: "🕹️ 進入霓虹空巴",
     settingsAbout: "關於",
     exportData: "匯出存檔",
     importData: "匯入存檔",
@@ -2560,6 +2563,9 @@ const I18N = {
     settingsLanguage: "语言",
     settingsData: "存档",
     settingsStats: "统计",
+    arcadeTitle: "街机模式",
+    arcadeHint: "另一款街机射击：驾驶霓虹空巴飞越香港天际线。存档独立，互不影响。",
+    arcadeOpen: "🕹️ 进入霓虹空巴",
     settingsAbout: "关于",
     exportData: "导出存档",
     importData: "导入存档",
@@ -2846,6 +2852,9 @@ const I18N = {
     settingsLanguage: "Language",
     settingsData: "Save data",
     settingsStats: "Statistics",
+    arcadeTitle: "Arcade mode",
+    arcadeHint: "A second arcade shooter: fly a neon bus over the Hong Kong skyline. Separate save, no overlap.",
+    arcadeOpen: "🕹️ Enter Neon Bus Strike",
     settingsAbout: "About",
     exportData: "Export save",
     importData: "Import save",
@@ -4264,6 +4273,14 @@ function renderSettings() {
       <p>${t("resetHint")}</p>
       <div class="row">
         <button type="button" class="btn btn-small" data-reset>${t("resetSave")}</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <h3>${t("arcadeTitle")}</h3>
+      <p>${t("arcadeHint")}</p>
+      <div class="row">
+        <a class="btn btn-primary btn-small" href="arcade.html">${t("arcadeOpen")}</a>
       </div>
     </div>
 

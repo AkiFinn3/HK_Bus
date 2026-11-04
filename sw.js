@@ -1,15 +1,22 @@
-/* Bus Tycoon HK — service worker
-   Only handles the game's own assets. Other pages on the site are untouched. */
+/* Bus Tycoon HK + Neon Bus Strike — service worker
+   Handles the game pages' own assets. Other pages on the site are untouched. */
 
-const CACHE = "bus-tycoon-v6";
+const CACHE = "bus-tycoon-v7";
 const CORE = [
   "./game.html",
+  "./arcade.html",
   "./manifest.webmanifest",
   "./icon-192.png",
   "./icon-512.png",
   "./icon-maskable-512.png"
 ];
 const CORE_PATHS = new Set(CORE.map((asset) => new URL(asset, self.location.href).pathname));
+
+const PAGE_FILES = ["./game.html", "./arcade.html"];
+
+function pagePath(asset) {
+  return new URL(asset, self.location.href).pathname;
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -29,6 +36,24 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+/* Network first so page updates arrive; fall back to the cached copy offline
+   or when the server errors. */
+function networkFirstPage(event, request, asset) {
+  const cacheKey = pagePath(asset);
+  event.respondWith(
+    fetch(request)
+      .then((response) => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(asset, copy));
+          return response;
+        }
+        return caches.match(cacheKey).then((hit) => hit || response);
+      })
+      .catch(() => caches.match(cacheKey).then((hit) => hit || caches.match(request)))
+  );
+}
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") return;
@@ -36,27 +61,14 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  const isGamePage = url.pathname.endsWith("/game.html") || url.pathname.endsWith("/game.html/");
-  const isCore = CORE_PATHS.has(url.pathname);
-
-  if (isGamePage) {
-    // Network first so updates arrive; fall back to the cached copy offline or on server errors.
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE).then((cache) => cache.put("./game.html", copy));
-            return response;
-          }
-          return caches.match("./game.html").then((hit) => hit || response);
-        })
-        .catch(() => caches.match("./game.html").then((hit) => hit || caches.match(request)))
-    );
-    return;
+  for (const asset of PAGE_FILES) {
+    if (url.pathname === pagePath(asset) || url.pathname === pagePath(asset) + "/") {
+      networkFirstPage(event, request, asset);
+      return;
+    }
   }
 
-  if (isCore) {
+  if (CORE_PATHS.has(url.pathname)) {
     event.respondWith(
       caches.match(request).then((hit) => {
         if (hit) return hit;
